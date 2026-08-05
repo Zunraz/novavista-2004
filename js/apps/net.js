@@ -224,8 +224,8 @@
   }
   function runTraceMult(run) {
     var m = 1;
-    if (run.modIds.indexOf('vigilada') !== -1) m *= 1.25;
-    if (run.modIds.indexOf('silenciosa') !== -1) m *= 0.8;
+    if (run.modIds && run.modIds.indexOf('vigilada') !== -1) m *= 1.25;
+    if (run.modIds && run.modIds.indexOf('silenciosa') !== -1) m *= 0.8;
     return m;
   }
   function lootMult() {
@@ -473,7 +473,7 @@
           '<b>Dinero cobrado:</b> ' + Util.fmtMoney(loot.cash) + '<br>' +
           '<b>Datos al almacén:</b> ' + Util.fmtBytes(loot.data * 1024 * 1024) + '<br>' +
           '<b>Mejor racha:</b> ×' + run.comboBest + ' (+' + Math.min(50, run.comboBest > 1 ? (run.comboBest - 1) * 10 : 0) + ' % máx)<br>' +
-          '<b>XP ganada:</b> +' + (bonusXP + 6 + 0) + '<br>' +
+          '<b>XP ganada:</b> +' + bonusXP + '<br>' +
           '<b>Objetivo del asalto:</b> ' + (run.objective ? Util.esc(run.objective.desc) : '—') + ' → <b>' + (objMet ? 'CUMPLIDO (+' + objBonus + ' NC)' : 'no cumplido') + '</b><br>' +
           '<b>Modificadores:</b> ' + Util.esc(modsTxt),
         buttons: [{ label: '¡A por el siguiente!', value: true, primary: true }]
@@ -570,10 +570,12 @@
     }
     extra.innerHTML = '';
     if (run) {
-      run.modifiers.forEach(function (m) {
+      (run.modifiers || []).forEach(function (m) {
         extra.appendChild(Util.el('span', { class: 'net-mod ' + m.kind, title: m.desc, text: m.name + (m.kind === 'bad' ? ' ▼' : ' ▲') }));
       });
-      extra.appendChild(Util.el('span', { class: 'net-obj', text: 'Objetivo: ' + run.objective.desc + ' (+' + run.objective.bonus + ' NC)' }));
+      if (run.objective) {
+        extra.appendChild(Util.el('span', { class: 'net-obj', text: 'Objetivo: ' + run.objective.desc + ' (+' + run.objective.bonus + ' NC)' }));
+      }
     }
   }
 

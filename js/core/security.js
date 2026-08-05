@@ -63,6 +63,13 @@
     try { window.localStorage.removeItem(qKey()); } catch (e) {}
   }
 
+  /* Releer el flag persistente: al cambiar de perfil (la cuarentena es por cuenta) */
+  function reloadQuarantine() {
+    quarantined = false;
+    quarantinedAt = 0;
+    readQuarantineFlag();
+  }
+
   function isQuarantined() { return quarantined; }
 
   /* Comprobaciones baratas, se ejecutan cada N ticks del bucle */
@@ -132,6 +139,7 @@
     flag: flag,
     quarantine: quarantine,
     clearQuarantine: clearQuarantine,
+    reload: reloadQuarantine,
     isQuarantined: isQuarantined,
     quarantinedAt: function () { return quarantinedAt; },
     flags: function () { return flags.slice(); },

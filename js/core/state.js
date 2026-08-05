@@ -385,11 +385,22 @@
     if (!o.browser) o.browser = { impressions: 0, auto: 0, clicks: 0 };
     if (!o.games) o.games = { pinball: 0, pinballCash: 0, pool: 0, poolWins: 0 };
     if (!o.docs) o.docs = [];
+    // partidas antiguas con un asalto a medias: rellenar los campos nuevos del roguelite
+    if (o.run && typeof o.run === 'object') {
+      o.run.modifiers = o.run.modifiers || [];
+      o.run.modIds = o.run.modIds || o.run.modifiers.map(function (m) { return m.id; });
+      o.run.objective = o.run.objective || null;
+      o.run.stats = o.run.stats || { drains: 0, crack: 0, bruteforce: 0, tools: {}, maxTrace: 0 };
+      o.run.combo = o.run.combo || 0;
+      o.run.comboBest = o.run.comboBest || 0;
+    }
     return o;
   }
 
   function loadGame() {
     prevTot = null;
+    // la cuarentena es por perfil: releer el flag persistente al entrar en una cuenta
+    if (NS.Sec && NS.Sec.reload) NS.Sec.reload();
     var res = NS.Save.load();
     if (res.ok) {
       S = repair(res.state);

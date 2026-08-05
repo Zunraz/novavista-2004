@@ -91,6 +91,7 @@
     return p;
   }
   function deleteProfile(id) {
+    if (currentProfile && currentProfile.id === id) return false; // no borrar la cuenta activa
     loadProfiles();
     profiles = profiles.filter(function (p) { return p.id !== id; });
     persistProfiles();
@@ -99,6 +100,7 @@
       store.removeItem(backupKeyFor(id));
     } catch (e) {}
     if (currentProfile && currentProfile.id === id) currentProfile = null;
+    return true;
   }
   function setProfile(id) {
     loadProfiles();

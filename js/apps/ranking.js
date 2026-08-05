@@ -58,23 +58,29 @@
   function gather() {
     var rows = [];
     var myId = NS.Save.currentProfileId();
+    var myIdRestore = myId;
 
     // cuentas locales: leer su partida (sin tocar la del jugador)
     var profs = NS.Save.listProfiles();
-    profs.forEach(function (p) {
-      if (p.id === myId) return;
-      var saved = null;
-      if (NS.Save.setProfile(p.id)) {
-        var res = NS.Save.load();
-        if (res.ok) saved = res.state;
-      }
-      if (saved) {
-        rows.push({
-          name: saved.profile.name, avatar: saved.profile.avatar,
-          power: powerOf(saved), elo: eloOf(saved), isPlayer: false, level: saved.currencies.level
-        });
-      }
-    });
+    try {
+      profs.forEach(function (p) {
+        if (p.id === myIdRestore) return;
+        var saved = null;
+        if (NS.Save.setProfile(p.id)) {
+          var res = NS.Save.load();
+          if (res.ok) saved = res.state;
+        }
+        if (saved) {
+          rows.push({
+            name: saved.profile.name, avatar: saved.profile.avatar,
+            power: powerOf(saved), elo: eloOf(saved), isPlayer: false, level: saved.currencies.level
+          });
+        }
+      });
+    } finally {
+      // siempre restaurar la cuenta del jugador, aunque algo falle
+      if (myIdRestore) NS.Save.setProfile(myIdRestore);
+    }
 
     // jugador actual
     var S = NS.State.get();

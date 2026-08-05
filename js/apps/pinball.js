@@ -24,7 +24,7 @@
   var waiting = false; // bola en la cuna del lanzador
 
   var BALL_R = 8;
-  var GRAV = 1350;
+  var GRAV = 1500;
 
   // Geometría del campo
   var WALL_TOP = 8, WALL_SIDE = 14;
@@ -285,8 +285,9 @@
     if (!running) return;
     var dt = Math.min(0.033, (ts - lastTime) / 1000 || 0.016);
     lastTime = ts;
-    step(dt);
-    step(dt);
+    // dos sub-pasos de dt/2: integración estable y sin túnel en colisiones
+    step(dt / 2);
+    step(dt / 2);
     draw();
     raf = requestAnimationFrame(loop);
   }

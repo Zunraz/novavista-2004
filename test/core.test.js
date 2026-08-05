@@ -323,7 +323,24 @@ ok(resA2.ok && resA2.state.currencies.cash === 5050, 'los perfiles no se pisan e
 ok(Save.listProfiles().length >= 2, 'hay 2+ cuentas listadas');
 Save.deleteProfile(p2.id);
 ok(!Save.listProfiles().some(function (p) { return p.id === p2.id; }), 'perfil borrado');
+ok(Save.deleteProfile(p1.id) === false, 'no se puede borrar la cuenta activa');
 Save.setProfile(p1.id);
+
+/* ================= security: cuarentena por perfil ================= */
+console.log('security — cuarentena por perfil');
+State.newGame();
+Sec.clearQuarantine();
+Sec.quarantine('prueba de perfil A');
+ok(Sec.isQuarantined(), 'cuarentena activa en el perfil A');
+var p3 = Save.createProfile('CuarentenaTest', 0);
+Save.setProfile(p3.id);
+State.loadGame(); // al cargar se relee el flag del perfil B
+ok(!Sec.isQuarantined(), 'el perfil B arranca sin cuarentena');
+Save.setProfile(p1.id);
+State.loadGame();
+ok(Sec.isQuarantined(), 'al volver al perfil A la cuarentena sigue activa');
+Sec.clearQuarantine();
+Save.deleteProfile(p3.id);
 
 /* ================= ranking (poder y elo) ================= */
 console.log('ranking — poder y elo hacker');

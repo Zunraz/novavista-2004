@@ -385,7 +385,8 @@
     ctx = cv.getContext('2d');
     cv.addEventListener('mousemove', onMove);
     cv.addEventListener('mousedown', onDown);
-    cv.addEventListener('mouseup', onUp);
+    // soltar fuera del canvas también dispara (evita que el arrastre se quede pillado)
+    window.addEventListener('mouseup', onUp);
     wrap.appendChild(cv);
 
     var side = Util.el('div', { style: { flex: '1', minWidth: '170px' } });
@@ -423,6 +424,7 @@
     onClose: function () {
       running = false;
       if (raf) cancelAnimationFrame(raf);
+      window.removeEventListener('mouseup', onUp);
     }
   });
 })();
