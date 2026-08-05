@@ -168,6 +168,21 @@ function ok(cond, name, extra) {
   click(doc.getElementById('btn-start'));
   await wait(100);
 
+  // menú contextual del escritorio
+  N.WM.close('browser');
+  doc.getElementById('desktop').dispatchEvent(new win.MouseEvent('contextmenu', { bubbles: true, cancelable: true, clientX: 60, clientY: 120 }));
+  await wait(60);
+  var ctxItems = doc.querySelectorAll('.ctx-menu button');
+  ok(ctxItems.length >= 4, 'menú contextual con opciones');
+  var termItem = null;
+  ctxItems.forEach(function (b) { if (b.textContent.indexOf('Abrir terminal') !== -1) termItem = b; });
+  if (termItem) {
+    termItem.dispatchEvent(new win.MouseEvent('mousedown', { bubbles: true, cancelable: true }));
+    termItem.dispatchEvent(new win.MouseEvent('click', { bubbles: true, cancelable: true }));
+  }
+  await wait(150);
+  ok(N.WM.isOpen('terminal'), 'acción del menú contextual abre la terminal');
+
   console.log('\n' + passed + ' pasaron, ' + failed + ' fallaron');
   process.exit(failed ? 1 : 0);
 })().catch(function (e) {

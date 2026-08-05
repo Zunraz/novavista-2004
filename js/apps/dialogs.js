@@ -106,6 +106,8 @@
     items.forEach(function (it) {
       if (it.sep) { menu.appendChild(Util.el('hr')); return; }
       var btn = Util.el('button', {});
+      // impedir que el cierre por mousedown global destruya el menú antes del click
+      btn.addEventListener('mousedown', function (e) { e.stopPropagation(); });
       if (it.icon) {
         var svg = Util.el('svg', { class: 'icon' });
         svg.innerHTML = '<use href="#' + it.icon + '"/>';
