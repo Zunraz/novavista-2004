@@ -10,93 +10,115 @@
 
   /* ================= generación de asaltos (puro) ================= */
   var NAMES = {
-    home: ['PC de Ana', 'PC de Roberto', 'PC familiar', 'PC de la vecina'],
-    cafe: ['CiberCafé NovaNet', 'Ciber@24 horas', 'Café Internet El Navegante'],
-    office: ['Oficina de diseño XS', 'Gestoría El Águila', 'Despacho López y Cía'],
-    news: ['Servidor NovaNoticias', 'Portal de deportes Golazo'],
-    bank: ['Banco del Sur S.A.', 'Caja de Ahorros Nova', 'Crédito Hipotecario Global'],
-    corp: ['MegaSoft Corp', 'DataCorp Central', 'Telefónica del Norte'],
-    dark: ['Nodo Oscuro #7', 'Bazar del Subsuelo', 'Servidor Fantasma']
+    data: ['PC de Ana', 'PC de Roberto', 'PC familiar', 'PC de la vecina', 'CiberCafé NovaNet', 'Oficina de diseño XS', 'Gestoría El Águila', 'Servidor NovaNoticias', 'Banco del Sur S.A.', 'MegaSoft Corp', 'DataCorp Central'],
+    elite: ['Núcleo MegaSoft', 'Bóveda del Banco del Sur', 'DataCorp Central', 'Sala de servidores VIP'],
+    loot: ['Cámara olvidada', 'Cajón de datos', 'Copia de seguridad', 'Archivo perdido'],
+    shop: ['Vendedor del subsuelo', 'Mercado negro NovaNet', 'Chiringuito de chips'],
+    event: ['Señal desconocida', 'Foro del submundo', 'Sala de chat cifrada'],
+    boss: ['MASTER SERVER', 'Núcleo de control', 'La Madre']
   };
 
-  function genNode(rng, kind, lvl, name, conn) {
-    var fw = 1 + Math.floor(lvl / 2) + (rng() < 0.45 ? 1 : 0);
+  /* Genera un nodo según su tipo; el nivel (1-4) marca la dificultad */
+  function genNode(rng, kind, lvl) {
+    var fw, data, cash, coins = 0, coinsChance = 0;
+    if (kind === 'data') {
+      fw = 1 + Math.floor(lvl / 2) + (rng() < 0.4 ? 1 : 0);
+      data = Math.round(Math.pow(lvl, 1.4) * 14 * (0.8 + rng() * 0.6));
+      cash = Math.round(Math.pow(lvl, 2.05) * 26 * (0.8 + rng() * 0.5));
+      coinsChance = 0.25 + lvl * 0.04;
+    } else if (kind === 'elite') {
+      fw = 2 + Math.floor(lvl / 2) + (rng() < 0.5 ? 1 : 0);
+      data = Math.round(Math.pow(lvl, 1.5) * 34 * (0.9 + rng() * 0.6));
+      cash = Math.round(Math.pow(lvl, 2.1) * 60 * (0.9 + rng() * 0.5));
+      coinsChance = 0.5;
+    } else if (kind === 'loot') {
+      fw = 0; data = Math.round(Math.pow(lvl, 1.3) * 26 * (0.8 + rng() * 0.5));
+      cash = Math.round(Math.pow(lvl, 1.9) * 32 * (0.8 + rng() * 0.5));
+    } else if (kind === 'shop') {
+      fw = 0; data = 0; cash = 0;
+    } else if (kind === 'event') {
+      fw = 0; data = 0; cash = 0;
+    } else if (kind === 'boss') {
+      fw = 4 + Math.floor(lvl / 2);
+      data = 4200 + Math.floor(rng() * 2200);
+      cash = 22000 + Math.floor(rng() * 16000);
+      coins = 8 + Math.floor(rng() * 10);
+      coinsChance = 1;
+    } else { // isp
+      fw = 0; data = 0; cash = 0;
+    }
     var vulns = [];
     var pool = ['buffer', 'openport', 'weakpass', 'backdoor'];
-    var nv = rng() < 0.3 ? 0 : rng() < 0.7 ? 1 : 2;
+    var nv = (kind === 'data' || kind === 'elite') ? (rng() < 0.3 ? 0 : rng() < 0.7 ? 1 : 2) : (rng() < 0.4 ? 1 : 0);
     for (var i = 0; i < nv; i++) {
       var v = pool[Math.floor(rng() * pool.length)];
       if (vulns.indexOf(v) === -1) vulns.push(v);
     }
     return {
       id: 'n' + Math.floor(rng() * 1e9).toString(36),
-      kind: kind, name: name,
+      kind: kind,
+      name: kind === 'isp' ? 'Proveedor ISP (tú)' : (NAMES[kind] || ['Nodo desconocido'])[Math.floor(rng() * (NAMES[kind] || ['Nodo desconocido']).length)],
       lvl: lvl,
-      fw: kind === 'isp' ? 0 : fw,
+      fw: kind === 'boss' ? fw : Math.min(fw, 6),
       fwMax: fw,
-      trace: 3 + lvl * 2 + Math.floor(rng() * 4),
-      data: Math.round(Math.pow(lvl, 1.35) * 15 * (0.8 + rng() * 0.6)),
-      cash: Math.round(Math.pow(lvl, 2.05) * 40 * (0.8 + rng() * 0.5)),
-      coins: kind === 'dark' ? 2 + Math.floor(rng() * 4) : 0,
-      coinsChance: kind === 'dark' ? 0.65 : kind === 'boss' ? 1 : 0,
+      trace: (kind === 'elite' ? 8 : kind === 'boss' ? 14 : 5) + lvl * 2 + Math.floor(rng() * 4),
+      data: data, cash: cash, coins: coins, coinsChance: coinsChance,
       vulns: vulns,
-      conn: conn || [],
+      conn: [],
       explored: kind === 'isp',
       drained: false,
       usedVulns: {}
     };
   }
 
+  /* Tipos de nodo según la posición en la rama (más profundo = más peligroso) */
+  function pickKind(rng, d, depth) {
+    var table;
+    if (d === 1) table = [['data', 58], ['loot', 24], ['event', 18]];
+    else if (d === depth) table = [['data', 38], ['elite', 27], ['loot', 14], ['shop', 12], ['event', 9]];
+    else table = [['data', 42], ['loot', 18], ['event', 14], ['shop', 14], ['elite', 12]];
+    var total = 0;
+    table.forEach(function (t) { total += t[1]; });
+    var r = rng() * total;
+    for (var i = 0; i < table.length; i++) {
+      r -= table[i][1];
+      if (r <= 0) return table[i][0];
+    }
+    return 'data';
+  }
+
   function genRun(seed) {
     var rng = Util.mulberry32(seed >>> 0);
     var nodes = [];
-    var boss;
+    function add(n) { nodes.push(n); return n; }
 
-    var isp = genNode(rng, 'isp', 0, 'Proveedor ISP (tú)', []);
-    nodes.push(isp);
+    var isp = add(genNode(rng, 'isp', 0));
 
-    function addLayer(count, kinds, lvlMin, lvlMax) {
-      var layer = [];
-      for (var i = 0; i < count; i++) {
-        var k = kinds[Math.floor(rng() * kinds.length)];
-        var lvl = lvlMin + Math.floor(rng() * (lvlMax - lvlMin + 1));
-        var n = genNode(rng, k, lvl, NAMES[k][Math.floor(rng() * NAMES[k].length)], []);
-        nodes.push(n);
-        layer.push(n);
+    // 3 ramas × 3 profundidades: el jugador elige su ruta (StS-style)
+    var branches = 3;
+    var depth = 3;
+    var ends = [];
+    for (var b = 0; b < branches; b++) {
+      var prev = isp;
+      for (var d = 1; d <= depth; d++) {
+        var kind = pickKind(rng, d, depth);
+        var node = add(genNode(rng, kind, d));
+        prev.conn.push(node.id);
+        prev = node;
+        if (d === depth) ends.push(node);
       }
-      return layer;
     }
-
-    var d1 = addLayer(2 + Math.floor(rng() * 2), ['home', 'home', 'cafe'], 1, 3);
-    var d2 = addLayer(2 + Math.floor(rng() * 2), ['office', 'office', 'news'], 3, 5);
-    var d3 = addLayer(1 + Math.floor(rng() * 2), ['bank', 'bank', 'corp'], 5, 8);
-    var d4 = addLayer(1, ['dark'], 7, 9);
-    boss = genNode(rng, 'boss', 10, 'MASTER SERVER', []);
-    boss.data = 4000 + Math.floor(rng() * 2000);
-    boss.cash = 25000 + Math.floor(rng() * 15000);
-    boss.coins = 8 + Math.floor(rng() * 10);
-    nodes.push(boss);
-
-    // conexiones
-    isp.conn = d1.map(function (n) { return n.id; });
-    function wire(prev, next) {
-      prev.forEach(function (p, i) {
-        var targets = next.slice();
-        // al menos 1, a veces 2
-        var picks = 1 + (rng() < 0.6 ? 1 : 0);
-        for (var k = 0; k < picks && targets.length; k++) {
-          var t = targets.splice(Math.floor(rng() * targets.length), 1)[0];
-          p.conn.push(t.id);
-        }
-        if (!p.conn.length && next.length) p.conn.push(next[0].id);
-      });
+    // el jefe conecta con el final de las 3 ramas
+    var boss = add(genNode(rng, 'boss', 4));
+    ends.forEach(function (e) { e.conn.push(boss.id); });
+    // a veces una conexión extra rama<->rama (atajos)
+    if (rng() < 0.5) {
+      var n1 = nodes[1 + Math.floor(rng() * (nodes.length - 2))];
+      var n2 = nodes[1 + Math.floor(rng() * (nodes.length - 2))];
+      if (n1 !== n2 && n1.conn.indexOf(n2.id) === -1 && n2.conn.indexOf(n1.id) === -1 && n1 !== isp && n2 !== isp && n1 !== boss && n2 !== boss) {
+        n1.conn.push(n2.id);
+      }
     }
-    wire(d1, d2);
-    wire(d2, d3);
-    wire(d3, d4);
-    d4.forEach(function (n) { n.conn.push(boss.id); });
-    // conexión extra opcional d2 -> boss para variedad
-    if (rng() < 0.3) d2[Math.floor(rng() * d2.length)].conn.push(boss.id);
 
     /* -------- modificadores del asalto (variedad sin injusticia) -------- */
     var MODIFIERS = [
@@ -105,7 +127,7 @@
       { id: 'silenciosa',kind: 'good', name: 'Red silenciosa',   desc: '-20 % de rastro por acción' },
       { id: 'agujeros',  kind: 'good', name: 'Red con agujeros', desc: 'Los nodos tienen más vulnerabilidades' },
       { id: 'criptico',  kind: 'good', name: 'Nodos cripticos',  desc: '+50 % de NovaCoins' },
-      { id: 'aquelarre', kind: 'good', name: 'Noche de aquelarre', desc: 'Menos firewall en las capas iniciales' }
+      { id: 'aquelarre', kind: 'good', name: 'Noche de aquelarre', desc: 'Menos firewall en las ramas iniciales' }
     ];
     var bads = MODIFIERS.filter(function (m) { return m.kind === 'bad'; });
     var goods = MODIFIERS.filter(function (m) { return m.kind === 'good'; });
@@ -120,7 +142,7 @@
     if (modIds.indexOf('agujeros') !== -1) {
       var vpool = ['buffer', 'openport', 'weakpass', 'backdoor'];
       nodes.forEach(function (n) {
-        if (n.kind === 'isp' || n.kind === 'boss') return;
+        if (n.kind === 'isp' || n.kind === 'boss' || n.kind === 'shop' || n.kind === 'event') return;
         if (rng() < 0.7 && n.vulns.length < 2) {
           var v = vpool[Math.floor(rng() * vpool.length)];
           if (n.vulns.indexOf(v) === -1) n.vulns.push(v);
@@ -129,13 +151,13 @@
     }
     if (modIds.indexOf('aquelarre') !== -1) {
       nodes.forEach(function (n) {
-        if (n.lvl <= 4 && n.fw > 1) n.fw = Math.max(1, n.fw - 1);
-        if (n.lvl <= 4) n.fwMax = n.fw;
+        if (n.lvl <= 2 && n.fw > 1) n.fw = Math.max(1, n.fw - 1);
+        if (n.lvl <= 2) n.fwMax = n.fw;
       });
     }
     if (modIds.indexOf('criptico') !== -1) {
       nodes.forEach(function (n) {
-        if (n.kind === 'dark' || n.kind === 'boss') n.coins = Math.round(n.coins * 1.5);
+        if ((n.kind === 'data' && n.coinsChance > 0) || n.kind === 'elite' || n.kind === 'boss') n.coins = Math.round((n.coins || 0) * 1.5) || n.coins;
       });
     }
 
@@ -143,7 +165,7 @@
     var OBJECTIVES = [
       { id: 'o-no-bruteforce', desc: 'Termina sin usar BRUTEFORCE',           bonus: 4, check: function (r) { return r.stats.bruteforce === 0; } },
       { id: 'o-low-trace',     desc: 'Cobra con el rastro por debajo de 40',  bonus: 3, check: function (r) { return r.trace < 40; } },
-      { id: 'o-4-drains',      desc: 'Drena al menos 4 nodos',                bonus: 3, check: function (r) { return r.stats.drains >= 4; } },
+      { id: 'o-4-drains',      desc: 'Consigue 4 o más nodos en un asalto',   bonus: 3, check: function (r) { return r.stats.drains >= 4; } },
       { id: 'o-2-tools',       desc: 'Usa 2 herramientas distintas',          bonus: 4, check: function (r) { return Object.keys(r.stats.tools).length >= 2; } },
       { id: 'o-no-crack',      desc: 'Termina sin usar CRACK',                bonus: 5, check: function (r) { return r.stats.crack === 0; } },
       { id: 'o-calm',          desc: 'Nunca superes 60 de rastro',            bonus: 4, check: function (r) { return r.stats.maxTrace <= 60; } }
@@ -157,6 +179,7 @@
       summary: null,
       modifiers: modifiers, modIds: modIds, objective: objective,
       combo: 0, comboBest: 0,
+      stealthCount: 0,
       stats: { drains: 0, crack: 0, bruteforce: 0, tools: {}, maxTrace: 0 }
     };
   }
@@ -201,12 +224,12 @@
     }
     if (run.trace >= 100) {
       run.trace = 100;
-      // Escapatoria: no es muerte instantánea. Con sigilo, casi siempre te salvas.
+      // Escapatoria: no es muerte instantánea, pero tampoco gratis.
       var S = NS.State.get();
-      var escapeChance = Util.clamp(0.6 + 0.04 * (S.upg['i-stealth'] || 0), 0, 0.92);
+      var escapeChance = Util.clamp(0.35 + 0.05 * (S.upg['i-stealth'] || 0), 0, 0.65);
       if (Math.random() < escapeChance) {
-        run.trace = 40;
-        log('ok', '¡Te escabulliste del rastreo a duras penas! Rastro reiniciado a 40.');
+        run.trace = 35;
+        log('ok', '¡Te escabulliste del rastreo a duras penas! Rastro reiniciado a 35.');
         NS.Audio.trace();
         refresh();
       } else {
@@ -242,10 +265,15 @@
     if (!isReachable(run, node)) return log('err', 'No puedes alcanzar «' + node.name + '» todavía. Drena antes un nodo conectado.');
     if (!spendE(run, 1)) return log('err', 'Energía insuficiente.');
     node.explored = true;
-    var vulnTxt = node.vulns.length ? node.vulns.map(vulnName).join(', ') : 'ninguna conocida';
-    log('ok', 'ESCANEO de ' + node.name + ' (nivel ' + node.lvl + ')');
-    log('dim', '  Firewall: ' + '▓'.repeat(node.fw) + '░'.repeat(node.fwMax - node.fw) + ' · Vulnerabilidades: ' + vulnTxt);
-    log('dim', '  Botín estimado: ' + Util.fmtBytes(node.data * 1024 * 1024) + ' · ' + Util.fmtMoney(node.cash) + (node.coinsChance > 0 ? ' · posible monedas' : ''));
+    if (node.kind === 'loot' || node.kind === 'shop' || node.kind === 'event') {
+      log('ok', 'ESCANEO de ' + node.name + ' (' + KIND_LABEL[node.kind] + ', nivel ' + node.lvl + ')');
+      log('dim', '  No es un servidor hostil: no tiene firewall. Interactúa con la acción especial.');
+    } else {
+      var vulnTxt = node.vulns.length ? node.vulns.map(vulnName).join(', ') : 'ninguna conocida';
+      log('ok', 'ESCANEO de ' + node.name + ' (nivel ' + node.lvl + (node.kind === 'elite' ? ' — ¡ÉLITE!' : '') + ')');
+      log('dim', '  Firewall: ' + '▓'.repeat(node.fw) + '░'.repeat(node.fwMax - node.fw) + ' · Vulnerabilidades: ' + vulnTxt);
+      log('dim', '  Botín estimado: ' + Util.fmtBytes(node.data * 1024 * 1024) + ' · ' + Util.fmtMoney(node.cash) + (node.coinsChance > 0 ? ' · posible monedas' : ''));
+    }
     addTrace(run, node);
     NS.State.addXP(2);
     NS.Audio.tick();
@@ -305,6 +333,9 @@
     refresh();
   }
   function actUpload(run, node) {
+    if (node.kind !== 'data' && node.kind !== 'elite' && node.kind !== 'boss') {
+      return log('err', '«' + node.name + '» no es un servidor hostil: usa su acción especial.');
+    }
     if (!isReachable(run, node)) return log('err', 'Nodo inalcanzable.');
     if (node.drained) return log('dim', 'Ya drenaste ' + node.name + '.');
     if (node.fw > 0) return log('err', 'El firewall de ' + node.name + ' sigue activo (' + node.fw + ' capas).');
@@ -364,10 +395,146 @@
     }
     refresh();
   }
-  function actStealth(run) {
+
+  /* ---------- acciones de los nodos especiales ---------- */
+  var KIND_LABEL = {
+    isp: 'Tu ISP', data: 'Servidor', elite: 'ÉLITE', loot: 'Botín',
+    shop: 'Mercado negro', event: 'Evento', boss: 'MASTER SERVER'
+  };
+
+  /* Botín: recoger sin pelear, con riesgo de trampa */
+  function actTake(run, node) {
+    if (!isReachable(run, node)) return log('err', 'Nodo inalcanzable.');
+    if (node.drained) return log('dim', 'Ya vaciaste ' + node.name + '.');
     if (!spendE(run, 1)) return log('err', 'Energía insuficiente.');
-    run.trace = Math.floor(run.trace * 0.7);
-    log('ok', 'SIGILO activado. Rastro reducido al 70 % (' + Math.floor(run.trace) + ').');
+    var dice = Math.random();
+    if (dice < 0.8) {
+      var d = Math.round(node.data * lootMult());
+      var c = Math.round(node.cash * lootMult());
+      run.loot.data += d;
+      run.loot.cash += c;
+      node.drained = true;
+      run.stats.drains++;
+      run.combo++;
+      if (run.combo > run.comboBest) run.comboBest = run.combo;
+      log('ok', '¡Robaste la cámara! +' + Util.fmtBytes(d * 1024 * 1024) + ' y ' + Util.fmtMoney(c) + ' al botín.');
+      NS.Audio.cash();
+    } else {
+      node.drained = true;
+      run.trace += 22;
+      if (run.trace > run.stats.maxTrace) run.stats.maxTrace = Math.floor(run.trace);
+      log('warn', '¡ERA UNA TRAMPA! Una alarma silenciosa te delató: +22 de rastro (' + Math.floor(run.trace) + '/100).');
+      NS.Audio.trace();
+    }
+    addTrace(run, node);
+    NS.State.addXP(2);
+    refresh();
+  }
+
+  /* Mercado negro: gasta botín del asalto en ventajas */
+  function actShop(run, node) {
+    if (!isReachable(run, node)) return log('err', 'Nodo inalcanzable.');
+    if (node.drained) return log('dim', 'Ya visitaste ' + node.name + '.');
+    var loot = run.loot.cash;
+    var offers = [
+      { id: 'energy', label: 'Cápsula de energía (+60 % de la máxima)', cost: Math.max(25, Math.round(loot * 0.35)), fn: function () {
+        var S = NS.State.get();
+        var add = Math.round(NS.State.maxEnergy() * 0.6);
+        S.currencies.energy = Math.min(NS.State.maxEnergy(), S.currencies.energy + add);
+        log('ok', 'Cápsula consumida: +' + add + ' de energía.');
+      } },
+      { id: 'clean', label: 'Limpiador de rastro (-40)', cost: Math.max(30, Math.round(loot * 0.4)), fn: function () {
+        run.trace = Math.max(0, run.trace - 40);
+        log('ok', 'Rastro limpiado: ahora está en ' + Math.floor(run.trace) + '.');
+      } },
+      { id: 'tool', label: 'Herramienta aleatoria (1×)', cost: Math.max(20, Math.round(loot * 0.3)), fn: function () {
+        var tids = Object.keys(NS.Catalog.TOOLS);
+        var tid = tids[Math.floor(Math.random() * tids.length)];
+        run.tools[tid] = (run.tools[tid] || 0) + 1;
+        log('ok', 'Herramienta comprada: 1× ' + NS.Catalog.TOOLS[tid].name + '.');
+      } }
+    ];
+    var msg = '<b>' + Util.esc(node.name) + '</b> (mercado negro)<br>' +
+      'Dispones de <b>' + Util.fmtMoney(loot) + '</b> de botín para gastar. Lo que gastes no lo cobrarás al final.<br><br>';
+    var buttons = offers.map(function (o) {
+      return { label: o.label + ' — ' + Util.fmtMoney(o.cost), value: o.id, primary: false, disabled: loot < o.cost };
+    });
+    buttons.push({ label: 'Salir sin comprar', value: null, primary: true });
+    NS.UI.dialog({
+      title: 'Mercado negro', icon: 'ic-coin',
+      message: msg,
+      buttons: buttons
+    }).then(function (choice) {
+      if (!choice) { node.drained = true; log('dim', 'Sales del mercado negro sin comprar.'); refresh(); return; }
+      for (var i = 0; i < offers.length; i++) {
+        if (offers[i].id === choice) {
+          if (run.loot.cash < offers[i].cost) { log('err', 'No te alcanza el botín para eso.'); return; }
+          run.loot.cash -= offers[i].cost;
+          offers[i].fn();
+          node.drained = true;
+          log('ok', 'El vendedor acepta el trato y desaparece en la penumbra.');
+          NS.Audio.cash();
+          refresh();
+          return;
+        }
+      }
+    });
+  }
+
+  /* Evento: resultado aleatorio justo (60 % bueno / 40 % malo) */
+  function actEvent(run, node) {
+    if (!isReachable(run, node)) return log('err', 'Nodo inalcanzable.');
+    if (node.drained) return log('dim', 'Ya resolviste ' + node.name + '.');
+    if (!spendE(run, 1)) return log('err', 'Energía insuficiente.');
+    node.drained = true;
+    var roll = Math.random();
+    if (roll < 0.6) {
+      var picks = ['energy', 'tool', 'coins', 'trace'];
+      var p = picks[Math.floor(Math.random() * picks.length)];
+      if (p === 'energy') {
+        NS.State.addEnergy(8);
+        log('ok', 'Un script útil: +8 de energía.');
+      } else if (p === 'tool') {
+        var tids = Object.keys(NS.Catalog.TOOLS);
+        var tid = tids[Math.floor(Math.random() * tids.length)];
+        run.tools[tid] = (run.tools[tid] || 0) + 1;
+        log('ok', 'Regalo de un extraño: 1× ' + NS.Catalog.TOOLS[tid].name + '.');
+      } else if (p === 'coins') {
+        var coins = 1 + Math.floor(Math.random() * 3);
+        NS.State.addCoins(coins);
+        log('ok', 'Pagaron por una ayuda: +' + coins + ' NovaCoins.');
+      } else {
+        run.trace = Math.max(0, run.trace - 20);
+        log('ok', 'Un contacto borró parte de tu rastro: -20.');
+      }
+    } else {
+      var bad = Math.random();
+      if (bad < 0.4) {
+        run.trace += 18;
+        log('warn', 'Un honeypot del administrador: +18 de rastro (' + Math.floor(run.trace) + '/100).');
+      } else if (bad < 0.7) {
+        var lost = Math.round(run.loot.cash * 0.15);
+        run.loot.cash -= lost;
+        log('warn', 'Un estafador te vació parte del botín: -' + Util.fmtMoney(lost) + '.');
+      } else {
+        NS.State.get().currencies.energy = Math.max(0, NS.State.get().currencies.energy - 6);
+        log('warn', 'Un virus en el acceso: -6 de energía.');
+      }
+    }
+    addTrace(run, node);
+    refresh();
+  }
+  function actStealth(run) {
+    if (!spendE(run, 2)) return log('err', 'Energía insuficiente (cuesta 2).');
+    // Fatiga de sigilo: cada uso en el mismo asalto reduce menos, y los
+    // vigilantes aprenden tu método (el rastro base sube). No se puede
+    // spamear para anular el riesgo del roguelite.
+    run.stealthCount = (run.stealthCount || 0) + 1;
+    var k = run.stealthCount;
+    var mult = Math.max(0.5, 0.7 + 0.06 * (k - 1));
+    run.trace = Math.floor(run.trace * mult) + 3;
+    log('ok', 'SIGILO (#uso ' + k + '): rastro ×' + mult.toFixed(2) + ' +3 de atención → ' + Math.floor(run.trace) + '.');
+    log('dim', 'Los vigilantes se están fijando en ti: cada sigilo es menos eficaz.');
     NS.State.addXP(1);
     NS.Audio.tick();
     refresh();
@@ -537,11 +704,21 @@
     if (!run || run.status !== 'active') return;
     var reach = node && isReachable(run, node);
     b('Escanear', function () { actScan(run, node); }, !reach);
-    b('Crack', function () { actCrack(run, node); }, !reach || (node && node.fw <= 0));
-    b('Exploit', function () { actExploit(run, node); }, !reach || (node && node.fw <= 0));
-    b('Bruteforce', function () { actBruteforce(run, node); }, !reach || (node && node.fw <= 0));
-    b('Descifrar', function () { actDecrypt(run, node); }, !reach);
-    b('¡Upload!', function () { actUpload(run, node); }, !reach || !node || node.fw > 0 || node.drained);
+    if (node) {
+      if (node.kind === 'data' || node.kind === 'elite' || node.kind === 'boss') {
+        b('Crack', function () { actCrack(run, node); }, !reach || node.fw <= 0);
+        b('Exploit', function () { actExploit(run, node); }, !reach || node.fw <= 0);
+        b('Bruteforce', function () { actBruteforce(run, node); }, !reach || node.fw <= 0);
+        b('Descifrar', function () { actDecrypt(run, node); }, !reach);
+        b('¡Upload!', function () { actUpload(run, node); }, !reach || node.fw > 0 || node.drained);
+      } else if (node.kind === 'loot') {
+        b('Robar botín', function () { actTake(run, node); }, !reach || node.drained, 'Recoge el botín: no hay firewall, pero puede ser una trampa.');
+      } else if (node.kind === 'shop') {
+        b('Entrar al mercado', function () { actShop(run, node); }, !reach || node.drained, 'Gasta botín del asalto en energía, limpieza de rastro o herramientas.');
+      } else if (node.kind === 'event') {
+        b('Investigar', function () { actEvent(run, node); }, !reach || node.drained, 'Resultado aleatorio: a veces una ganga, a veces una trampa.');
+      }
+    }
   }
 
   function renderTop() {
@@ -579,75 +756,194 @@
     }
   }
 
+  /* ---------- mapa en canvas (ramas + conexiones) ---------- */
+  var mapCanvas = null;
+  var mapCtx = null;
+
+  var KIND_GLYPH = { isp: 'ISP', data: 'D', elite: 'E', loot: 'L', shop: 'S', event: '?', boss: 'B' };
+  var KIND_COLOR = { isp: '#3f8fd6', data: '#5a6a8a', elite: '#c050a0', loot: '#3e9e4a', shop: '#d6a83f', event: '#9a6ad6', boss: '#d6403f' };
+
+  function mapLayout(run) {
+    // posiciones fijas: ISP abajo-izquierda, 3 ramas en columnas, jefe arriba al centro
+    var pos = {};
+    var BX = [150, 280, 410];
+    var byId = {};
+    run.nodes.forEach(function (n) { byId[n.id] = n; });
+    pos[run.ispId] = { x: 60, y: 272 };
+    // recorrido: hijos directos del ISP definen las ramas
+    var isp = byId[run.ispId];
+    isp.conn.forEach(function (cid, ci) {
+      var cur = byId[cid];
+      var depth = 1;
+      pos[cid] = { x: BX[ci % 3], y: 232 };
+      while (cur && cur.conn.length) {
+        var nextId = cur.conn[0];
+        var next = byId[nextId];
+        if (!next || next.id === run.bossId || pos[nextId]) break;
+        depth++;
+        pos[nextId] = { x: BX[ci % 3], y: 232 - (depth - 1) * 77 };
+        cur = next;
+      }
+    });
+    pos[run.bossId] = { x: 280, y: 22 };
+    return pos;
+  }
+
+  function drawMap(run) {
+    var cv = mapCanvas;
+    if (!cv || !mapCtx) return;
+    var ctx = mapCtx;
+    var W = cv.width, H = cv.height;
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = '#0a1230';
+    ctx.fillRect(0, 0, W, H);
+    // retícula sutil
+    ctx.strokeStyle = 'rgba(120,160,220,.06)';
+    ctx.lineWidth = 1;
+    for (var gx = 0; gx < W; gx += 24) { ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, H); ctx.stroke(); }
+    for (var gy = 0; gy < H; gy += 24) { ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(W, gy); ctx.stroke(); }
+
+    var pos = mapLayout(run);
+    var byId = {};
+    run.nodes.forEach(function (n) { byId[n.id] = n; });
+
+    // líneas de conexión
+    run.nodes.forEach(function (n) {
+      var a = pos[n.id];
+      if (!a) return;
+      (n.conn || []).forEach(function (cid) {
+        var b = pos[cid];
+        if (!b) return;
+        ctx.strokeStyle = 'rgba(140,180,230,.25)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.stroke();
+      });
+    });
+
+    // nodos
+    run.nodes.forEach(function (n) {
+      var p = pos[n.id];
+      if (!p) return;
+      var reach = isReachable(run, n);
+      var visible = n.explored || run.mapRevealed;
+      var sel = selectedId === n.id;
+      var x = p.x - 55, y = p.y - 23, w = 110, h = 46;
+
+      ctx.fillStyle = n.drained ? '#123a22' : (reach ? '#12305a' : '#151a26');
+      ctx.fillRect(x, y, w, h);
+      ctx.strokeStyle = n.drained ? '#3e9e4a' : (sel ? '#f2c14e' : (n.kind === 'boss' ? '#d6403f' : (reach ? '#3f8fd6' : '#3a4252')));
+      ctx.lineWidth = sel ? 3 : 2;
+      ctx.strokeRect(x, y, w, h);
+      if (n.drained) {
+        ctx.fillStyle = '#3e9e4a';
+        ctx.font = 'bold 20px Tahoma';
+        ctx.fillText('✓', x + w - 18, y + 18);
+      }
+      // glifo del tipo
+      ctx.fillStyle = KIND_COLOR[n.kind] || '#888';
+      ctx.font = 'bold 14px Tahoma';
+      ctx.textAlign = 'center';
+      ctx.fillText(visible ? (KIND_GLYPH[n.kind] || '?') : '?', x + 16, y + 20);
+      // nombre
+      ctx.fillStyle = visible ? '#dfe8f5' : '#6a7288';
+      ctx.font = '10px Tahoma';
+      var name = visible ? n.name : '???';
+      if (name.length > 13) name = name.slice(0, 12) + '…';
+      ctx.fillText(name, x + w / 2, y + h - 10);
+      // subinfo
+      if (visible && !n.drained && n.kind !== 'loot' && n.kind !== 'shop' && n.kind !== 'event' && n.kind !== 'isp') {
+        ctx.fillStyle = '#8fa8c8';
+        ctx.fillText('FW ' + n.fw + ' · Nv ' + n.lvl, x + w / 2, y + 15);
+      } else if (visible && n.kind === 'loot') {
+        ctx.fillStyle = '#8fc89a';
+        ctx.fillText('botín', x + w / 2, y + 15);
+      } else if (visible && n.kind === 'shop') {
+        ctx.fillStyle = '#d6c06a';
+        ctx.fillText('mercado', x + w / 2, y + 15);
+      } else if (visible && n.kind === 'event') {
+        ctx.fillStyle = '#b99ad6';
+        ctx.fillText('evento', x + w / 2, y + 15);
+      } else if (visible && n.kind === 'boss') {
+        ctx.fillStyle = '#e0806a';
+        ctx.fillText('FW ' + n.fw, x + w / 2, y + 15);
+      }
+      ctx.textAlign = 'left';
+    });
+
+    // etiqueta del jefe
+    ctx.fillStyle = '#d6403f';
+    ctx.font = 'bold 12px Tahoma';
+    ctx.textAlign = 'center';
+    ctx.fillText('MASTER SERVER', 280, 12);
+    ctx.textAlign = 'left';
+
+    // consejo inferior
+    ctx.fillStyle = 'rgba(160,200,255,.5)';
+    ctx.font = '9px Tahoma';
+    ctx.fillText('Haz clic en un nodo alcanzable para atacarlo · Drena nodos conectados para abrir el camino', 12, H - 6);
+  }
+
+  function mapHit(run, mx, my) {
+    var pos = mapLayout(run);
+    var best = null, bestD = 1e9;
+    run.nodes.forEach(function (n) {
+      var p = pos[n.id];
+      if (!p) return;
+      var d = Math.sqrt((p.x - mx) * (p.x - mx) + (p.y - my) * (p.y - my));
+      if (d < 60 && d < bestD) { bestD = d; best = n; }
+    });
+    return best;
+  }
+
   function renderMap() {
     if (!mapEl) return;
     var S = NS.State.get();
     var run = S.run;
     mapEl.innerHTML = '';
     if (!run) {
-      mapEl.appendChild(Util.el('div', { class: 'net-empty' }));
-      Util.$('.net-empty', mapEl).innerHTML = '<div style="font-size:20px;margin-bottom:10px">Mapa de red inactivo</div>' +
-        '<div class="cfg-sub" style="margin-bottom:12px">Conecta para generar un asalto procedural. Drena nodos, esquiva el rastreo y alcanza el MasterServer.</div>';
+      var empty = Util.el('div', { class: 'net-empty' });
+      empty.innerHTML = '<div style="font-size:20px;margin-bottom:10px">Mapa de red inactivo</div>' +
+        '<div class="cfg-sub" style="margin-bottom:12px">Conecta para generar un asalto procedural. Elige tu ruta entre 3 ramas, esquiva el rastreo y alcanza el MasterServer.</div>';
       var btn = Util.el('button', { class: 'xp-btn primary', text: 'Conectar a la red' });
       btn.addEventListener('click', startRun);
-      Util.$('.net-empty', mapEl).appendChild(btn);
+      empty.appendChild(btn);
+      mapEl.appendChild(empty);
       return;
     }
     renderTop();
-    // agrupar por profundidad (nivel de conexión = distancia desde isp)
-    var depths = {};
-    var visited = {};
-    var queue = [[run.ispId, 0]];
-    visited[run.ispId] = 0;
-    while (queue.length) {
-      var cur = queue.shift();
-      var n = nodeById(run, cur[0]);
-      if (!n) continue; // conn apunta a un nodo inexistente (guard contra estados dañados)
-      (depths[cur[1]] = depths[cur[1]] || []).push(n);
-      (n.conn || []).forEach(function (cid) {
-        if (visited[cid] === undefined) { visited[cid] = cur[1] + 1; queue.push([cid, cur[1] + 1]); }
-      });
-    }
-    var colWrap = Util.el('div', { class: 'net-cols' });
-    var DEPTH_NAMES = ['Tu ISP', 'Red local', 'Zona media', 'Zona alta', 'Subsuelo', 'Objetivo final'];
-    Object.keys(depths).sort(function (a, b) { return a - b; }).forEach(function (d) {
-      var col = Util.el('div', { class: 'net-col' });
-      var header = Util.el('div', { class: 'net-col-head', text: DEPTH_NAMES[Math.min(d, DEPTH_NAMES.length - 1)] });
-      col.appendChild(header);
-      depths[d].forEach(function (node) {
-        var reach = isReachable(run, node);
-        var visible = node.explored || run.mapRevealed;
-        var box = Util.el('div', {
-          class: 'net-node' + (node.drained ? ' drained' : '') + (reach ? ' reach' : '') + (!visible ? ' hidden' : '') + (selectedId === node.id ? ' sel' : '') + (node.kind === 'boss' ? ' boss' : '')
-        });
-        box.appendChild(Util.svgIcon(node.kind === 'boss' ? 'ic-error' : node.kind === 'isp' ? 'ic-computer' : node.kind === 'dark' ? 'ic-hacker' : 'ic-net'));
-        box.appendChild(Util.el('div', { class: 'net-node-name', text: (visible ? node.name : '???') }));
-        box.appendChild(Util.el('div', { class: 'net-node-sub', text: visible ? ('nivel ' + node.lvl + ' · FW ' + node.fw) : '' }));
-        if (node.drained) box.appendChild(Util.el('div', { class: 'net-node-sub ok', text: '✓ drenado' }));
-        else if (visible && !reach) {
-          var lock = Util.el('div', { class: 'net-node-sub', text: 'bloqueado' });
-          box.appendChild(lock);
+    mapCanvas = Util.el('canvas', { width: 560, height: 322, style: { width: '100%', maxWidth: '560px', display: 'block', margin: '0 auto', cursor: 'pointer' } });
+    try {
+      mapCtx = mapCanvas.getContext('2d');
+    } catch (e) { mapCtx = null; } // motores sin canvas (jsdom)
+    mapEl.appendChild(mapCanvas);
+    mapCanvas.addEventListener('click', function (e) {
+      var r = mapCanvas.getBoundingClientRect();
+      var mx = (e.clientX - r.left) * (mapCanvas.width / r.width);
+      var my = (e.clientY - r.top) * (mapCanvas.height / r.height);
+      var hit = mapHit(run, mx, my);
+      if (hit) {
+        selectedId = hit.id;
+        var reach = isReachable(run, hit);
+        if (hit.explored || run.mapRevealed) {
+          log('dim', 'Seleccionado: ' + hit.name + ' (' + (KIND_LABEL[hit.kind] || hit.kind) + ')' + (reach ? ' — alcanzable' : ' — bloqueado') + (hit.drained ? ' — ya resuelto' : ''));
         }
-        box.addEventListener('click', function () {
-          selectedId = node.id;
-          if (visible) {
-            log('dim', 'Seleccionado: ' + node.name + (reach ? ' (alcanzable)' : ' (bloqueado)') + (node.drained ? ' — ya drenado' : ''));
-          }
-          renderMap();
-        });
-        col.appendChild(box);
-      });
-      colWrap.appendChild(col);
+        drawMap(run);
+        renderActions();
+      }
     });
-    mapEl.appendChild(colWrap);
+    drawMap(run);
 
     // leyenda
     var legend = Util.el('div', { class: 'net-legend' });
     legend.appendChild(Util.el('span', { html: '<span class="lg lg-reach"></span> alcanzable' }));
     legend.appendChild(Util.el('span', { html: '<span class="lg lg-lock"></span> bloqueado' }));
-    legend.appendChild(Util.el('span', { html: '<span class="lg lg-done"></span> drenado' }));
+    legend.appendChild(Util.el('span', { html: '<span class="lg lg-done"></span> resuelto' }));
     legend.appendChild(Util.el('span', { html: '<span class="lg lg-hidden"></span> sin escanear' }));
     legend.appendChild(Util.el('span', { html: '<span class="lg lg-boss"></span> MasterServer' }));
+    legend.appendChild(Util.el('span', { html: '<span class="lg lg-d"></span> datos · <span class="lg lg-l"></span> botín · <span class="lg lg-s"></span> mercado · <span class="lg lg-e"></span> evento · <span class="lg lg-x"></span> élite' }));
     mapEl.appendChild(legend);
     renderTop();
   }

@@ -60,6 +60,14 @@
         });
         sc.appendChild(b);
       });
+      // vista previa en miniatura del fondo seleccionado
+      var wall = (NS.Assets && NS.Assets.walls) ? NS.Assets.walls[S.settings.wallpaper] : null;
+      if (wall && wall.src) {
+        var prev = Util.el('div', { class: 'wp-preview' });
+        prev.style.backgroundImage = 'url("' + wall.src + '")';
+        prev.appendChild(Util.el('div', { class: 'wp-preview-label', text: wall.name }));
+        sc.appendChild(prev);
+      }
       content.appendChild(sc);
 
       var st = section('Tema de colores');
@@ -140,6 +148,36 @@
       sc.appendChild(row('Nombre de usuario', inp));
       sc.appendChild(row('', save));
       content.appendChild(sc);
+
+      // cuenta en línea (servidor)
+      var os = section('Cuenta en línea');
+      if (NS.Online && NS.Online.isOnline() && NS.Online.user()) {
+        var u = NS.Online.user();
+        os.appendChild(Util.el('div', { class: 'cfg-info', html:
+          'Conectado como <b>' + Util.esc(u.username) + '</b> (nivel ' + (u.level || 1) + ')<br>' +
+          'Tu guardado se sincroniza con el servidor cada ~45 s y al cerrar sesión.'
+        }));
+        var syncBtn = Util.el('button', { class: 'xp-btn', text: 'Sincronizar ahora' });
+        syncBtn.addEventListener('click', function () {
+          NS.Online.syncNow().then(function (ok) {
+            NS.UI.toast('Cuenta en línea', ok ? 'Guardado subido al servidor.' : 'El servidor no está disponible ahora.', ok ? 'good' : 'dim', 'ic-save');
+          });
+        });
+        os.appendChild(syncBtn);
+        var outBtn = Util.el('button', { class: 'xp-btn', text: 'Cerrar sesión en línea' });
+        outBtn.addEventListener('click', function () {
+          NS.Online.logout();
+          NS.UI.toast('Cuenta en línea', 'Sesión cerrada. El juego seguirá en modo local.', 'dim', 'ic-logout');
+          NS.WM.rerender('settings');
+        });
+        os.appendChild(outBtn);
+      } else {
+        os.appendChild(Util.el('div', { class: 'cfg-info', html:
+          'No hay sesión en línea. El servidor con base de datos (cuentas reales, rankings y guardado en la nube) está disponible en ' +
+          '<b>Panel de control</b> al iniciar el sistema con una cuenta de servidor.'
+        }));
+      }
+      content.appendChild(os);
 
       var st = section('Estadísticas de la partida');
       st.appendChild(Util.el('div', { class: 'cfg-info', html:

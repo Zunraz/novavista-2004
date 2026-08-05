@@ -58,7 +58,8 @@
     html += tip('No formatees a la ligera: el legado se calcula con las NovaCoins acumuladas <b>en total</b> (histórico). Cuanto más esperes, más legado ganas.');
 
     html += h2('6 · Rankings y rivales');
-    html += p('La app <b>Rankings NovaVista</b> compara tu cuenta con las demás cuentas locales y con rivales NPC. Dos tablas: <b>Poder</b> (riqueza, seguidores, bots, implantes y legado) y <b>Elo Hacker</b> (MasterServers drenados, nodos, asaltos y rastreos). ¿Podrás superar a NullPointer?');
+    html += p('La app <b>Rankings NovaVista</b> compara tu cuenta con las demás cuentas (locales o del servidor en línea) y con rivales NPC. Dos tablas: <b>Poder</b> (riqueza, seguidores, bots, implantes y legado) y <b>Elo Hacker</b> (MasterServers drenados, nodos, asaltos y rastreos). ¿Podrás superar a NullPointer?');
+    html += p('Con una <b>cuenta en línea</b> (pantalla de inicio de sesión → sección en línea), el ranking se calcula en el servidor con los guardados de todos los jugadores reales.');
 
     html += h2('7 · No te dejes infectar');
     html += p('<b>NovaShield</b> bloquea amenazas aleatorias (troyanos, gusanos, phishing). Sube el <b>motor antivirus</b> y el <b>cortafuegos</b> para aumentar la probabilidad de bloqueo.');
@@ -76,6 +77,7 @@
     html += p('<b>NovaPool 8-Ball</b> (escritorio): <b>arrastra</b> desde la bola blanca: la dirección es la puntería y la distancia es la fuerza. Gana 25 $ por partida contra la CPU.');
     html += p('<b>NovaMessenger</b> (escritorio): chatea con tus contactos. Algunos dan consejos... y de vez en cuando, algún dólar.');
     html += p('<b>Bloc de notas</b> y <b>Calculadora</b>: guarda documentos en tu cuenta y haz cuentas a la antigua.');
+    html += p('<b>NovaMedia Player</b>: reproductor de los 2000s con 5 skins (Clásico, Candy, Hulk, Cromo, Neón), ecualizador y canciones generadas en tiempo real por tu tarjeta de sonido. Cambia de skin en el propio reproductor.');
     html += p('<b>Secretos:</b> prueba el <span class="manual-kbd">Código Konami</span> (arriba, arriba, abajo, abajo, izquierda, derecha, izquierda, derecha, B, A) o el comando <span class="manual-kbd">gato</span> en la terminal. Ctrl+Mayús+Esc abre el Administrador de tareas.');
 
     body.innerHTML = html;

@@ -119,6 +119,19 @@
     <path d="M16 3v12" stroke="#c33" stroke-width="3" stroke-linecap="round"/>
     <path d="M8 8a11 11 0 1 0 16 0" stroke="#c33" stroke-width="3" fill="none" stroke-linecap="round"/>
   </symbol>
+  <symbol id="ic-power" viewBox="0 0 32 32">
+    <path d="M16 3v12" stroke="#c33" stroke-width="3" stroke-linecap="round"/>
+    <path d="M8 8a11 11 0 1 0 16 0" stroke="#c33" stroke-width="3" fill="none" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="ic-restart" viewBox="0 0 32 32">
+    <circle cx="16" cy="16" r="5" fill="#9aa3ad" stroke="#4a4f58" stroke-width="1.5"/>
+    <path d="M16 3l2 4h-4zM16 29l-2-4h4zM3 16l4-2v4zM29 16l-4 2v-4zM7.5 7.5l4 2-2 4zM24.5 24.5l-4-2 2-4zM24.5 7.5l-2 4-4-2zM7.5 24.5l2-4 4 2z" fill="#7c8590"/>
+  </symbol>
+  <symbol id="ic-logout" viewBox="0 0 32 32">
+    <path d="M6 4h13v4h-9v16h9v4H6z" fill="#7c8590"/>
+    <path d="M14 12l5 4-5 4" stroke="#7c8590" stroke-width="2.4" fill="none"/>
+    <path d="M20 16h8" stroke="#7c8590" stroke-width="2.4"/>
+  </symbol>
   <symbol id="ic-help" viewBox="0 0 32 32">
     <circle cx="16" cy="16" r="13" fill="#3a8fd6" stroke="#1c4f86" stroke-width="1.5"/>
     <path d="M12.5 12a3.5 3.5 0 1 1 5 3.2c-1.1.5-2 .9-2 2.3" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/>
@@ -369,12 +382,7 @@
 
 <div id="shutdown-screen" class="hidden">
   <div id="shutdown-box">
-    <div class="sd-logo"><svg class="icon icon-64">
-    <rect x="2" y="10" width="24" height="12" rx="1" fill="url(#g-flag)"/>
-    <rect x="26" y="8" width="4" height="16" rx="1" fill="#e8b23a"/>
-    <path d="M6 14h10v4H6z" fill="#fff" opacity="0.9"/>
-    <circle cx="22" cy="16" r="2" fill="#fff"/>
-  </svg></div>
+    <div class="sd-logo"><img class="icon icon-64" data-icon="ic-logo" alt=""></div>
     <div id="shutdown-msg">Es seguro apagar el equipo.</div>
     <button id="btn-power-on" class="xp-btn">Encender</button>
   </div>
@@ -396,54 +404,27 @@
 </div>
 
 <div id="taskbar">
-  <button id="btn-start" class="start-btn"><span class="start-logo"><svg class="icon">
-    <rect x="2" y="10" width="24" height="12" rx="1" fill="url(#g-flag)"/>
-    <rect x="26" y="8" width="4" height="16" rx="1" fill="#e8b23a"/>
-    <path d="M6 14h10v4H6z" fill="#fff" opacity="0.9"/>
-    <circle cx="22" cy="16" r="2" fill="#fff"/>
-  </svg></span><span class="start-text">Inicio</span></button>
+  <button id="btn-start" class="start-btn"><span class="start-logo"><img class="icon" data-icon="ic-logo" alt=""></span><span class="start-text">Inicio</span></button>
   <div id="quicklaunch"></div>
   <div id="taskbar-apps"></div>
   <div id="tray">
-    <button class="tray-item" id="tray-av" title="NovaShield"><svg class="icon">
-    <path d="M16 2l12 4v9c0 8-5 13-12 15C9 28 4 23 4 15V6z" fill="#4f8f4f" stroke="#2c5e2c" stroke-width="1.5"/>
-    <path d="M10 16l4 4 8-8" stroke="#eaffea" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-  </svg></button>
-    <button class="tray-item" id="tray-wifi" title="Conectado a RED-NOVA 54 Mbps"><svg class="icon">
-    <path d="M4 13a20 20 0 0 1 24 0M8.5 17.5a13 13 0 0 1 15 0M13 22a6 6 0 0 1 6 0" stroke="#3f8fd6" stroke-width="2.4" fill="none" stroke-linecap="round"/>
-    <circle cx="16" cy="26" r="2" fill="#3f8fd6"/>
-  </svg></button>
-    <button class="tray-item" id="tray-vol" title="Volumen"><svg class="icon">
-    <path d="M5 12h5l7-5v18l-7-5H5z" fill="#7c8590"/>
-    <path d="M21 11a6 6 0 0 1 0 10M24.5 8a10 10 0 0 1 0 16" stroke="#7c8590" stroke-width="2" fill="none" stroke-linecap="round"/>
-  </svg></button>
+    <button class="tray-item" id="tray-av" title="NovaShield"><img class="icon" data-icon="ic-shield" alt=""></button>
+    <button class="tray-item" id="tray-wifi" title="Conectado a RED-NOVA 54 Mbps"><img class="icon" data-icon="ic-wifi" alt=""></button>
+    <button class="tray-item" id="tray-vol" title="Volumen"><img class="icon" data-icon="ic-volume" alt=""></button>
     <div id="tray-money" title="Tu efectivo y NovaCoins"></div>
     <div id="tray-clock" title="Fecha y hora"></div>
   </div>
 </div>
 
 <div id="start-menu" class="hidden">
-  <div class="sm-header"><div class="sm-user-icon"><svg class="icon icon-48">
-    <circle cx="16" cy="12" r="6" fill="#3a3f4d" stroke="#1a1f2e" stroke-width="1.4"/>
-    <path d="M4 27c0-6 5-9 12-9s12 3 12 9" fill="#3a3f4d" stroke="#1a1f2e" stroke-width="1.4"/>
-    <path d="M13 13l-1-2h8l-1 2z" fill="#0f1522"/>
-    <circle cx="13.5" cy="11" r="1" fill="#3f9e3f"/><circle cx="18.5" cy="11" r="1" fill="#3f9e3f"/>
-  </svg></div><span id="sm-username">Usuario</span><span id="sm-level"></span></div>
+  <div class="sm-header"><div class="sm-user-icon"><img class="icon icon-48" data-icon="ic-hacker" alt=""></div><span id="sm-username">Usuario</span><span id="sm-level"></span></div>
   <div class="sm-body">
     <div class="sm-col" id="sm-programs"></div>
     <div class="sm-sep"></div>
     <div class="sm-col sm-col-right">
-      <button class="sm-item" data-action="logout"><svg class="icon">
-    <path d="M6 4h13v4h-9v16h9v4H6z" fill="#7c8590"/><path d="M14 12l5 4-5 4" stroke="#7c8590" stroke-width="2.4" fill="none"/><path d="M20 16h8" stroke="#7c8590" stroke-width="2.4"/>
-  </svg> Cerrar sesión</button>
-      <button class="sm-item" data-action="restart"><svg class="icon">
-    <circle cx="16" cy="16" r="5" fill="#9aa3ad" stroke="#4a4f58" stroke-width="1.5"/>
-    <path d="M16 3l2 4h-4zM16 29l-2-4h4zM3 16l4-2v4zM29 16l-4 2v-4zM7.5 7.5l4 2-2 4zM24.5 24.5l-4-2 2-4zM24.5 7.5l-2 4-4-2zM7.5 24.5l2-4 4 2z" fill="#7c8590"/>
-  </svg> Reiniciar equipo</button>
-      <button class="sm-item sm-shutdown" data-action="shutdown"><svg class="icon">
-    <path d="M16 3v12" stroke="#c33" stroke-width="3" stroke-linecap="round"/>
-    <path d="M8 8a11 11 0 1 0 16 0" stroke="#c33" stroke-width="3" fill="none" stroke-linecap="round"/>
-  </svg> Apagar equipo...</button>
+      <button class="sm-item" data-action="logout"><img class="icon" data-icon="ic-logout" alt=""> Cerrar sesión</button>
+      <button class="sm-item" data-action="restart"><img class="icon" data-icon="ic-restart" alt=""> Reiniciar equipo</button>
+      <button class="sm-item sm-shutdown" data-action="shutdown"><img class="icon" data-icon="ic-power" alt=""> Apagar equipo...</button>
     </div>
   </div>
 </div>
@@ -456,6 +437,8 @@
 <script src="js/core/audio.js"></script>
 <script src="js/core/catalog.js"></script>
 <script src="js/core/save.js"></script>
+<script src="js/core/assets.js"></script>
+<script src="js/core/online.js"></script>
 <script src="js/core/state.js"></script>
 <script src="js/core/wm.js"></script>
 <script src="js/core/events.js"></script>
@@ -482,6 +465,7 @@
 <script src="js/apps/ranking.js"></script>
 <script src="js/apps/notepad.js"></script>
 <script src="js/apps/calc.js"></script>
+<script src="js/apps/player.js"></script>
 <script src="js/main.js"></script>
 </body>
 </html>

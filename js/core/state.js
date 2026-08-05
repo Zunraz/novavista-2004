@@ -27,7 +27,9 @@
         allTimeCoins: 0, legacy: 0, formatsDone: 0, threatsStopped: 0
       },
       profile: { name: 'Usuario', avatar: 0 },
-      settings: { theme: 'luna', wallpaper: 'bliss', sound: true, notifs: true },
+      settings: { theme: 'luna', wallpaper: 'foto1', sound: true, notifs: true },
+      desktopIcons: {},
+      media: { skin: 'classic', volume: 0.8, currentTrack: 't1', repeat: false, shuffle: false },
       currencies: { cash: 50, novaCoins: 0, xp: 0, level: 1, energy: 12, maxEnergy: 12, legacy: 0 },
       bank: { balance: 50, loanDebt: 0, totalInterest: 0, price: 12 },
       social: { followers: 0, lastPostAt: 0, totalPosts: 0, viralBest: 0 },
@@ -56,23 +58,22 @@
   function upg(id) { return S.upg[id] || 0; }
   function incomeMult() {
     var m = 1;
-    m *= 1 + 0.02 * S.currencies.level;
-    m *= 1 + 0.03 * S.currencies.legacy;
-    m *= 1 + 0.05 * upg('i-income');
+    m *= 1 + 0.015 * S.currencies.level;
+    m *= 1 + 0.02 * S.currencies.legacy;
+    m *= 1 + 0.04 * upg('i-income');
     return m;
   }
   function bankRate() {
-    // Curva LINEAL (sin disparo exponencial): cada nivel añade un +fijo.
-    var r = 0.0003 + 0.0004 * upg('b-rate') + 0.0002 * upg('b-off');
-    r *= 1 + 0.35 * upg('b-cd');
-    return r * incomeMult();
+    // Curva LINEAL + rendimientos decrecientes: imposible explotar el banco.
+    var raw = (0.00008 + 0.00006 * upg('b-rate') + 0.00006 * upg('b-off')) * (1 + 0.2 * upg('b-cd'));
+    return raw / (1 + S.bank.balance / 3000000) * incomeMult();
   }
-  function socialAdRate() { return 0.003 * (1 + 0.5 * upg('s-ad')) * incomeMult(); }
-  function followerGrowthRate() { return 0.0012 * upg('s-vrf') * incomeMult(); }
-  function botCoinRate() { return S.bots.count * 0.0015 * (1 + 0.4 * upg('b-rig')) * incomeMult(); }
+  function socialAdRate() { return 0.0015 * (1 + 0.5 * upg('s-ad')) * incomeMult(); }
+  function followerGrowthRate() { return 0.0006 * upg('s-vrf') * incomeMult(); }
+  function botCoinRate() { return S.bots.count * 0.0006 * (1 + 0.4 * upg('b-rig')) * incomeMult(); }
   function energyRegen() { return 0.125 * Math.pow(1.5, upg('e-regen')); }
   function maxEnergy() { return 12 + upg('e-max') + upg('i-energy'); }
-  function dataPrice() { return 8 * (1 + 0.5 * upg('d-price')) * incomeMult(); }
+  function dataPrice() { return 6 * (1 + 0.5 * upg('d-price')) * incomeMult(); }
   function dataMaxMB() { return 2000 + 500 * upg('d-cap'); }
   function botCount() { return upg('b-count'); }
   function xpForLevel(l) { return Math.floor(40 * Math.pow(l, 1.5)); }
@@ -252,7 +253,7 @@
 
   /* ---------------- publicaciones sociales ---------------- */
   function makePost() {
-    var base = 6 * (1 + 0.4 * upg('s-post'));
+    var base = 4 * (1 + 0.4 * upg('s-post'));
     var viral = 0.5 + Math.random() * 1.2;               // multiplicador de viralidad
     var burst = Math.floor(base * viral * (1 + upg('s-vrf') * 0.12));
     addFollowers(burst);
@@ -385,6 +386,8 @@
     if (!o.browser) o.browser = { impressions: 0, auto: 0, clicks: 0 };
     if (!o.games) o.games = { pinball: 0, pinballCash: 0, pool: 0, poolWins: 0 };
     if (!o.docs) o.docs = [];
+    if (!o.desktopIcons || typeof o.desktopIcons !== 'object') o.desktopIcons = {};
+    if (!o.media || typeof o.media !== 'object') o.media = { skin: 'classic', volume: 0.8, currentTrack: 't1', repeat: false, shuffle: false };
     // partidas antiguas con un asalto a medias: rellenar los campos nuevos del roguelite
     if (o.run && typeof o.run === 'object') {
       o.run.modifiers = o.run.modifiers || [];

@@ -162,13 +162,13 @@
     var autoCost = Math.floor(150 * Math.pow(2.2, autoLvl));
     var cpmCost = Math.floor(400 * Math.pow(3, cpmLvl));
     var imp = b.impressions || 0;
-    var value = imp * 0.015 * Math.pow(2, cpmLvl);
+    var value = imp * 0.01 * Math.pow(2, cpmLvl);
     var h = '<div class="web-click">' +
       '<div class="web-logo" style="font-size:26px">Nova<span style="color:#c33">Click</span></div>' +
       '<div class="web-click-count">' + Util.fmtInt(imp) + ' impresiones</div>' +
       '<div class="web-click-value">Valor: ' + Util.fmtMoney(value) + '</div>' +
       '<button class="xp-btn click-big" onclick="NovaOS.Browser.clickImp()">¡HAZ CLIC!</button>' +
-      '<div class="cfg-sub">Cada clic = 1 impresión · 0,015 $ por impresión (CPM mejorable)</div>' +
+      '<div class="cfg-sub">Cada clic = 1 impresión · 0,01 $ por impresión (CPM mejorable)</div>' +
       '<div class="web-dl-item"><div style="flex:1"><div class="web-rtitle">Autoclic de marquesina</div><div class="web-rd">+1 impresión/s (nivel ' + autoLvl + ')</div></div>' +
       '<button class="xp-btn small" onclick="NovaOS.Browser.buyAuto()">' + Util.fmtMoney(autoCost) + '</button></div>' +
       '<div class="web-dl-item"><div style="flex:1"><div class="web-rtitle">Mejor CPM</div><div class="web-rd">x2 valor por impresión (nivel ' + cpmLvl + ')</div></div>' +

@@ -80,10 +80,11 @@ ok(isFinite(s.currencies.cash), 'cash rechaza strings');
 console.log('state — compras');
 State.addCash(500);
 var before = s.currencies.cash;
+var r0 = State.bankRate();
 var r = State.buyUpgrade('b-rate');
 ok(r.ok, 'compra b-rate nivel 0');
 ok(s.currencies.cash < before, 'se descontó dinero');
-ok(State.bankRate() > 0.0004, 'interés sube tras mejora');
+ok(State.bankRate() > r0, 'interés sube tras mejora');
 var r2 = State.buyUpgrade('no-existe');
 ok(!r2.ok, 'compra inexistente rechazada');
 State.addCoins(100);
@@ -258,29 +259,37 @@ var seen = bfsReach(run);
 var allReachable = run.nodes.every(function (n) { return seen[n.id]; });
 ok(allReachable, 'todos los nodos son alcanzables desde el ISP');
 
-// validez de campos (el ISP es tu propio nodo: no tiene botín)
+// validez de campos (el ISP y los nodos especiales sin botín directo)
 var sane = run.nodes.every(function (n) {
   if (n.kind === 'isp') return Array.isArray(n.conn);
+  if (n.kind === 'shop' || n.kind === 'event') return isFinite(n.data) && isFinite(n.cash) && Array.isArray(n.conn);
   return isFinite(n.data) && isFinite(n.cash) && n.data > 0 && n.cash > 0 && Array.isArray(n.conn);
 });
 ok(sane, 'campos de botín y conexiones válidos');
 var boss = run.nodes.filter(function (n) { return n.kind === 'boss'; })[0];
-ok(boss.coins >= 8 && boss.coins <= 18, 'MasterServer da 8-18 NovaCoins, got ' + boss.coins);
-var darks = run.nodes.filter(function (n) { return n.kind === 'dark'; });
-ok(darks.length === 0 || darks.every(function (n) { return n.coins >= 2 && n.coinsChance === 0.65; }), 'nodos oscuros pagan NovaCoins 2-5');
+ok(boss.coins >= 8 && boss.coins <= 27, 'MasterServer da 8-18 NovaCoins (x1,5 con modificador), got ' + boss.coins);
+var coinNodes = run.nodes.filter(function (n) { return n.coinsChance > 0 && n.kind !== 'boss'; });
+ok(coinNodes.length >= 1, 'hay nodos que pueden dar NovaCoins');
 ok(boss.coinsChance === 1, 'el MasterServer siempre paga NovaCoins');
 
 // simular drenado en cadena hasta el boss
 var runX = Net.genRun(777);
 function find(kind) { return runX.nodes.filter(function (n) { return n.kind === kind; })[0]; }
-var d1 = runX.nodes.filter(function (n) { return n.kind === 'home' || n.kind === 'cafe'; });
-d1.forEach(function (n) { n.drained = true; });
-var d2 = runX.nodes.filter(function (n) { return n.kind === 'office' || n.kind === 'news'; });
-d2.forEach(function (n) { n.drained = true; });
-var d3 = runX.nodes.filter(function (n) { return n.kind === 'bank' || n.kind === 'corp'; });
-d3.forEach(function (n) { n.drained = true; });
-find('dark').drained = true;
-ok(true, 'cadena de drenado hasta el boss simulada sin errores');
+// tipos de nodo especiales presentes
+ok(find('boss'), 'hay MasterServer');
+var specials = runX.nodes.filter(function (n) { return n.kind === 'loot' || n.kind === 'shop' || n.kind === 'event'; });
+ok(specials.length >= 2, 'hay nodos especiales (botín/mercado/evento)');
+ok(runX.nodes.some(function (n) { return n.kind === 'elite'; }), 'hay nodos élite');
+// todas las ramas conectan con el jefe
+var boss2 = find('boss');
+ok(boss2.conn.length === 0, 'el jefe no conecta hacia fuera');
+var reachBoss = runX.nodes.some(function (n) { return n.conn.indexOf(boss2.id) !== -1; });
+ok(reachBoss, 'el jefe es alcanzable desde las ramas');
+// drenar todos los no-ISP/no-jefe: el jefe queda alcanzable
+runX.nodes.forEach(function (n) {
+  if (n.kind !== 'isp' && n.kind !== 'boss') n.drained = true;
+});
+ok(runX.nodes.some(function (n) { return n.conn.indexOf(boss2.id) !== -1 && n.drained; }), 'cadena de drenado hasta el boss simulada sin errores');
 
 /* ================= catalog ================= */
 console.log('catalog');

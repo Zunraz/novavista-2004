@@ -15,6 +15,9 @@
     if (started) return;
     started = true;
 
+    // Iconos estáticos del HTML: <img data-icon="..."> -> PNG incrustado
+    Util.applyDataIcons(document);
+
     // Compatibilidad de iconos: en motores antiguos <use> necesita xlink:href.
     // (Los iconos ya se incrustan literalmente, esto es una red de seguridad.)
     try {
@@ -132,12 +135,29 @@
     setInterval(loop, 200);
 
     // Guardado periódico
-    setInterval(function () { NS.State.saveNow(); }, 15000);
+    var syncCount = 0;
+    setInterval(function () {
+      NS.State.saveNow();
+      // sincronización con el servidor cada ~45 s si hay sesión en línea
+      syncCount++;
+      if (NS.Online && NS.Online.isOnline() && syncCount % 3 === 0) {
+        NS.Online.syncNow();
+      }
+    }, 15000);
     document.addEventListener('visibilitychange', function () {
-      if (document.visibilityState === 'hidden') NS.State.saveNow();
+      if (document.visibilityState === 'hidden') {
+        NS.State.saveNow();
+        if (NS.Online && NS.Online.isOnline()) NS.Online.syncNow();
+      }
     });
-    window.addEventListener('beforeunload', function () { NS.State.saveNow(); });
-    window.addEventListener('pagehide', function () { NS.State.saveNow(); });
+    window.addEventListener('beforeunload', function () {
+      NS.State.saveNow();
+      if (NS.Online && NS.Online.isOnline()) NS.Online.pushSave(NS.Save.exportSave(NS.State.get()));
+    });
+    window.addEventListener('pagehide', function () {
+      NS.State.saveNow();
+      if (NS.Online && NS.Online.isOnline()) NS.Online.pushSave(NS.Save.exportSave(NS.State.get()));
+    });
 
     // Clics en el escritorio
     Util.$('#desktop').addEventListener('contextmenu', function (e) {

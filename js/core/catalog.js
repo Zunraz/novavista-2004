@@ -8,12 +8,12 @@
 
   /* ---------- Mejoras comprables con dólares ---------- */
   var UPGRADES = {
-    'b-rate':   { name: 'Mejora de intereses',        desc: 'Cada nivel añade +0,04 %/s de interés sobre el saldo.', cat: 'banco',  base: 300,   mult: 3.2, max: 25, icon: 'ic-chart' },
-    'b-cd':     { name: 'Certificado de depósito',    desc: 'Cada nivel multiplica el interés por 1,35.',        cat: 'banco',  base: 3200,  mult: 4.0, max: 15, icon: 'ic-bank' },
-    'b-off':    { name: 'Cuenta offshore',            desc: '+0,02 %/s de interés fijo por nivel.',              cat: 'banco',  base: 24000, mult: 5.2, max: 10, icon: 'ic-lock' },
+    'b-rate':   { name: 'Mejora de intereses',        desc: 'Cada nivel añade +0,006 %/s de interés (con rendimientos decrecientes).', cat: 'banco',  base: 300,   mult: 3.2, max: 25, icon: 'ic-chart' },
+    'b-cd':     { name: 'Certificado de depósito',    desc: 'Cada nivel multiplica el interés por 1,2.',            cat: 'banco',  base: 3200,  mult: 4.0, max: 15, icon: 'ic-bank' },
+    'b-off':    { name: 'Cuenta offshore',            desc: '+0,006 %/s de interés fijo por nivel.',              cat: 'banco',  base: 24000, mult: 5.2, max: 10, icon: 'ic-lock' },
     's-post':   { name: 'Cámara digital de 3 MP',     desc: 'Cada nivel da +40 % de seguidores por publicación.', cat: 'social', base: 250,   mult: 3.0, max: 20, icon: 'ic-social' },
     's-ad':     { name: 'Agencia de anuncios',        desc: 'Cada nivel da +50 % de ingresos por seguidor.',     cat: 'social', base: 1800,  mult: 3.6, max: 15, icon: 'ic-chart' },
-    's-vrf':    { name: 'Chapa verificada',           desc: 'Cada nivel añade +0,12 %/s de crecimiento.',        cat: 'social', base: 9000,  mult: 4.2, max: 10, icon: 'ic-star' },
+    's-vrf':    { name: 'Chapa verificada',           desc: 'Cada nivel añade +0,06 %/s de crecimiento.',        cat: 'social', base: 9000,  mult: 4.2, max: 10, icon: 'ic-star' },
     'b-count':  { name: 'Bot zombie',                 desc: 'Añade un bot a tu botnet.',                      cat: 'bots',   base: 2200,  mult: 2.1, max: 120, icon: 'ic-bot' },
     'b-rig':    { name: 'Granja de minería',          desc: 'Cada nivel da +40 % de producción por bot.',     cat: 'bots',   base: 14000, mult: 2.5, max: 12, icon: 'ic-gear' },
     'd-price':  { name: 'Acuerdo de datos',           desc: 'Cada nivel da +50 % al precio de venta.',        cat: 'datos',  base: 1200,  mult: 3.4, max: 15, icon: 'ic-files' },
@@ -47,7 +47,18 @@
 
   /* ---------- Fondos de pantalla y temas ---------- */
   var WALLPAPERS = [
-    { id: 'bliss',   name: 'Colinas de la felicidad' },
+    { id: 'foto1',   name: 'Colinas al atardecer' },
+    { id: 'foto2',   name: 'Desierto dorado' },
+    { id: 'foto3',   name: 'Bosque frondoso' },
+    { id: 'foto4',   name: 'Cordillera nevada' },
+    { id: 'foto5',   name: 'Playa paradisíaca' },
+    { id: 'foto6',   name: 'Noche estrellada' },
+    { id: 'foto7',   name: 'Río sereno' },
+    { id: 'foto8',   name: 'Ciudad al amanecer' },
+    { id: 'procBliss', name: 'Bliss clásico' },
+    { id: 'procDesert', name: 'Desierto clásico' },
+    { id: 'procNight', name: 'Noche clásica' },
+    { id: 'bliss',   name: 'Colinas de la felicidad (estilizado)' },
     { id: 'nova',    name: 'Azul Nova' },
     { id: 'grid',    name: 'Malla del sistema' },
     { id: 'sunset',  name: 'Atardecer digital' },

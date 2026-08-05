@@ -124,22 +124,48 @@
 
     function table(title, key, fmt) {
       content.innerHTML = '';
-      var rows = sortBy(gather(), key);
-      var myRow = rows.filter(function (r) { return r.isPlayer; })[0];
-      var myPos = rows.indexOf(myRow) + 1;
-
       var head = Util.el('div', { class: 'panel' });
       head.appendChild(Util.el('div', { class: 'panel-title', text: title }));
-      head.appendChild(Util.el('div', { class: 'cfg-info', html:
-        'Tu puesto: <b>#' + myPos + ' de ' + rows.length + '</b> (' + (fmt(myRow[key])) + ')'
-      }));
+      var info = Util.el('div', { class: 'cfg-info', id: 'rank-info', text: 'Cargando…' });
+      head.appendChild(info);
       content.appendChild(head);
-
       var list = Util.el('div', { class: 'panel' });
-      rows.forEach(function (row, i) {
-        list.appendChild(rankRow(row, i + 1, fmt(row[key]), i < 3 ? i + 1 : 0));
-      });
       content.appendChild(list);
+
+      function paint(rows) {
+        rows = rows.slice();
+        var myRow = rows.filter(function (r) { return r.isPlayer; })[0];
+        var myPos = rows.indexOf(myRow) + 1;
+        var infoEl = Util.$('#rank-info', content);
+        if (infoEl) infoEl.innerHTML = 'Tu puesto: <b>#' + myPos + ' de ' + rows.length + '</b> (' + fmt(myRow ? myRow[key] : 0) + ')';
+        list.innerHTML = '';
+        rows.forEach(function (row, i) {
+          list.appendChild(rankRow(row, i + 1, fmt(row[key]), i < 3 ? i + 1 : 0));
+        });
+      }
+
+      // rankings del servidor (cuentas reales) cuando hay sesión en línea
+      var remote = NS.Online && NS.Online.isOnline() ? NS.Online.rankings(key === 'elo' ? 'elo' : 'power') : Promise.resolve(null);
+      remote.then(function (serverList) {
+        var rows;
+        if (serverList && serverList.length) {
+          var me = NS.Online.user();
+          rows = serverList.map(function (r) {
+            return {
+              name: r.name, avatar: r.avatar, level: r.level,
+              power: r.power, elo: r.elo,
+              isPlayer: me ? r.name === me.username : false
+            };
+          });
+          // añadir rivales NPC como reto permanente
+          NPCS.forEach(function (n) {
+            rows.push({ name: n.name, avatar: n.avatar, power: n.power, elo: n.elo, isPlayer: false, level: 1 + Math.floor(Math.log(n.power) / Math.LN10) });
+          });
+          paint(rows);
+        } else {
+          paint(gather());
+        }
+      }).catch(function () { paint(gather()); });
     }
 
     var b1 = Util.el('button', { class: 'tab-btn', text: 'Más poder' });

@@ -72,7 +72,7 @@
           class: 'xp-btn' + (b.primary ? ' primary' : '') + (b.danger ? ' danger' : ''),
           text: b.label
         });
-        btn.addEventListener('click', function () {
+        btn.disabled = !!b.disabled;        btn.addEventListener('click', function () {
           overlay.remove();
           var idx = modalStack.indexOf(overlay);
           if (idx !== -1) modalStack.splice(idx, 1);

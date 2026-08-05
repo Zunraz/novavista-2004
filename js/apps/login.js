@@ -28,7 +28,7 @@
     box.innerHTML = '';
     var profs = NS.Save.listProfiles();
     if (!profs.length) {
-      box.appendChild(Util.el('div', { class: 'empty', text: 'Aún no hay cuentas. Crea la primera para empezar a jugar.' }));
+      box.appendChild(Util.el('div', { class: 'empty', text: 'Aún no hay cuentas locales. Crea una o entra con tu cuenta en línea.' }));
     }
     profs.forEach(function (p) {
       var row = Util.el('div', { class: 'login-user' });
@@ -43,6 +43,74 @@
         enter();
       });
       box.appendChild(row);
+    });
+    // panel de cuenta en línea (servidor con BD)
+    var sep = Util.el('div', { class: 'login-sep' });
+    sep.appendChild(Util.el('div', { class: 'login-sub', text: '· · · · · · Cuenta en línea · · · · · ·' }));
+    box.appendChild(sep);
+
+    var oRow = Util.el('div', { class: 'login-online' });
+    var uInp = Util.el('input', { class: 'xp-input', type: 'text', maxlength: '20', placeholder: 'Usuario', style: { flex: '1' } });
+    var pInp = Util.el('input', { class: 'xp-input', type: 'password', placeholder: 'Contraseña', style: { flex: '1' } });
+    var status = Util.el('div', { class: 'login-status', text: 'Comprobando servidor…' });
+    var goBtn = Util.el('button', { class: 'xp-btn', text: 'Entrar' });
+    var regBtn = Util.el('button', { class: 'xp-btn', text: 'Crear cuenta' });
+    oRow.appendChild(uInp);
+    oRow.appendChild(pInp);
+    oRow.appendChild(goBtn);
+    oRow.appendChild(regBtn);
+    box.appendChild(oRow);
+    box.appendChild(status);
+
+    function onlineDo(fn) {
+      status.textContent = 'Contactando con el servidor…';
+      goBtn.disabled = regBtn.disabled = true;
+      fn(uInp.value.trim(), pInp.value).then(function (ok) {
+        if (!ok) { status.textContent = 'No se pudo conectar con el servidor (modo local).'; goBtn.disabled = regBtn.disabled = false; return; }
+        status.textContent = 'Sesión iniciada en el servidor. Cargando…';
+        afterOnlineLogin();
+      }).catch(function (e) {
+        status.textContent = 'Error: ' + (e.message || 'servidor no disponible');
+        goBtn.disabled = regBtn.disabled = false;
+      });
+    }
+    goBtn.addEventListener('click', function () { onlineDo(NS.Online.login); });
+    regBtn.addEventListener('click', function () { onlineDo(NS.Online.register); });
+    pInp.addEventListener('keydown', function (e) { if (e.key === 'Enter') goBtn.click(); });
+    uInp.focus();
+
+    // estado del servidor
+    NS.Online.init().then(function (online) {
+      if (online) {
+        status.textContent = 'Servidor conectado — bienvenido, ' + NS.Online.user().username + '. Elige una cuenta o entra de nuevo.';
+      } else {
+        status.textContent = 'Servidor no disponible: modo local (tu progreso se guarda en este equipo).';
+      }
+    });
+  }
+
+  /* Entrar con la cuenta del servidor: importa el guardado remoto si existe */
+  function afterOnlineLogin() {
+    var uname = NS.Online.user().username;
+    var pid = 'srv-' + uname;
+    var profs = NS.Save.listProfiles();
+    if (!profs.some(function (p) { return p.id === pid; })) {
+      NS.Save.createProfile(uname, NS.Online.user().avatar);
+    }
+    NS.Save.setProfile(pid);
+    NS.Online.fetchRemoteSave().then(function (remote) {
+      if (remote) {
+        var res = NS.Save.importSave(remote);
+        if (res.ok) {
+          NS.Save.save(res.state);
+          NS.UI.toast('Cuenta en línea', 'Guardado sincronizado desde el servidor.', 'good', 'ic-save');
+        }
+      }
+      hide();
+      NS.Main.enterDesktop();
+    }).catch(function () {
+      hide();
+      NS.Main.enterDesktop();
     });
   }
 
@@ -103,7 +171,14 @@
 
   function logout() {
     NS.State.saveNow();
-    window.location.reload();
+    if (NS.Online && NS.Online.isOnline()) {
+      NS.Online.syncNow().then(function () {
+        NS.Online.logout();
+        window.location.reload();
+      }).catch(function () { window.location.reload(); });
+    } else {
+      window.location.reload();
+    }
   }
 
   function init() {

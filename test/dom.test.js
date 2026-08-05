@@ -136,12 +136,16 @@ function ok(cond, name, extra) {
   if (connectBtn) click(connectBtn);
   await wait(150);
   ok(N.State.get().run !== null, 'asalto iniciado');
-  var nodes = doc.querySelectorAll('.net-node');
-  ok(nodes.length >= 7, 'nodos renderizados: ' + nodes.length);
+  ok(!!doc.querySelector('.net-content canvas'), 'mapa renderizado en canvas');
+  var runNodes = N.State.get().run.nodes;
+  ok(runNodes.length >= 7, 'nodos del asalto: ' + runNodes.length);
+  ok(runNodes.some(function (n) { return n.kind === 'loot' || n.kind === 'shop' || n.kind === 'event'; }), 'tipos de nodo especiales presentes');
+  ok(runNodes.filter(function (n) { return n.kind === 'boss'; }).length === 1, 'un MasterServer');
 
-  // acciones del asalto: escanear y drenar el primer nodo
+  // acciones del asalto: escanear y drenar el primer servidor de datos
   var s2 = N.State.get();
-  var first = s2.run.nodes.filter(function (n) { return n.kind !== 'isp'; })[0];
+  var first = s2.run.nodes.filter(function (n) { return n.kind === 'data'; })[0];
+  ok(!!first, 'hay al menos un nodo de datos');
   s2.run.trace = 0;
   N.State.addEnergy(99); // se recorta al máximo legítimo (12)
   // seleccionar nodo y usar acciones directamente
@@ -216,8 +220,8 @@ function ok(cond, name, extra) {
   });
   ok(missing.length === 0, 'todas las referencias de icono resuelven (' + uses.length + ' usos)' + (missing.length ? ' faltan: ' + missing.join(',') : ''));
   ok(uses.length === 0, 'iconos incrustados literalmente (sin <use>): ' + uses.length);
-  var deskSvg = doc.querySelectorAll('.desktop-icon svg');
-  ok(deskSvg.length >= 16, 'iconos del escritorio incrustados: ' + deskSvg.length);
+  var deskSvg = doc.querySelectorAll('.desktop-icon img');
+  ok(deskSvg.length >= 16, 'iconos del escritorio incrustados (PNG): ' + deskSvg.length);
 
   // manual de usuario abierto y con contenido
   ok(N.WM.isOpen('manual'), 'ventana del manual abierta');

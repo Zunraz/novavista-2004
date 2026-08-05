@@ -120,23 +120,41 @@
     return null;
   }
 
-  /* ---------- iconos: incrustación literal del SVG (sin <use>) ----------
-     Algunos navegadores/webviews no renderizan <use>. Copiamos el contenido
-     del <symbol> dentro de cada <svg> para que los iconos funcionen siempre. */
-  function symInfo(name) {
-    var sym = document.getElementById(name);
-    if (!sym) return { vb: '0 0 32 32', html: '' };
-    return { vb: sym.getAttribute('viewBox') || '0 0 32 32', html: sym.innerHTML };
+  /* ---------- iconos: PNG reales incrustados (base64) ----------
+     Los iconos se rasterizan desde el sprite en tools/gen-assets.js
+     y se incrustan en js/core/assets.js. PNG = se ven en cualquier
+     navegador, sin depender de <use> ni de clonado SVG. */
+  function iconData(name, size) {
+    var A = (NS.Assets && NS.Assets.icons) ? NS.Assets.icons[name] : null;
+    if (!A) return null;
+    if (!size) size = 32;
+    return size >= 40 ? (A.s64 || A.s32) : (A.s32 || A.s64);
   }
-  function svgHtml(name, cls) {
-    var s = symInfo(name);
-    return '<svg class="' + (cls || 'icon') + '" viewBox="' + s.vb + '" xmlns="http://www.w3.org/2000/svg">' + s.html + '</svg>';
+  function iconSizeFromClass(cls) {
+    var m = /icon-(\d+)/.exec(cls || '');
+    return m ? parseInt(m[1], 10) : 16;
   }
   function svgIcon(name, cls) {
-    var s = symInfo(name);
-    var svg = el('svg', { class: cls || 'icon', viewBox: s.vb });
-    svg.innerHTML = s.html;
-    return svg;
+    var size = iconSizeFromClass(cls);
+    var img = el('img', { class: cls || 'icon', alt: '', draggable: 'false' });
+    var src = iconData(name, size);
+    img.src = src || '#icon-faltante';
+    return img;
+  }
+  function svgHtml(name, cls) {
+    var size = iconSizeFromClass(cls);
+    var src = iconData(name, size) || '#icon-faltante';
+    return '<img class="' + (cls || 'icon') + '" src="' + src + '" alt="" draggable="false">';
+  }
+  /* Aplica los iconos a los <img data-icon="..."> del HTML estático */
+  function applyDataIcons(root) {
+    var els = (root || document).querySelectorAll ? (root || document).querySelectorAll('[data-icon]') : [];
+    for (var i = 0; i < els.length; i++) {
+      var elN = els[i];
+      var name = elN.getAttribute('data-icon');
+      var src = iconData(name, iconSizeFromClass(elN.className));
+      if (src) elN.setAttribute('src', src);
+    }
   }
 
   NS.Util = {
@@ -145,6 +163,6 @@
     fmtPct: fmtPct, fmtClock: fmtClock, fmtDate: fmtDate, fmtDuration: fmtDuration, pad2: pad2,
     mulberry32: mulberry32, cyrb53: cyrb53, hashStr: hashStr, randId: randId,
     clamp: clamp, lerp: lerp, deepCopy: deepCopy, num: num,
-    symInfo: symInfo, svgHtml: svgHtml, svgIcon: svgIcon
+    iconData: iconData, svgHtml: svgHtml, svgIcon: svgIcon, applyDataIcons: applyDataIcons
   };
 })();
