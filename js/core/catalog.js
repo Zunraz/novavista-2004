@@ -15,7 +15,7 @@
     's-ad':     { name: 'Agencia de anuncios',        desc: 'Los seguidores generan el doble de ingresos.',    cat: 'social', base: 1800,  mult: 3.6, max: 15, icon: 'ic-chart' },
     's-vrf':    { name: 'Chapa verificada',           desc: '+15 % de crecimiento de seguidores por segundo.',cat: 'social', base: 9000,  mult: 4.2, max: 10, icon: 'ic-star' },
     'b-count':  { name: 'Bot zombie',                 desc: 'Añade un bot a tu botnet.',                      cat: 'bots',   base: 2200,  mult: 2.1, max: 120, icon: 'ic-bot' },
-    'b-rig':    { name: 'Granja de minería',          desc: 'Cada bot mina x2,5 más NovaCoins.',             cat: 'bots',   base: 14000, mult: 2.5, max: 12, icon: 'ic-gear' },
+    'b-rig':    { name: 'Granja de minería',          desc: 'Cada bot mina el doble de NovaCoins.',           cat: 'bots',   base: 14000, mult: 2.5, max: 12, icon: 'ic-gear' },
     'd-price':  { name: 'Acuerdo de datos',           desc: 'Vendes los datos al doble de precio.',           cat: 'datos',  base: 1200,  mult: 3.4, max: 15, icon: 'ic-files' },
     'd-cap':    { name: 'Disco duro mayor',           desc: '+500 MB de almacenamiento de datos.',            cat: 'datos',  base: 900,   mult: 2.6, max: 60, icon: 'ic-computer' },
     'e-max':    { name: 'Memoria RAM extra',          desc: '+1 de energía máxima.',                          cat: 'rig',    base: 3500,  mult: 3.1, max: 20, icon: 'ic-hacker' },
