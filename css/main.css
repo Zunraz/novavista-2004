@@ -1,0 +1,264 @@
+/* ============================================================
+   NovaVista 2004 — Estilo del sistema operativo (tema Luna)
+   ============================================================ */
+
+:root{
+  --tbar1:#0058e6; --tbar2:#3d93ff; --tbar3:#64b2ff;
+  --accent:#316ac5; --accent-light:#8fb6e0;
+  --start1:#5cb842; --start2:#3e8f2a;
+  --winbody:#ece9d8; --winface:#d4d0c8; --winborder:#0831d9;
+  --sel:#316ac5; --seltext:#fff;
+  --font:"Tahoma","Verdana","Segoe UI",sans-serif;
+  --mono:"Lucida Console","Consolas",monospace;
+}
+
+.theme-olive{
+  --tbar1:#005e54; --tbar2:#3fa37e; --tbar3:#8fd6b0;
+  --accent:#547c36; --accent-light:#a8c88a;
+  --winborder:#0a4a3a; --sel:#547c36;
+}
+.theme-silver{
+  --tbar1:#555; --tbar2:#999; --tbar3:#ccc;
+  --accent:#6a7078; --accent-light:#c8ccd4;
+  --winborder:#333; --sel:#6a7078;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;height:100%;overflow:hidden;}
+body{font-family:var(--font);font-size:12px;color:#000;background:#000;user-select:none;-webkit-user-select:none;}
+button{font-family:var(--font);}
+svg.icon{width:16px;height:16px;display:inline-block;vertical-align:-3px;}
+svg.icon-24{width:24px;height:24px;}
+svg.icon-32{width:32px;height:32px;}
+svg.icon-48{width:48px;height:48px;}
+svg.icon-64{width:64px;height:64px;}
+.hidden{display:none !important;}
+
+/* ---------------- Escritorio ---------------- */
+#desktop{position:fixed;inset:0 0 30px 0;overflow:hidden;}
+#desktop.wp-bliss{
+  background:
+    radial-gradient(ellipse 90% 45% at 50% 105%, #1e7a2e 0%, #2f9e3f 22%, #57c04f 40%, transparent 62%),
+    radial-gradient(ellipse 120% 40% at 50% 108%, #3fae45 0%, transparent 55%),
+    linear-gradient(#1a4fd0 0%, #2f7be0 35%, #7fc4f2 62%, #cfe8fa 78%, #eef7fd 100%);
+  background-size:100% 100%,100% 100%,cover;
+}
+#desktop.wp-nova{
+  background:linear-gradient(135deg,#083fa0 0%,#0a58d8 45%,#2f7be0 70%,#6aa9ee 100%);
+}
+#desktop.wp-grid{
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 110%, #1c3a7a 0%, transparent 70%),
+    repeating-linear-gradient(0deg, rgba(120,160,255,.14) 0 1px, transparent 1px 32px),
+    repeating-linear-gradient(90deg, rgba(120,160,255,.14) 0 1px, transparent 1px 32px),
+    linear-gradient(#05102e,#0a1e4d 60%,#0c2a66);
+}
+#desktop.wp-sunset{
+  background:
+    radial-gradient(ellipse 55% 40% at 50% 82%, #ffd27a 0%, #ff9a3a 30%, transparent 60%),
+    linear-gradient(#3a1c6a 0%, #7a3a9a 30%, #d85a3a 60%, #f5a03a 82%, #ffe08a 100%);
+}
+#desktop.wp-fractal{
+  background:
+    radial-gradient(circle at 20% 25%, rgba(60,120,255,.35) 0 18%, transparent 60%),
+    radial-gradient(circle at 75% 60%, rgba(120,60,255,.3) 0 22%, transparent 60%),
+    radial-gradient(circle at 50% 50%, rgba(255,120,60,.22) 0 15%, transparent 55%),
+    linear-gradient(#0a1030,#14205a);
+}
+
+#desktop-icons{position:absolute;top:4px;left:4px;bottom:4px;width:120px;display:flex;flex-direction:column;flex-wrap:wrap;align-content:flex-start;z-index:1;}
+.desktop-icon{
+  width:104px;padding:5px 2px;margin:2px 0;display:flex;flex-direction:column;align-items:center;gap:3px;
+  cursor:default;border:1px solid transparent;border-radius:2px;text-align:center;color:#fff;
+  text-shadow:1px 1px 2px rgba(0,0,0,.9),0 0 4px rgba(0,0,0,.6);
+}
+.desktop-icon:hover{background:rgba(90,140,255,.35);border-color:rgba(150,190,255,.5);}
+.desktop-icon.sel{background:rgba(49,106,197,.6);border:1px solid #fff;outline:1px solid rgba(49,106,197,.8);}
+.desktop-icon .di-name{font-size:11px;line-height:1.15;overflow-wrap:anywhere;}
+.desktop-icon .di-badge{position:absolute;transform:translate(34px,-6px);background:#c03030;color:#fff;font-size:9px;font-weight:bold;padding:0 4px;border-radius:8px;border:1px solid #7a1c1c;}
+
+/* ---------------- Ventanas ---------------- */
+#windows-layer{position:absolute;inset:0;z-index:2;pointer-events:none;}
+#windows-layer .window{pointer-events:auto;}
+.window{
+  position:absolute;min-width:280px;min-height:160px;
+  background:var(--winbody);
+  border:1px solid var(--winborder);
+  border-radius:8px 8px 0 0;
+  box-shadow:2px 2px 8px rgba(0,0,0,.55), inset 0 0 0 1px rgba(255,255,255,.35);
+  display:flex;flex-direction:column;
+}
+.window.maximized{border-radius:0;}
+.win-titlebar{
+  height:28px;flex:0 0 28px;display:flex;align-items:center;gap:4px;padding:0 4px 0 6px;
+  background:linear-gradient(180deg,var(--tbar1) 0%,var(--tbar2) 45%,var(--tbar2) 55%,var(--tbar3) 100%);
+  color:#fff;font-weight:bold;font-size:12px;text-shadow:0 1px 1px rgba(0,0,0,.5);
+  border-radius:7px 7px 0 0;cursor:default;
+}
+.window.maximized .win-titlebar{border-radius:0;}
+.win-titlebar .wt-title{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:6px;}
+.win-titlebar .wt-title svg{flex:0 0 auto;}
+.win-btns{display:flex;gap:2px;}
+.win-btns button{
+  width:21px;height:21px;border:1px solid #fff;border-radius:3px;background:linear-gradient(180deg,#fff 0%,#d4e4f7 50%,#8fafe0 100%);
+  color:#0a2a5a;font-weight:bold;font-size:10px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;
+}
+.win-btns button:hover{background:linear-gradient(180deg,#fff,#e8f2fd 60%,#b8d0f0);}
+.win-btns button:active{background:linear-gradient(180deg,#8fafe0,#d4e4f7);}
+.win-btns button.wc-close{background:linear-gradient(180deg,#fdb 0%,#f8a 50%,#d66 100%);border-color:#fff;}
+.win-btns button.wc-close:hover{background:linear-gradient(180deg,#ffd0b0,#ff9a7a 60%,#e06050);}
+.win-body{flex:1;overflow:auto;position:relative;background:var(--winbody);}
+.window:not(.focused) .win-titlebar{background:linear-gradient(180deg,#7a7f9a 0%,#9aa0b8 45%,#9aa0b8 55%,#b8bcd0 100%);}
+.window:not(.focused){box-shadow:1px 1px 5px rgba(0,0,0,.4);}
+.win-statusbar{
+  flex:0 0 22px;border-top:1px solid #a0a4b8;background:var(--winface);display:flex;align-items:center;
+  gap:10px;padding:0 8px;font-size:11px;color:#333;
+}
+
+/* ---------------- Barra de tareas ---------------- */
+#taskbar{
+  position:fixed;left:0;right:0;bottom:0;height:30px;z-index:500;
+  background:linear-gradient(180deg,#1d5fd6 0%,#3d8ff0 8%,#2a6fd6 45%,#1a4fa8 50%,#2a6fd6 96%,#5aa0f5 100%);
+  border-top:1px solid #6aa9ee;display:flex;align-items:center;gap:3px;padding:0 2px;
+  box-shadow:0 -1px 2px rgba(0,0,0,.4);
+}
+.start-btn{
+  display:flex;align-items:center;gap:5px;height:26px;padding:0 10px 0 4px;border:0;border-radius:0 8px 8px 0;
+  background:linear-gradient(180deg,#7ed957 0%,#5cb842 35%,#3e8f2a 70%,#6fd14e 100%);
+  color:#fff;font-weight:bold;font-size:14px;text-shadow:0 1px 1px rgba(0,0,0,.4);cursor:pointer;
+  font-style:italic;box-shadow:inset 0 0 0 1px rgba(255,255,255,.45);
+}
+.start-btn:hover{filter:brightness(1.12);}
+.start-btn:active{filter:brightness(.95);}
+.start-btn .start-logo svg{width:22px;height:22px;vertical-align:middle;}
+#quicklaunch{display:flex;gap:1px;padding:2px;border-right:1px solid #1a4fa8;margin-right:2px;}
+#quicklaunch button{
+  width:24px;height:24px;padding:3px;border:0;background:transparent;cursor:pointer;border-radius:2px;display:flex;align-items:center;justify-content:center;
+}
+#quicklaunch button:hover{background:rgba(255,255,255,.25);}
+#taskbar-apps{flex:1;display:flex;gap:2px;overflow:hidden;}
+.tb-btn{
+  min-width:100px;max-width:170px;height:26px;margin-top:2px;padding:0 6px;display:flex;align-items:center;gap:5px;
+  background:linear-gradient(180deg,#5a8fe0 0%,#3d7fd8 45%,#2a6fd6 50%,#4f8fe8 100%);
+  border:0;border-radius:3px;color:#fff;font-size:11px;cursor:pointer;text-align:left;overflow:hidden;
+  box-shadow:inset 0 1px 1px rgba(255,255,255,.3);
+}
+.tb-btn:hover{filter:brightness(1.08);}
+.tb-btn.active{
+  background:linear-gradient(180deg,#1a3f8f 0%,#2a5fc0 45%,#1f54a8 50%,#3a7fd8 100%);
+  box-shadow:inset 0 1px 3px rgba(0,0,0,.5), inset 0 0 0 1px rgba(0,0,0,.25);
+}
+.tb-btn .tb-title{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.tb-btn .icon{width:14px;height:14px;flex:0 0 auto;}
+#tray{display:flex;align-items:center;gap:2px;padding:0 4px;border-left:1px solid #1a4fa8;background:linear-gradient(180deg,#0e3f9f 0%,#1a4fa8 40%,#3d7fd8 100%);height:30px;color:#fff;}
+.tray-item{width:22px;height:22px;border:0;background:transparent;cursor:pointer;border-radius:2px;display:flex;align-items:center;justify-content:center;}
+.tray-item:hover{background:rgba(255,255,255,.22);}
+#tray-clock{font-size:11px;padding:0 4px;text-align:center;cursor:default;line-height:1.25;}
+#tray-av.suspect svg{animation:avpulse 0.8s infinite alternate;}
+@keyframes avpulse{from{filter:brightness(1);}to{filter:brightness(1.6) drop-shadow(0 0 4px #f00);}}
+#tray-wifi.off svg{opacity:.35;}
+
+/* ---------------- Menú inicio ---------------- */
+#start-menu{
+  position:fixed;left:2px;bottom:32px;width:400px;z-index:600;
+  border:1px solid #0a2a5a;border-radius:6px 6px 0 0;overflow:hidden;
+  box-shadow:3px 3px 12px rgba(0,0,0,.6);
+  background:#fff;
+}
+.sm-header{
+  height:58px;background:linear-gradient(180deg,#1a5fd0 0%,#3d8ff0 70%,#5aa0f5 100%);
+  display:flex;align-items:center;gap:10px;padding:0 12px;color:#fff;
+}
+.sm-user-icon{width:42px;height:42px;background:linear-gradient(180deg,#cfd8e8,#8fa0c0);border-radius:4px;border:1px solid #fff;display:flex;align-items:center;justify-content:center;}
+.sm-header span{font-size:16px;font-weight:bold;text-shadow:0 1px 2px rgba(0,0,0,.5);}
+.sm-body{display:flex;background:var(--winface);}
+.sm-col{flex:1;padding:6px 2px;background:linear-gradient(180deg,#fff 0%,#f2efe6 40%,#e6e2d4 100%);}
+.sm-col-right{flex:0 0 150px;background:linear-gradient(180deg,#d4e0f0 0%,#c4d4ea 100%);}
+.sm-sep{width:1px;background:linear-gradient(180deg,#8fa0c0,#e6e2d4);}
+.sm-item{
+  width:100%;display:flex;align-items:center;gap:8px;padding:6px 10px;border:0;background:transparent;
+  font-size:12px;cursor:pointer;text-align:left;border-radius:2px;
+}
+.sm-item:hover{background:var(--sel);color:#fff;}
+.sm-item .icon{width:22px;height:22px;}
+.sm-shutdown{color:#7a1c1c;font-weight:bold;}
+.sm-group{font-size:11px;color:#666;padding:6px 10px 2px;font-weight:bold;}
+
+/* ---------------- Boot / apagado ---------------- */
+#boot-screen{position:fixed;inset:0;background:#000;color:#c8c8c8;z-index:1000;display:flex;flex-direction:column;padding:24px;cursor:pointer;}
+#boot-bios{flex:1;font-family:var(--mono);font-size:13px;white-space:pre-wrap;overflow:hidden;}
+#boot-bios .b-ok{color:#7ed957;}
+#boot-bios .b-warn{color:#f2c14e;}
+#boot-bar-wrap{height:22px;border:1px solid #888;background:#111;padding:2px;margin-bottom:6px;}
+#boot-bar{height:100%;width:0%;background:linear-gradient(90deg,#1a4fa8,#3d8ff0);transition:width .2s;}
+#boot-skip{font-family:var(--mono);font-size:11px;color:#666;}
+#shutdown-screen{position:fixed;inset:0;background:#000;color:#fff;z-index:1100;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:18px;}
+#shutdown-screen .sd-logo svg{width:90px;height:90px;filter:drop-shadow(0 0 18px rgba(90,180,80,.5));}
+#shutdown-msg{font-size:20px;color:#e0e0e0;text-align:center;font-family:var(--mono);}
+#btn-power-on{margin-top:10px;}
+
+/* ---------------- Botones / controles XP ---------------- */
+.xp-btn{
+  min-width:70px;padding:4px 14px;border:1px solid #0831d9;border-radius:3px;cursor:pointer;
+  background:linear-gradient(180deg,#fff 0%,#ecebe5 50%,#d8d0c5 51%,#f2efe6 100%);
+  font-size:12px;color:#000;
+}
+.xp-btn:hover{background:linear-gradient(180deg,#eaf4fd,#dcebfc 50%,#c8d8f0 51%,#eaf4fd);}
+.xp-btn:active{background:linear-gradient(180deg,#c8d8f0,#dcebfc);}
+.xp-btn:disabled{color:#999;border-color:#a0a4b8;cursor:default;}
+.xp-btn.primary{background:linear-gradient(180deg,#f4f9ff,#dcebfc 50%,#a8c8ee 51%,#eaf4fd);border-color:#0058e6;font-weight:bold;}
+.xp-btn.danger{background:linear-gradient(180deg,#fff0f0,#f8d8d8 50%,#e0a8a8 51%,#fff0f0);border-color:#a03030;color:#7a1c1c;}
+.xp-btn.small{padding:2px 8px;font-size:11px;min-width:0;}
+
+.xp-input{border:1px solid #7f9db9;border-radius:2px;padding:3px 6px;font-size:12px;background:#fff;font-family:var(--font);}
+.xp-input:focus{outline:none;border-color:#316ac5;}
+.xp-input.mono{font-family:var(--mono);}
+.xp-select{border:1px solid #7f9db9;background:#fff;padding:2px 4px;font-size:12px;border-radius:2px;}
+
+/* Barra de progreso estilo XP */
+.xp-progress{height:16px;border:1px solid #7f9db9;background:#fff;border-radius:2px;overflow:hidden;position:relative;}
+.xp-progress>div{height:100%;background:linear-gradient(90deg,#7ed957,#3e8f2a);background-size:100% 100%;}
+.xp-progress.xp-blue>div{background:linear-gradient(90deg,#9ec5f5,#1a4fa8);}
+
+/* ---------------- Diálogos / toasts / menús contextuales ---------------- */
+.dialog-msg{display:flex;gap:12px;padding:14px;align-items:flex-start;font-size:12px;line-height:1.4;}
+.dialog-msg svg{flex:0 0 auto;}
+.dialog-btns{display:flex;justify-content:center;gap:8px;padding:0 14px 14px;}
+.dialog-input{padding:0 14px 12px;}
+
+#toasts{position:fixed;right:8px;bottom:36px;z-index:900;display:flex;flex-direction:column;gap:6px;width:300px;}
+.toast{
+  background:linear-gradient(180deg,#fdfef8,#f2f0e4);border:1px solid #7f9db9;border-radius:3px;
+  box-shadow:2px 2px 8px rgba(0,0,0,.4);padding:8px 10px;display:flex;gap:8px;align-items:flex-start;
+  animation:toastin .25s ease-out;cursor:default;
+}
+.toast.important{border-color:#c03030;background:linear-gradient(180deg,#fff8f0,#f8e8d8);}
+.toast.good{border-color:#3e8f2a;background:linear-gradient(180deg,#f4fff0,#e2f2d8);}
+.toast .t-icon{flex:0 0 auto;}
+.toast .t-title{font-weight:bold;font-size:12px;margin-bottom:2px;}
+.toast .t-body{font-size:11px;color:#333;line-height:1.35;}
+.toast .t-close{position:absolute;right:4px;top:2px;border:0;background:none;font-size:11px;color:#666;cursor:pointer;}
+@keyframes toastin{from{transform:translateX(30px);opacity:0;}to{transform:none;opacity:1;}}
+
+.ctx-menu{
+  position:fixed;z-index:800;min-width:170px;background:var(--winface);border:1px solid #7f9db9;
+  box-shadow:2px 2px 8px rgba(0,0,0,.5);padding:2px;
+}
+.ctx-menu button{width:100%;text-align:left;padding:5px 18px;border:0;background:none;font-size:12px;cursor:pointer;display:flex;gap:8px;align-items:center;}
+.ctx-menu button:hover{background:var(--sel);color:#fff;}
+.ctx-menu hr{border:0;border-top:1px solid #a0a4b8;margin:3px 6px;}
+
+/* ---------------- Scrollbars XP ---------------- */
+::-webkit-scrollbar{width:16px;height:16px;}
+::-webkit-scrollbar-track{background:#f0efe6;}
+::-webkit-scrollbar-thumb{background:linear-gradient(90deg,#d8d0c5,#c0b8a8);border:1px solid #a0a4b8;border-radius:8px;}
+::-webkit-scrollbar-thumb:hover{background:linear-gradient(90deg,#c0d8f0,#8fb6e0);}
+::-webkit-scrollbar-button{background:#e6e2d4;height:16px;width:16px;border:1px solid #a0a4b8;}
+*{scrollbar-width:thin;scrollbar-color:#b8b0a0 #f0efe6;}
+
+/* ---------------- Ventanas fijas de la barra de tareas ---------------- */
+.window .win-body{padding:0;}
+.app-pad{padding:10px;}
+.clickable{cursor:pointer;}
+
+::selection{background:var(--sel);color:#fff;}

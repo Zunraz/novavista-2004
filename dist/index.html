@@ -1,0 +1,4091 @@
+<!-- NovaVista 2004 Edition · Build de producción 2026-08-05T14:18:31.738Z · autocontenido, sin red -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="NovaVista 2004 — un sistema operativo de los años 2000 completamente funcional, con juego incremental y rasgos roguelite.">
+<title>NovaVista 2004</title>
+<style>:root{--tbar1:#0058e6;--tbar2:#3d93ff;--tbar3:#64b2ff;--accent:#316ac5;--accent-light:#8fb6e0;--start1:#5cb842;--start2:#3e8f2a;--winbody:#ece9d8;--winface:#d4d0c8;--winborder:#0831d9;--sel:#316ac5;--seltext:#fff;--font:"Tahoma","Verdana","Segoe UI",sans-serif;--mono:"Lucida Console","Consolas",monospace}.theme-olive{--tbar1:#005e54;--tbar2:#3fa37e;--tbar3:#8fd6b0;--accent:#547c36;--accent-light:#a8c88a;--winborder:#0a4a3a;--sel:#547c36}.theme-silver{--tbar1:#555;--tbar2:#999;--tbar3:#ccc;--accent:#6a7078;--accent-light:#c8ccd4;--winborder:#333;--sel:#6a7078}*{margin:0;padding:0;box-sizing:border-box}html,body{width:100%;height:100%;overflow:hidden}body{font-family:var(--font);font-size:12px;color:#000;background:#000;user-select:none;-webkit-user-select:none}button{font-family:var(--font)}svg.icon{width:16px;height:16px;display:inline-block;vertical-align:-3px}svg.icon-24{width:24px;height:24px}svg.icon-32{width:32px;height:32px}svg.icon-48{width:48px;height:48px}svg.icon-64{width:64px;height:64px}.hidden{display:none !important}#desktop{position:fixed;inset:0 0 30px 0;overflow:hidden}#desktop.wp-bliss{background:radial-gradient(ellipse 90% 45% at 50% 105%,#1e7a2e 0%,#2f9e3f 22%,#57c04f 40%,transparent 62%),radial-gradient(ellipse 120% 40% at 50% 108%,#3fae45 0%,transparent 55%),linear-gradient(#1a4fd0 0%,#2f7be0 35%,#7fc4f2 62%,#cfe8fa 78%,#eef7fd 100%);background-size:100% 100%,100% 100%,cover}#desktop.wp-nova{background:linear-gradient(135deg,#083fa0 0%,#0a58d8 45%,#2f7be0 70%,#6aa9ee 100%)}#desktop.wp-grid{background:radial-gradient(ellipse 80% 60% at 50% 110%,#1c3a7a 0%,transparent 70%),repeating-linear-gradient(0deg,rgba(120,160,255,.14) 0 1px,transparent 1px 32px),repeating-linear-gradient(90deg,rgba(120,160,255,.14) 0 1px,transparent 1px 32px),linear-gradient(#05102e,#0a1e4d 60%,#0c2a66)}#desktop.wp-sunset{background:radial-gradient(ellipse 55% 40% at 50% 82%,#ffd27a 0%,#ff9a3a 30%,transparent 60%),linear-gradient(#3a1c6a 0%,#7a3a9a 30%,#d85a3a 60%,#f5a03a 82%,#ffe08a 100%)}#desktop.wp-fractal{background:radial-gradient(circle at 20% 25%,rgba(60,120,255,.35) 0 18%,transparent 60%),radial-gradient(circle at 75% 60%,rgba(120,60,255,.3) 0 22%,transparent 60%),radial-gradient(circle at 50% 50%,rgba(255,120,60,.22) 0 15%,transparent 55%),linear-gradient(#0a1030,#14205a)}#desktop-icons{position:absolute;top:4px;left:4px;bottom:4px;width:120px;display:flex;flex-direction:column;flex-wrap:wrap;align-content:flex-start;z-index:1}.desktop-icon{width:104px;padding:5px 2px;margin:2px 0;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:default;border:1px solid transparent;border-radius:2px;text-align:center;color:#fff;text-shadow:1px 1px 2px rgba(0,0,0,.9),0 0 4px rgba(0,0,0,.6)}.desktop-icon:hover{background:rgba(90,140,255,.35);border-color:rgba(150,190,255,.5)}.desktop-icon.sel{background:rgba(49,106,197,.6);border:1px solid #fff;outline:1px solid rgba(49,106,197,.8)}.desktop-icon .di-name{font-size:11px;line-height:1.15;overflow-wrap:anywhere}.desktop-icon .di-badge{position:absolute;transform:translate(34px,-6px);background:#c03030;color:#fff;font-size:9px;font-weight:bold;padding:0 4px;border-radius:8px;border:1px solid #7a1c1c}#windows-layer{position:absolute;inset:0;z-index:2;pointer-events:none}#windows-layer .window{pointer-events:auto}.window{position:absolute;min-width:280px;min-height:160px;background:var(--winbody);border:1px solid var(--winborder);border-radius:8px 8px 0 0;box-shadow:2px 2px 8px rgba(0,0,0,.55),inset 0 0 0 1px rgba(255,255,255,.35);display:flex;flex-direction:column}.window.maximized{border-radius:0}.win-titlebar{height:28px;flex:0 0 28px;display:flex;align-items:center;gap:4px;padding:0 4px 0 6px;background:linear-gradient(180deg,var(--tbar1) 0%,var(--tbar2) 45%,var(--tbar2) 55%,var(--tbar3) 100%);color:#fff;font-weight:bold;font-size:12px;text-shadow:0 1px 1px rgba(0,0,0,.5);border-radius:7px 7px 0 0;cursor:default}.window.maximized .win-titlebar{border-radius:0}.win-titlebar .wt-title{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:6px}.win-titlebar .wt-title svg{flex:0 0 auto}.win-btns{display:flex;gap:2px}.win-btns button{width:21px;height:21px;border:1px solid #fff;border-radius:3px;background:linear-gradient(180deg,#fff 0%,#d4e4f7 50%,#8fafe0 100%);color:#0a2a5a;font-weight:bold;font-size:10px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center}.win-btns button:hover{background:linear-gradient(180deg,#fff,#e8f2fd 60%,#b8d0f0)}.win-btns button:active{background:linear-gradient(180deg,#8fafe0,#d4e4f7)}.win-btns button.wc-close{background:linear-gradient(180deg,#fdb 0%,#f8a 50%,#d66 100%);border-color:#fff}.win-btns button.wc-close:hover{background:linear-gradient(180deg,#ffd0b0,#ff9a7a 60%,#e06050)}.win-body{flex:1;overflow:auto;position:relative;background:var(--winbody)}.window:not(.focused) .win-titlebar{background:linear-gradient(180deg,#7a7f9a 0%,#9aa0b8 45%,#9aa0b8 55%,#b8bcd0 100%)}.window:not(.focused){box-shadow:1px 1px 5px rgba(0,0,0,.4)}.win-statusbar{flex:0 0 22px;border-top:1px solid #a0a4b8;background:var(--winface);display:flex;align-items:center;gap:10px;padding:0 8px;font-size:11px;color:#333}#taskbar{position:fixed;left:0;right:0;bottom:0;height:30px;z-index:500;background:linear-gradient(180deg,#1d5fd6 0%,#3d8ff0 8%,#2a6fd6 45%,#1a4fa8 50%,#2a6fd6 96%,#5aa0f5 100%);border-top:1px solid #6aa9ee;display:flex;align-items:center;gap:3px;padding:0 2px;box-shadow:0 -1px 2px rgba(0,0,0,.4)}.start-btn{display:flex;align-items:center;gap:5px;height:26px;padding:0 10px 0 4px;border:0;border-radius:0 8px 8px 0;background:linear-gradient(180deg,#7ed957 0%,#5cb842 35%,#3e8f2a 70%,#6fd14e 100%);color:#fff;font-weight:bold;font-size:14px;text-shadow:0 1px 1px rgba(0,0,0,.4);cursor:pointer;font-style:italic;box-shadow:inset 0 0 0 1px rgba(255,255,255,.45)}.start-btn:hover{filter:brightness(1.12)}.start-btn:active{filter:brightness(.95)}.start-btn .start-logo svg{width:22px;height:22px;vertical-align:middle}#quicklaunch{display:flex;gap:1px;padding:2px;border-right:1px solid #1a4fa8;margin-right:2px}#quicklaunch button{width:24px;height:24px;padding:3px;border:0;background:transparent;cursor:pointer;border-radius:2px;display:flex;align-items:center;justify-content:center}#quicklaunch button:hover{background:rgba(255,255,255,.25)}#taskbar-apps{flex:1;display:flex;gap:2px;overflow:hidden}.tb-btn{min-width:100px;max-width:170px;height:26px;margin-top:2px;padding:0 6px;display:flex;align-items:center;gap:5px;background:linear-gradient(180deg,#5a8fe0 0%,#3d7fd8 45%,#2a6fd6 50%,#4f8fe8 100%);border:0;border-radius:3px;color:#fff;font-size:11px;cursor:pointer;text-align:left;overflow:hidden;box-shadow:inset 0 1px 1px rgba(255,255,255,.3)}.tb-btn:hover{filter:brightness(1.08)}.tb-btn.active{background:linear-gradient(180deg,#1a3f8f 0%,#2a5fc0 45%,#1f54a8 50%,#3a7fd8 100%);box-shadow:inset 0 1px 3px rgba(0,0,0,.5),inset 0 0 0 1px rgba(0,0,0,.25)}.tb-btn .tb-title{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tb-btn .icon{width:14px;height:14px;flex:0 0 auto}#tray{display:flex;align-items:center;gap:2px;padding:0 4px;border-left:1px solid #1a4fa8;background:linear-gradient(180deg,#0e3f9f 0%,#1a4fa8 40%,#3d7fd8 100%);height:30px;color:#fff}.tray-item{width:22px;height:22px;border:0;background:transparent;cursor:pointer;border-radius:2px;display:flex;align-items:center;justify-content:center}.tray-item:hover{background:rgba(255,255,255,.22)}#tray-clock{font-size:11px;padding:0 4px;text-align:center;cursor:default;line-height:1.25}#tray-av.suspect svg{animation:avpulse 0.8s infinite alternate}@keyframes avpulse{from{filter:brightness(1)}to{filter:brightness(1.6) drop-shadow(0 0 4px #f00)}}#tray-wifi.off svg{opacity:.35}#start-menu{position:fixed;left:2px;bottom:32px;width:400px;z-index:600;border:1px solid #0a2a5a;border-radius:6px 6px 0 0;overflow:hidden;box-shadow:3px 3px 12px rgba(0,0,0,.6);background:#fff}.sm-header{height:58px;background:linear-gradient(180deg,#1a5fd0 0%,#3d8ff0 70%,#5aa0f5 100%);display:flex;align-items:center;gap:10px;padding:0 12px;color:#fff}.sm-user-icon{width:42px;height:42px;background:linear-gradient(180deg,#cfd8e8,#8fa0c0);border-radius:4px;border:1px solid #fff;display:flex;align-items:center;justify-content:center}.sm-header span{font-size:16px;font-weight:bold;text-shadow:0 1px 2px rgba(0,0,0,.5)}.sm-body{display:flex;background:var(--winface)}.sm-col{flex:1;padding:6px 2px;background:linear-gradient(180deg,#fff 0%,#f2efe6 40%,#e6e2d4 100%)}.sm-col-right{flex:0 0 150px;background:linear-gradient(180deg,#d4e0f0 0%,#c4d4ea 100%)}.sm-sep{width:1px;background:linear-gradient(180deg,#8fa0c0,#e6e2d4)}.sm-item{width:100%;display:flex;align-items:center;gap:8px;padding:6px 10px;border:0;background:transparent;font-size:12px;cursor:pointer;text-align:left;border-radius:2px}.sm-item:hover{background:var(--sel);color:#fff}.sm-item .icon{width:22px;height:22px}.sm-shutdown{color:#7a1c1c;font-weight:bold}.sm-group{font-size:11px;color:#666;padding:6px 10px 2px;font-weight:bold}#boot-screen{position:fixed;inset:0;background:#000;color:#c8c8c8;z-index:1000;display:flex;flex-direction:column;padding:24px;cursor:pointer}#boot-bios{flex:1;font-family:var(--mono);font-size:13px;white-space:pre-wrap;overflow:hidden}#boot-bios .b-ok{color:#7ed957}#boot-bios .b-warn{color:#f2c14e}#boot-bar-wrap{height:22px;border:1px solid #888;background:#111;padding:2px;margin-bottom:6px}#boot-bar{height:100%;width:0%;background:linear-gradient(90deg,#1a4fa8,#3d8ff0);transition:width .2s}#boot-skip{font-family:var(--mono);font-size:11px;color:#666}#shutdown-screen{position:fixed;inset:0;background:#000;color:#fff;z-index:1100;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:18px}#shutdown-screen .sd-logo svg{width:90px;height:90px;filter:drop-shadow(0 0 18px rgba(90,180,80,.5))}#shutdown-msg{font-size:20px;color:#e0e0e0;text-align:center;font-family:var(--mono)}#btn-power-on{margin-top:10px}.xp-btn{min-width:70px;padding:4px 14px;border:1px solid #0831d9;border-radius:3px;cursor:pointer;background:linear-gradient(180deg,#fff 0%,#ecebe5 50%,#d8d0c5 51%,#f2efe6 100%);font-size:12px;color:#000}.xp-btn:hover{background:linear-gradient(180deg,#eaf4fd,#dcebfc 50%,#c8d8f0 51%,#eaf4fd)}.xp-btn:active{background:linear-gradient(180deg,#c8d8f0,#dcebfc)}.xp-btn:disabled{color:#999;border-color:#a0a4b8;cursor:default}.xp-btn.primary{background:linear-gradient(180deg,#f4f9ff,#dcebfc 50%,#a8c8ee 51%,#eaf4fd);border-color:#0058e6;font-weight:bold}.xp-btn.danger{background:linear-gradient(180deg,#fff0f0,#f8d8d8 50%,#e0a8a8 51%,#fff0f0);border-color:#a03030;color:#7a1c1c}.xp-btn.small{padding:2px 8px;font-size:11px;min-width:0}.xp-input{border:1px solid #7f9db9;border-radius:2px;padding:3px 6px;font-size:12px;background:#fff;font-family:var(--font)}.xp-input:focus{outline:none;border-color:#316ac5}.xp-input.mono{font-family:var(--mono)}.xp-select{border:1px solid #7f9db9;background:#fff;padding:2px 4px;font-size:12px;border-radius:2px}.xp-progress{height:16px;border:1px solid #7f9db9;background:#fff;border-radius:2px;overflow:hidden;position:relative}.xp-progress>div{height:100%;background:linear-gradient(90deg,#7ed957,#3e8f2a);background-size:100% 100%}.xp-progress.xp-blue>div{background:linear-gradient(90deg,#9ec5f5,#1a4fa8)}.dialog-msg{display:flex;gap:12px;padding:14px;align-items:flex-start;font-size:12px;line-height:1.4}.dialog-msg svg{flex:0 0 auto}.dialog-btns{display:flex;justify-content:center;gap:8px;padding:0 14px 14px}.dialog-input{padding:0 14px 12px}#toasts{position:fixed;right:8px;bottom:36px;z-index:900;display:flex;flex-direction:column;gap:6px;width:300px}.toast{background:linear-gradient(180deg,#fdfef8,#f2f0e4);border:1px solid #7f9db9;border-radius:3px;box-shadow:2px 2px 8px rgba(0,0,0,.4);padding:8px 10px;display:flex;gap:8px;align-items:flex-start;animation:toastin .25s ease-out;cursor:default}.toast.important{border-color:#c03030;background:linear-gradient(180deg,#fff8f0,#f8e8d8)}.toast.good{border-color:#3e8f2a;background:linear-gradient(180deg,#f4fff0,#e2f2d8)}.toast .t-icon{flex:0 0 auto}.toast .t-title{font-weight:bold;font-size:12px;margin-bottom:2px}.toast .t-body{font-size:11px;color:#333;line-height:1.35}.toast .t-close{position:absolute;right:4px;top:2px;border:0;background:none;font-size:11px;color:#666;cursor:pointer}@keyframes toastin{from{transform:translateX(30px);opacity:0}to{transform:none;opacity:1}}.ctx-menu{position:fixed;z-index:800;min-width:170px;background:var(--winface);border:1px solid #7f9db9;box-shadow:2px 2px 8px rgba(0,0,0,.5);padding:2px}.ctx-menu button{width:100%;text-align:left;padding:5px 18px;border:0;background:none;font-size:12px;cursor:pointer;display:flex;gap:8px;align-items:center}.ctx-menu button:hover{background:var(--sel);color:#fff}.ctx-menu hr{border:0;border-top:1px solid #a0a4b8;margin:3px 6px}::-webkit-scrollbar{width:16px;height:16px}::-webkit-scrollbar-track{background:#f0efe6}::-webkit-scrollbar-thumb{background:linear-gradient(90deg,#d8d0c5,#c0b8a8);border:1px solid #a0a4b8;border-radius:8px}::-webkit-scrollbar-thumb:hover{background:linear-gradient(90deg,#c0d8f0,#8fb6e0)}::-webkit-scrollbar-button{background:#e6e2d4;height:16px;width:16px;border:1px solid #a0a4b8}*{scrollbar-width:thin;scrollbar-color:#b8b0a0 #f0efe6}.window .win-body{padding:0}.app-pad{padding:10px}.clickable{cursor:pointer}::selection{background:var(--sel);color:#fff}</style>
+<style>.app-pad{padding:10px;background:var(--winbody);height:100%;overflow:auto}.panel{border:1px solid #a0a4b8;background:#fdfef8;margin-bottom:10px;border-radius:3px}.panel-title{background:linear-gradient(180deg,#f2f4fa,#d8dff0);padding:4px 8px;font-weight:bold;font-size:12px;border-bottom:1px solid #a0a4b8}.panel>*:not(.panel-title){margin-left:8px;margin-right:8px}.panel>.panel-title{margin:0}.cfg-section{margin-bottom:12px}.cfg-title{font-weight:bold;margin-bottom:6px;color:#1c3f6e}.cfg-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}.cfg-sub{font-size:11px;color:#666;line-height:1.35;margin-top:2px}.cfg-info{font-size:11px;color:#333;line-height:1.5;padding:4px 0}.cfg-info b{color:#123d6e}.tabs{display:flex;gap:2px;padding:4px 6px 0;background:var(--winface);border-bottom:1px solid #a0a4b8}.tab-btn{padding:5px 14px;border:1px solid #a0a4b8;border-bottom:none;border-radius:4px 4px 0 0;background:linear-gradient(180deg,#f0efe8,#d8d0c5);cursor:pointer;font-size:12px}.tab-btn.on{background:var(--winbody);font-weight:bold;position:relative;top:1px;border-color:#7f9db9}.tab-content{padding:10px;height:calc(100% - 36px);overflow:auto}.files-cols{display:flex;gap:12px;align-items:flex-start;height:100%}.files-col{flex:1;min-width:0;overflow:auto;max-height:100%}.inv-row{display:flex;align-items:center;gap:8px;padding:6px 4px;border-bottom:1px solid #e6e2d4}.inv-row:last-child{border-bottom:none}.mail-title{font-size:15px;font-weight:bold;margin-bottom:8px;color:#1c3f6e}.mail-row{display:flex;align-items:center;gap:8px;padding:7px 4px;border-bottom:1px solid #e6e2d4}.mail-row:last-child{border-bottom:none}.mail-row.mail-done{background:#f0f8e8}.mail-subj{font-weight:bold;font-size:12px}.mail-subj b{font-weight:bold}.bank-balance{font-size:26px;font-weight:bold;color:#0a5c2a;padding:6px 0 2px}.trade-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:8px 0}.spark{height:70px;display:flex;align-items:flex-end;gap:2px;margin:8px 0;border-bottom:1px solid #ccc}.spark-bar{flex:1;background:linear-gradient(180deg,#3f8fd6,#1c4f86);min-height:2px}.myspace-profile{border:1px solid #a0a4b8;border-radius:3px;margin-bottom:10px;overflow:hidden;background:#fff}.myspace-head{background:linear-gradient(90deg,#2a6fd6,#6aa9ee);color:#fff;font-weight:bold;padding:6px 10px;font-size:13px}.myspace-inner{display:flex;gap:12px;padding:10px;align-items:center}.myspace-name{font-size:18px;font-weight:bold;color:#123d6e}.social-big{font-size:20px;font-weight:bold;color:#123d6e;padding:4px 0}.post-box{width:100%;height:64px;resize:none;margin-bottom:6px;font-family:inherit}.av-grade{font-size:26px;font-weight:bold;color:#2c5e2c;padding:6px 0}.av-quarantine{border-color:#c03030;background:#fff4f0}.av-quarantine .panel-title{background:linear-gradient(180deg,#f8d8d8,#f0c0c0);color:#7a1c1c;border-color:#c03030}.av-quarantine .xp-btn{display:block;margin:8px 0}.term-body{display:flex;flex-direction:column;height:100%;background:#0a0a12;color:#d8e0d0;font-family:var(--mono);font-size:12px}.term-out{flex:1;overflow-y:auto;padding:6px 8px;line-height:1.4}.term-out .term-ok{color:#7ed957}.term-out .term-warn{color:#f2c14e}.term-out .term-err{color:#ff6b6b}.term-out .term-dim{color:#8a93a8}.term-out .term-cmd{color:#c8d4f0}.term-inrow{display:flex;align-items:center;padding:4px 8px;border-top:1px solid #2a2f3d;background:#0d0d16}.term-prompt{color:#7ed957;white-space:nowrap}.term-in{flex:1;background:transparent;border:0;outline:none;color:#e8f0e0;font-family:var(--mono);font-size:12px}.web-root{display:flex;flex-direction:column;height:100%;background:#f4efe6}.web-toolbar{display:flex;align-items:center;gap:4px;padding:5px;background:linear-gradient(180deg,#eef0f6,#d8dff0);border-bottom:1px solid #a0a4b8}.web-addr{flex:1;font-size:12px}.web-favs{display:flex;gap:2px;padding:3px 5px;background:linear-gradient(180deg,#fdfef8,#ecefe8);border-bottom:1px solid #d0d4c8;overflow-x:auto}.web-fav{display:flex;align-items:center;gap:4px;border:0;background:transparent;padding:3px 8px;cursor:pointer;font-size:11px;border-radius:3px}.web-fav:hover{background:#dcebfc}.web-content{flex:1;overflow:auto;background:#fff}.web-status{border-top:1px solid #d0d4c8;padding:2px 8px;font-size:11px;color:#666;background:#f0efe6}.web-page{padding:16px;font-family:"Verdana","Tahoma",sans-serif;font-size:13px;color:#222}.web-page.web-dark{background:#0c1020;color:#c8d4f0}.web-title{font-size:17px;font-weight:bold;margin-bottom:12px;color:#123d6e}.web-dark .web-title{color:#9ec5f5}.web-logo{font-size:34px;font-weight:bold;color:#4a6fa5;text-align:center;margin:8px 0 4px;font-family:"Georgia",serif}.web-search-wrap{text-align:center;margin-top:10vh}.web-searchbox{margin:10px auto;width:min(520px,90%)}.web-q{width:100%;font-size:15px;padding:6px 10px}.web-quick{display:flex;justify-content:center;gap:18px;margin:22px 0;flex-wrap:wrap}.web-quick-item{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;font-size:11px;color:#123d6e;padding:8px;border-radius:6px}.web-quick-item:hover{background:#e4eefc}.web-quick-item svg{width:36px;height:36px}.web-ad{margin:10px auto;width:min(560px,92%);background:linear-gradient(180deg,#fff6d8,#ffe9a8);border:1px solid #e0b23a;border-radius:6px;padding:8px 12px;font-size:12px;cursor:pointer;text-align:center}.web-ad:hover{border-color:#c03030;background:linear-gradient(180deg,#fff0d8,#ffd8a8)}.web-footer{text-align:center;color:#999;font-size:11px;margin-top:20px}.web-results{max-width:640px;margin:0 auto}.web-rcount{color:#666;font-size:11px;margin-bottom:12px}.web-result{margin-bottom:14px}.web-rtitle{font-size:14px;color:#123d6e}.web-link{cursor:pointer;color:#123d6e;text-decoration:underline}.web-link:hover{color:#c33}.web-route{color:#0a7a2a;font-size:11px}.web-rd{color:#444;font-size:12px;line-height:1.4;margin-top:2px}.web-news-item{margin-bottom:14px}.web-dl-item{display:flex;align-items:center;gap:10px;padding:8px 4px;border-bottom:1px solid #e6e2d4}.web-dl-item:last-child{border-bottom:none}.web-click{text-align:center;padding:20px;color:#c8d4f0}.web-click-count{font-size:30px;font-weight:bold;margin:8px 0 2px}.web-click-value{font-size:14px;color:#9ec5f5;margin-bottom:16px}.click-big{width:220px;height:220px;border-radius:110px;border:6px solid #1c4f86;cursor:pointer;background:radial-gradient(circle at 35% 30%,#7ec8ff,#1a4fa8 70%);color:#fff;font-size:22px;font-weight:bold;text-shadow:0 2px 4px rgba(0,0,0,.6);margin-bottom:14px;box-shadow:0 6px 18px rgba(0,0,0,.5)}.click-big:hover{filter:brightness(1.15)}.click-big:active{transform:scale(.96)}.web-dark .web-dl-item{border-color:#22304a}.web-404{text-align:center;padding:30px}.web-404-code{font-size:64px;font-weight:bold;color:#c03030;font-family:var(--mono)}.web-loading{display:flex;flex-direction:column;align-items:center;gap:10px;padding:40px;color:#666;font-size:12px}.web-loading-bar{width:220px;height:8px;border:1px solid #a0a4b8;border-radius:4px;overflow:hidden;position:relative}.web-loading-bar:after{content:'';position:absolute;top:0;left:0;height:100%;width:40%;background:#3f8fd6;animation:loadingbar 1s infinite}@keyframes loadingbar{from{left:-40%}to{left:100%}}.net-root{display:flex;flex-direction:column;height:100%;background:var(--winbody)}.net-top{display:flex;align-items:center;gap:14px;padding:6px 10px;background:linear-gradient(180deg,#d8e4f4,#c4d8f0);border-bottom:1px solid #8fa8c8;font-size:11px;flex-wrap:wrap}.net-stat{display:flex;align-items:center;gap:6px;white-space:nowrap}.net-lbl{font-weight:bold;color:#1c3f6e}.net-content{flex:1;overflow:auto;display:flex;flex-direction:column}.net-map{flex:1;overflow:auto;padding:10px;background:#0c1020}.net-cols{display:flex;gap:14px;align-items:flex-start;min-width:min-content;padding-bottom:10px}.net-col{display:flex;flex-direction:column;gap:8px;min-width:130px}.net-node{border:1px solid #2a3a5a;border-radius:6px;padding:7px 9px;background:linear-gradient(180deg,#16203a,#0e1628);color:#9ec5f5;cursor:pointer;text-align:center;font-size:11px}.net-node:hover{border-color:#4a7ab5}.net-node.reach{border-color:#3f8fd6;box-shadow:0 0 6px rgba(63,143,214,.5)}.net-node.drained{border-color:#3e8f2a;background:linear-gradient(180deg,#14301a,#0c2010);color:#7ed957}.net-node.boss{border-color:#c03030;background:linear-gradient(180deg,#3a1414,#200c0c);color:#ff9a9a;font-weight:bold}.net-node.hidden{opacity:.35;border-style:dashed}.net-node.sel{outline:2px solid #fff;outline-offset:1px}.net-node-name{font-weight:bold;line-height:1.25}.net-node-sub{color:#6a8ab5;font-size:10px}.net-node .ok{color:#7ed957}.net-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:6px 10px;background:var(--winface);border-top:1px solid #a0a4b8}.net-actionset{display:inline-flex;gap:5px;flex-wrap:wrap;align-items:center}.net-console{height:170px;flex:0 0 170px;border-top:1px solid #333}.net-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#9ec5f5;text-align:center;padding:30px}.wp-pick{margin:0 6px 6px 0}.avatar-pick{border:2px solid transparent;background:#eef0f6;border-radius:6px;padding:6px;cursor:pointer;margin:0 4px 4px 0}.avatar-pick:hover{border-color:#8fb6e0}.avatar-pick.on{border-color:#316ac5;background:#dcebfc}</style>
+</head>
+<body>
+
+<!-- ============ SPRITE DE ICONOS SVG ============ -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+  <defs>
+    <linearGradient id="g-win" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0997ff"/><stop offset="0.5" stop-color="#0053ee"/><stop offset="0.5" stop-color="#0052ee"/><stop offset="1" stop-color="#0038a8"/>
+    </linearGradient>
+    <linearGradient id="g-flag" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7ed957"/><stop offset="1" stop-color="#2c7a1e"/>
+    </linearGradient>
+  </defs>
+
+  <symbol id="ic-logo" viewBox="0 0 32 32">
+    <rect x="2" y="10" width="24" height="12" rx="1" fill="url(#g-flag)"/>
+    <rect x="26" y="8" width="4" height="16" rx="1" fill="#e8b23a"/>
+    <path d="M6 14h10v4H6z" fill="#fff" opacity="0.9"/>
+    <circle cx="22" cy="16" r="2" fill="#fff"/>
+  </symbol>
+  <symbol id="ic-browser" viewBox="0 0 32 32">
+    <circle cx="16" cy="16" r="13" fill="#3f8fd6" stroke="#1c4f86" stroke-width="1.5"/>
+    <ellipse cx="16" cy="16" rx="6" ry="13" fill="#d9e9f7" stroke="#1c4f86" stroke-width="1"/>
+    <path d="M3.5 16h25" stroke="#1c4f86" stroke-width="1"/>
+    <path d="M16 3a13 13 0 0 1 0 26" stroke="#7fb3dd" stroke-width="0.8" fill="none"/>
+    <circle cx="16" cy="16" r="2.2" fill="#f2c14e" stroke="#9c7a1c" stroke-width="0.8"/>
+  </symbol>
+  <symbol id="ic-bank" viewBox="0 0 32 32">
+    <rect x="2" y="22" width="28" height="4" fill="#8a8f98" stroke="#4a4f58" stroke-width="1"/>
+    <path d="M4 22L16 5l12 17" fill="#c8ccd4" stroke="#4a4f58" stroke-width="1"/>
+    <rect x="8" y="10" width="3.4" height="10" fill="#5a7fbf"/>
+    <rect x="14" y="10" width="3.4" height="10" fill="#5a7fbf"/>
+    <rect x="20.5" y="10" width="3.4" height="10" fill="#5a7fbf"/>
+    <circle cx="16" cy="15" r="1.6" fill="#fff" opacity="0.85"/>
+  </symbol>
+  <symbol id="ic-social" viewBox="0 0 32 32">
+    <rect x="2" y="2" width="28" height="28" rx="5" fill="#3a6ea5" stroke="#1d3a5f" stroke-width="1.5"/>
+    <circle cx="11" cy="11" r="3.4" fill="#fff"/>
+    <path d="M6 22c0-4.2 2.2-6.6 5-6.6s5 2.4 5 6.6" fill="#fff"/>
+    <circle cx="23" cy="12" r="2.6" fill="#ffe08a"/>
+    <path d="M19.5 21.5c.6-3 2-4.6 4-4.6 2 0 3.4 1.6 4 4.6" fill="#ffe08a"/>
+  </symbol>
+  <symbol id="ic-files" viewBox="0 0 32 32">
+    <path d="M3 8a2 2 0 0 1 2-2h7l3 3h12a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" fill="#f5c04a" stroke="#a8791a" stroke-width="1.2"/>
+    <path d="M3 10h26" stroke="#e8b23a" stroke-width="1.5"/>
+  </symbol>
+  <symbol id="ic-terminal" viewBox="0 0 32 32">
+    <rect x="2" y="4" width="28" height="24" rx="2" fill="#0a0a12" stroke="#333a4d" stroke-width="1.5"/>
+    <path d="M6 10l5 4.5L6 19" stroke="#3f9e3f" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <rect x="13" y="18" width="9" height="2" fill="#3f9e3f"/>
+  </symbol>
+  <symbol id="ic-mail" viewBox="0 0 32 32">
+    <rect x="2" y="7" width="28" height="18" rx="2" fill="#f3efe2" stroke="#8a8262" stroke-width="1.5"/>
+    <path d="M2 8l14 9 14-9" fill="none" stroke="#8a8262" stroke-width="1.8"/>
+    <path d="M2 8l14 9 14-9v5L16 22 2 13z" fill="#e8e0c8" opacity="0.5"/>
+  </symbol>
+  <symbol id="ic-shield" viewBox="0 0 32 32">
+    <path d="M16 2l12 4v9c0 8-5 13-12 15C9 28 4 23 4 15V6z" fill="#4f8f4f" stroke="#2c5e2c" stroke-width="1.5"/>
+    <path d="M10 16l4 4 8-8" stroke="#eaffea" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="ic-shield-bad" viewBox="0 0 32 32">
+    <path d="M16 2l12 4v9c0 8-5 13-12 15C9 28 4 23 4 15V6z" fill="#b94a4a" stroke="#7a2c2c" stroke-width="1.5"/>
+    <path d="M12 12l8 8M20 12l-8 8" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="ic-net" viewBox="0 0 32 32">
+    <circle cx="16" cy="16" r="3" fill="#3f8fd6" stroke="#1c4f86" stroke-width="1.4"/>
+    <path d="M16 3a13 13 0 0 1 13 13M16 3a13 13 0 0 0-13 13M16 29a13 13 0 0 0 13-13M16 29a13 13 0 0 1-13-13" stroke="#3f8fd6" stroke-width="1.2" fill="none"/>
+    <ellipse cx="16" cy="16" rx="4.4" ry="13" stroke="#9fc6e8" stroke-width="0.8" fill="none"/>
+  </symbol>
+  <symbol id="ic-settings" viewBox="0 0 32 32">
+    <circle cx="16" cy="16" r="6.5" fill="#cfd4dc" stroke="#4a4f58" stroke-width="1.6"/>
+    <circle cx="16" cy="16" r="3" fill="#6a9fd8" stroke="#3a5f8f" stroke-width="1"/>
+    <path d="M16 2.5v5M16 24.5v5M2.5 16h5M24.5 16h5M6.5 6.5l3.5 3.5M22 22l3.5 3.5M25.5 6.5L22 10M10 22l-3.5 3.5" stroke="#6a7078" stroke-width="2" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="ic-computer" viewBox="0 0 32 32">
+    <rect x="3" y="5" width="22" height="16" rx="1.5" fill="#dde3ea" stroke="#4a4f58" stroke-width="1.5"/>
+    <rect x="5.5" y="7.5" width="17" height="11" rx="1" fill="#2a6fd6"/>
+    <path d="M14 21v3h6M8 24h14" stroke="#4a4f58" stroke-width="2" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="ic-doc" viewBox="0 0 32 32">
+    <path d="M6 2h13l7 7v21H6z" fill="#fff" stroke="#8a8262" stroke-width="1.2"/>
+    <path d="M19 2v7h7" fill="#e8e0c8" stroke="#8a8262" stroke-width="1.2"/>
+    <path d="M10 15h12M10 19h12M10 23h8" stroke="#8a8262" stroke-width="1.6" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="ic-folder" viewBox="0 0 32 32">
+    <path d="M3 9a2 2 0 0 1 2-2h6l3 3h13a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" fill="#f7cf5e" stroke="#a8791a" stroke-width="1.2"/>
+    <rect x="5" y="13" width="22" height="3" fill="#f0b83a" opacity="0.6"/>
+  </symbol>
+  <symbol id="ic-trash" viewBox="0 0 32 32">
+    <path d="M7 9h18l-1.5 19a2 2 0 0 1-2 1.8h-11a2 2 0 0 1-2-1.8z" fill="#e6e6e6" stroke="#8a8a8a" stroke-width="1.2"/>
+    <path d="M4 9h24" stroke="#8a8a8a" stroke-width="2"/>
+    <path d="M12 5h8v4h-8z" fill="#e6e6e6" stroke="#8a8a8a" stroke-width="1.2"/>
+    <path d="M13 14v9M19 14v9" stroke="#8a8a8a" stroke-width="1.6"/>
+  </symbol>
+  <symbol id="ic-gear" viewBox="0 0 32 32">
+    <circle cx="16" cy="16" r="5" fill="#9aa3ad" stroke="#4a4f58" stroke-width="1.5"/>
+    <path d="M16 3l2 4h-4zM16 29l-2-4h4zM3 16l4-2v4zM29 16l-4 2v-4zM7.5 7.5l4 2-2 4zM24.5 24.5l-4-2 2-4zM24.5 7.5l-2 4-4-2zM7.5 24.5l2-4 4 2z" fill="#7c8590"/>
+  </symbol>
+  <symbol id="ic-wifi" viewBox="0 0 32 32">
+    <path d="M4 13a20 20 0 0 1 24 0M8.5 17.5a13 13 0 0 1 15 0M13 22a6 6 0 0 1 6 0" stroke="#3f8fd6" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+    <circle cx="16" cy="26" r="2" fill="#3f8fd6"/>
+  </symbol>
+  <symbol id="ic-volume" viewBox="0 0 32 32">
+    <path d="M5 12h5l7-5v18l-7-5H5z" fill="#7c8590"/>
+    <path d="M21 11a6 6 0 0 1 0 10M24.5 8a10 10 0 0 1 0 16" stroke="#7c8590" stroke-width="2" fill="none" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="ic-shutdown" viewBox="0 0 32 32">
+    <path d="M16 3v12" stroke="#c33" stroke-width="3" stroke-linecap="round"/>
+    <path d="M8 8a11 11 0 1 0 16 0" stroke="#c33" stroke-width="3" fill="none" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="ic-help" viewBox="0 0 32 32">
+    <circle cx="16" cy="16" r="13" fill="#3a8fd6" stroke="#1c4f86" stroke-width="1.5"/>
+    <path d="M12.5 12a3.5 3.5 0 1 1 5 3.2c-1.1.5-2 .9-2 2.3" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <circle cx="15.5" cy="21" r="1.6" fill="#fff"/>
+  </symbol>
+  <symbol id="ic-search" viewBox="0 0 32 32">
+    <circle cx="14" cy="14" r="9" fill="none" stroke="#4a6fa5" stroke-width="2.6"/>
+    <path d="M21 21l7 7" stroke="#4a6fa5" stroke-width="2.6" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="ic-coin" viewBox="0 0 32 32">
+    <circle cx="16" cy="16" r="12" fill="#f2c14e" stroke="#9c7a1c" stroke-width="1.6"/>
+    <circle cx="16" cy="16" r="8.5" fill="none" stroke="#e0a832" stroke-width="1.4"/>
+    <path d="M16 9v14M12 12.5c0-1 1.6-1.8 4-1.8s4 .8 4 1.8-1.6 1.8-4 1.8-4 .8-4 1.8 1.6 1.8 4 1.8 4-.8 4-1.8" stroke="#9c7a1c" stroke-width="1.6" fill="none"/>
+  </symbol>
+  <symbol id="ic-chart" viewBox="0 0 32 32">
+    <path d="M4 26h24" stroke="#4a4f58" stroke-width="2"/>
+    <path d="M7 22l5-6 4 3 6-9 3 2" stroke="#3a8fd6" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+    <rect x="6" y="22" width="3" height="4" fill="#3a8fd6"/><rect x="11" y="22" width="3" height="4" fill="#3a8fd6"/>
+    <rect x="16" y="22" width="3" height="4" fill="#3a8fd6"/><rect x="21" y="22" width="3" height="4" fill="#3a8fd6"/>
+  </symbol>
+  <symbol id="ic-users" viewBox="0 0 32 32">
+    <circle cx="12" cy="11" r="5" fill="#8a8f98" stroke="#4a4f58" stroke-width="1.4"/>
+    <path d="M3 26c0-5 4-8 9-8s9 3 9 8" fill="#8a8f98" stroke="#4a4f58" stroke-width="1.4"/>
+    <circle cx="23" cy="12" r="3.4" fill="#6a9fd8" stroke="#3a5f8f" stroke-width="1.2"/>
+    <path d="M22 21c3.4.4 6 2.6 6.6 5" fill="none" stroke="#6a9fd8" stroke-width="1.6"/>
+  </symbol>
+  <symbol id="ic-download" viewBox="0 0 32 32">
+    <path d="M16 3v14M9 12l7 7 7-7" stroke="#3f8fd6" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M4 21v6h24v-6" stroke="#4a4f58" stroke-width="2" fill="none"/>
+  </symbol>
+  <symbol id="ic-lock" viewBox="0 0 32 32">
+    <rect x="7" y="13" width="18" height="14" rx="2" fill="#e8c33a" stroke="#9c7a1c" stroke-width="1.6"/>
+    <path d="M11 13V9a5 5 0 0 1 10 0v4" fill="none" stroke="#9c7a1c" stroke-width="2.4"/>
+    <circle cx="16" cy="20" r="2" fill="#9c7a1c"/>
+  </symbol>
+  <symbol id="ic-info" viewBox="0 0 32 32">
+    <circle cx="16" cy="16" r="13" fill="#3a8fd6" stroke="#1c4f86" stroke-width="1.5"/>
+    <path d="M16 14v9" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>
+    <circle cx="16" cy="9.5" r="1.7" fill="#fff"/>
+  </symbol>
+  <symbol id="ic-warning" viewBox="0 0 32 32">
+    <path d="M16 3l14 25H2z" fill="#f2c14e" stroke="#9c7a1c" stroke-width="1.6" stroke-linejoin="round"/>
+    <path d="M16 11v8" stroke="#7a5c10" stroke-width="2.6" stroke-linecap="round"/>
+    <circle cx="16" cy="23" r="1.8" fill="#7a5c10"/>
+  </symbol>
+  <symbol id="ic-error" viewBox="0 0 32 32">
+    <circle cx="16" cy="16" r="13" fill="#c03030" stroke="#7a1c1c" stroke-width="1.5"/>
+    <path d="M11 11l10 10M21 11L11 21" stroke="#fff" stroke-width="2.8" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="ic-av" viewBox="0 0 32 32">
+    <path d="M16 2l12 4v9c0 8-5 13-12 15C9 28 4 23 4 15V6z" fill="#4f8f4f" stroke="#2c5e2c" stroke-width="1.5"/>
+    <rect x="10" y="9" width="12" height="10" rx="1" fill="#fff" opacity="0.85"/>
+    <path d="M16 11v6M13 14h6" stroke="#2c5e2c" stroke-width="1.8"/>
+    <circle cx="16" cy="24" r="1.4" fill="#2c5e2c"/>
+  </symbol>
+  <symbol id="ic-game" viewBox="0 0 32 32">
+    <rect x="2" y="9" width="28" height="14" rx="7" fill="#3a6ea5" stroke="#1d3a5f" stroke-width="1.5"/>
+    <circle cx="8" cy="16" r="2.2" fill="#fff"/><circle cx="13" cy="12" r="1.8" fill="#ffd27a"/>
+    <circle cx="13" cy="20" r="1.8" fill="#ffd27a"/><circle cx="20" cy="12" r="1.8" fill="#ffd27a"/>
+    <circle cx="20" cy="20" r="1.8" fill="#ffd27a"/><circle cx="25" cy="16" r="2.2" fill="#fff"/>
+  </symbol>
+  <symbol id="ic-phone" viewBox="0 0 32 32">
+    <rect x="9" y="2" width="14" height="28" rx="2.5" fill="#333a4d" stroke="#1a1f2e" stroke-width="1.4"/>
+    <rect x="11" y="5" width="10" height="18" rx="1" fill="#0f1522"/>
+    <rect x="13" y="24.5" width="6" height="1.6" rx="0.8" fill="#5a6270"/>
+  </symbol>
+  <symbol id="ic-bot" viewBox="0 0 32 32">
+    <rect x="8" y="8" width="16" height="14" rx="3" fill="#9aa3ad" stroke="#4a4f58" stroke-width="1.4"/>
+    <rect x="10" y="4" width="4" height="5" rx="1.5" fill="#9aa3ad" stroke="#4a4f58" stroke-width="1"/>
+    <rect x="18" y="4" width="4" height="5" rx="1.5" fill="#9aa3ad" stroke="#4a4f58" stroke-width="1"/>
+    <circle cx="13" cy="14" r="2" fill="#2c5e2c"/><circle cx="19" cy="14" r="2" fill="#2c5e2c"/>
+    <path d="M13 19h6" stroke="#4a4f58" stroke-width="1.6"/>
+    <rect x="11" y="22" width="3" height="6" rx="1" fill="#7c8590"/><rect x="18" y="22" width="3" height="6" rx="1" fill="#7c8590"/>
+  </symbol>
+  <symbol id="ic-key" viewBox="0 0 32 32">
+    <circle cx="10" cy="22" r="6.5" fill="none" stroke="#e8c33a" stroke-width="3"/>
+    <path d="M15 17l13-13M22 10l5 5M18 14l3 3" stroke="#e8c33a" stroke-width="3" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="ic-hacker" viewBox="0 0 32 32">
+    <circle cx="16" cy="12" r="6" fill="#3a3f4d" stroke="#1a1f2e" stroke-width="1.4"/>
+    <path d="M4 27c0-6 5-9 12-9s12 3 12 9" fill="#3a3f4d" stroke="#1a1f2e" stroke-width="1.4"/>
+    <path d="M13 13l-1-2h8l-1 2z" fill="#0f1522"/>
+    <circle cx="13.5" cy="11" r="1" fill="#3f9e3f"/><circle cx="18.5" cy="11" r="1" fill="#3f9e3f"/>
+  </symbol>
+  <symbol id="ic-save" viewBox="0 0 32 32">
+    <path d="M5 4h18l5 5v19H5z" fill="#cfd4dc" stroke="#4a4f58" stroke-width="1.4"/>
+    <path d="M9 4v9h14V4" fill="#e6e9ee" stroke="#4a4f58" stroke-width="1.2"/>
+    <rect x="9" y="19" width="14" height="9" fill="#8fb6e0" stroke="#4a4f58" stroke-width="1.2"/>
+    <path d="M12 8h8" stroke="#4a4f58" stroke-width="1.4"/>
+  </symbol>
+  <symbol id="ic-music" viewBox="0 0 32 32">
+    <path d="M12 25V7l14-3v17" stroke="#4a4f58" stroke-width="2" fill="none"/>
+    <ellipse cx="9" cy="25" rx="4.5" ry="3" fill="#8fb6e0" stroke="#4a4f58" stroke-width="1.4"/>
+    <ellipse cx="23" cy="21" rx="4.5" ry="3" fill="#8fb6e0" stroke="#4a4f58" stroke-width="1.4"/>
+  </symbol>
+  <symbol id="ic-star" viewBox="0 0 32 32">
+    <path d="M16 3l3.8 8.2 9 .9-6.8 6 2 8.9L16 23l-8 4.9 2-8.9-6.8-6 9-.9z" fill="#f2c14e" stroke="#9c7a1c" stroke-width="1.2" stroke-linejoin="round"/>
+  </symbol>
+</svg>
+
+<!-- ============ OVERLAYS ============ -->
+<div id="boot-screen">
+  <div id="boot-bios"></div>
+  <div id="boot-bar-wrap"><div id="boot-bar"></div></div>
+  <div id="boot-skip">Haga clic para omitir</div>
+</div>
+
+<div id="shutdown-screen" class="hidden">
+  <div id="shutdown-box">
+    <div class="sd-logo"><svg class="icon icon-64"><use href="#ic-logo"/></svg></div>
+    <div id="shutdown-msg">Es seguro apagar el equipo.</div>
+    <button id="btn-power-on" class="xp-btn">Encender</button>
+  </div>
+</div>
+
+<div id="desktop">
+  <div id="desktop-icons"></div>
+  <div id="windows-layer"></div>
+</div>
+
+<div id="taskbar">
+  <button id="btn-start" class="start-btn"><span class="start-logo"><svg class="icon"><use href="#ic-logo"/></svg></span><span class="start-text">Inicio</span></button>
+  <div id="quicklaunch"></div>
+  <div id="taskbar-apps"></div>
+  <div id="tray">
+    <button class="tray-item" id="tray-av" title="NovaShield"><svg class="icon"><use href="#ic-shield"/></svg></button>
+    <button class="tray-item" id="tray-wifi" title="Conectado a RED-NOVA 54 Mbps"><svg class="icon"><use href="#ic-wifi"/></svg></button>
+    <button class="tray-item" id="tray-vol" title="Volumen"><svg class="icon"><use href="#ic-volume"/></svg></button>
+    <div id="tray-clock" title="Fecha y hora"></div>
+  </div>
+</div>
+
+<div id="start-menu" class="hidden">
+  <div class="sm-header"><div class="sm-user-icon"><svg class="icon icon-48"><use href="#ic-hacker"/></svg></div><span id="sm-username">Usuario</span></div>
+  <div class="sm-body">
+    <div class="sm-col" id="sm-programs"></div>
+    <div class="sm-sep"></div>
+    <div class="sm-col sm-col-right">
+      <button class="sm-item" data-action="restart"><svg class="icon"><use href="#ic-gear"/></svg> Reiniciar equipo</button>
+      <button class="sm-item sm-shutdown" data-action="shutdown"><svg class="icon"><use href="#ic-shutdown"/></svg> Apagar equipo...</button>
+    </div>
+  </div>
+</div>
+
+<div id="toasts"></div>
+
+<!-- ============ SCRIPTS (orden de dependencias) ============ -->
+<script>(function(){
+'use strict';
+var NS=window.NovaOS=window.NovaOS||{};
+function $(sel,root){return(root||document).querySelector(sel);}
+function $$(sel,root){return Array.prototype.slice.call((root||document).querySelectorAll(sel));}
+function el(tag,attrs,children){
+var node=document.createElement(tag);
+if(attrs){
+Object.keys(attrs).forEach(function(k){
+var v=attrs[k];
+if(v===null||v===undefined)return;
+if(k==='class')node.className=v;
+else if(k==='style'&&typeof v==='object'){
+Object.keys(v).forEach(function(sk){node.style[sk]=v[sk];});
+}else if(k==='html')node.innerHTML=v;
+else if(k==='text')node.textContent=v;
+else if(k.indexOf('on')===0)node.addEventListener(k.slice(2),v);
+else node.setAttribute(k,v);
+});
+}
+if(children){
+if(typeof children==='string')node.textContent=children;
+else if(children.forEach)children.forEach(function(c){if(c)node.appendChild(c);});
+else node.appendChild(children);
+}
+return node;
+}
+function esc(s){
+return String(s).replace(/[&<>"']/g,function(c){
+return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+});
+}
+var UNITS=['','K','M','B','T','Qa','Qi','Sx','Sp'];
+function fmtNum(n){
+if(!isFinite(n))return'∞';
+var neg=n<0;
+n=Math.abs(n);
+if(n<1000)return(neg?'-':'')+Math.floor(n).toLocaleString('es-ES');
+var tier=Math.floor(Math.log10(n)/3);
+if(tier>=UNITS.length)tier=UNITS.length-1;
+var scaled=n/Math.pow(10,tier*3);
+var digits=scaled>=100?0:scaled>=10?1:2;
+return(neg?'-':'')+scaled.toFixed(digits).replace('.',',')+' '+UNITS[tier];
+}
+function fmtMoney(n){return'$'+fmtNum(n);}
+function fmtInt(n){return Math.floor(n).toLocaleString('es-ES');}
+function fmtBytes(b){
+if(!isFinite(b))return'∞';
+var u=['B','KB','MB','GB','TB','PB'];
+var i=0;
+while(b>=1024&&i<u.length-1){b/=1024;i++;}
+return(i===0?Math.floor(b):b.toFixed(1).replace('.',','))+' '+u[i];
+}
+function fmtPct(n){return(n*100).toFixed(2).replace('.',',')+' %';}
+function pad2(n){return(n<10?'0':'')+n;}
+function fmtClock(ts){
+var d=new Date(ts);
+return pad2(d.getHours())+':'+pad2(d.getMinutes());
+}
+function fmtDate(ts){
+var d=new Date(ts);
+return pad2(d.getDate())+'/'+pad2(d.getMonth()+1)+'/'+d.getFullYear();
+}
+function fmtDuration(ms){
+var s=Math.floor(ms/1000);
+var h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sec=s%60;
+return(h?h+' h ':'')+(m?m+' min ':'')+sec+' s';
+}
+function mulberry32(seed){
+var a=seed>>>0;
+return function(){
+a|=0;a=(a+0x6D2B79F5)|0;
+var t=Math.imul(a^(a>>>15),1|a);
+t=(t+Math.imul(t^(t>>>7),61|t))^t;
+return((t^(t>>>14))>>>0)/4294967296;
+};
+}
+function cyrb53(str,seed){
+var h1=0xdeadbeef^(seed||0),h2=0x41c6ce57^(seed||0);
+for(var i=0;i<str.length;i++){
+var ch=str.charCodeAt(i);
+h1=Math.imul(h1^ch,2654435761);
+h2=Math.imul(h2^ch,1597334677);
+}
+h1=Math.imul(h1^(h1>>>16),2246822507)^Math.imul(h2^(h2>>>13),3266489909);
+h2=Math.imul(h2^(h2>>>16),2246822507)^Math.imul(h1^(h1>>>13),3266489909);
+return 4294967296*(2097151&h2)+(h1>>>0);
+}
+function hashStr(str){
+var a=cyrb53(str,0x9e3779b9);
+var b=cyrb53(str,0x85ebca6b);
+return a.toString(36)+b.toString(36);
+}
+function randId(){return cyrb53(String(Math.random())+String(Date.now()),7).toString(36);}
+function clamp(v,lo,hi){return v<lo?lo:v>hi?hi:v;}
+function lerp(a,b,t){return a+(b-a)*t;}
+function deepCopy(o){
+if(o===null||typeof o!=='object')return o;
+if(Array.isArray(o))return o.map(deepCopy);
+var out={};
+Object.keys(o).forEach(function(k){out[k]=deepCopy(o[k]);});
+return out;
+}
+function num(x){
+if(typeof x==='number'&&isFinite(x))return x;
+return null;
+}
+NS.Util={
+$:$,$$:$$,el:el,esc:esc,
+fmtNum:fmtNum,fmtMoney:fmtMoney,fmtInt:fmtInt,fmtBytes:fmtBytes,
+fmtPct:fmtPct,fmtClock:fmtClock,fmtDate:fmtDate,fmtDuration:fmtDuration,pad2:pad2,
+mulberry32:mulberry32,cyrb53:cyrb53,hashStr:hashStr,randId:randId,
+clamp:clamp,lerp:lerp,deepCopy:deepCopy,num:num
+};
+})();
+</script>
+<script>(function(){
+'use strict';
+var NS=window.NovaOS=window.NovaOS||{};
+var Util=NS.Util;
+var QUARANTINE_KEY='novavista.quarantine.v1';
+var flags=[];
+var quarantined=false;
+var quarantinedAt=0;
+var lastNow=null;
+var tickCount=0;
+var randomWarning=0;
+function readQuarantineFlag(){
+try{
+var raw=window.localStorage.getItem(QUARANTINE_KEY);
+if(raw){
+var o=JSON.parse(raw);
+if(o&&o.on){quarantined=true;quarantinedAt=o.at||Date.now();}
+}
+}catch(e){}
+}
+function now(){
+var t=Date.now();
+if(lastNow!==null&&t<lastNow-4000){
+flag('Retroceso de reloj detectado');
+}
+if(t>=lastNow)lastNow=t;
+return t;
+}
+function flag(reason){
+if(flags.indexOf(reason)===-1)flags.push(reason);
+}
+function quarantine(reason){
+if(quarantined)return;
+quarantined=true;
+quarantinedAt=Date.now();
+flag(reason);
+try{
+window.localStorage.setItem(QUARANTINE_KEY,JSON.stringify({on:true,at:quarantinedAt,why:reason}));
+}catch(e){}
+NS.Event&&NS.Event.fire&&NS.Event.fire('quarantine',reason);
+}
+function clearQuarantine(){
+quarantined=false;
+quarantinedAt=0;
+try{window.localStorage.removeItem(QUARANTINE_KEY);}catch(e){}
+}
+function isQuarantined(){return quarantined;}
+function periodicChecks(){
+tickCount++;
+if(tickCount%5!==0)return;
+if(quarantined)return;
+
+var first=Math.random();
+var same=true;
+for(var i=0;i<5;i++){if(Math.random()!==first){same=false;break;}}
+if(same){
+randomWarning++;
+if(randomWarning>=2)quarantine('Se detectó una manipulación del generador aleatorio');
+}else randomWarning=0;
+
+try{
+var probe={};
+if(probe.hasOwnProperty('__proto__')&&probe['__proto__']!==Object.prototype){
+quarantine('Se detectó contaminación de prototipos');
+}
+}catch(e){}
+
+}
+function guardNum(v,name){
+var n=Util.num(v);
+if(n===null){
+flag('Valor corrupto en estado: '+name);
+return 0;
+}
+return n;
+}
+function validateDelta(dtMs){
+if(!isFinite(dtMs)||dtMs<0){flag('Delta de tiempo inválido');return 0;}
+if(dtMs>10000){
+
+
+if(dtMs>3600000)flag('Salto de tiempo anómalo entre ticks');
+return 10000;
+}
+return dtMs;
+}
+function sealApi(api){
+Object.keys(api).forEach(function(k){
+if(api[k]&&typeof api[k]==='object'&&!Object.isFrozen(api[k])){
+try{Object.freeze(api[k]);}catch(e){}
+}
+});
+try{Object.freeze(api);}catch(e){}
+return api;
+}
+readQuarantineFlag();
+NS.Sec=sealApi({
+now:now,
+flag:flag,
+quarantine:quarantine,
+clearQuarantine:clearQuarantine,
+isQuarantined:isQuarantined,
+quarantinedAt:function(){return quarantinedAt;},
+flags:function(){return flags.slice();},
+periodicChecks:periodicChecks,
+guardNum:guardNum,
+validateDelta:validateDelta,
+sealApi:sealApi
+});
+})();
+</script>
+<script>(function(){
+'use strict';
+var NS=window.NovaOS=window.NovaOS||{};
+var ctx=null;
+var enabled=true;
+var master=null;
+function ensure(){
+if(ctx)return true;
+try{
+var AC=window.AudioContext||window.webkitAudioContext;
+if(!AC)return false;
+ctx=new AC();
+master=ctx.createGain();
+master.gain.value=0.5;
+master.connect(ctx.destination);
+return true;
+}catch(e){return false;}
+}
+function tone(freq,dur,type,vol,delay,slide){
+if(!enabled||!ensure())return;
+try{
+var t0=ctx.currentTime+(delay||0);
+var osc=ctx.createOscillator();
+var g=ctx.createGain();
+osc.type=type||'square';
+osc.frequency.setValueAtTime(freq,t0);
+if(slide)osc.frequency.exponentialRampToValueAtTime(Math.max(20,slide),t0+dur);
+g.gain.setValueAtTime(0.0001,t0);
+g.gain.exponentialRampToValueAtTime(vol||0.12,t0+0.008);
+g.gain.exponentialRampToValueAtTime(0.0001,t0+dur);
+osc.connect(g);g.connect(master);
+osc.start(t0);osc.stop(t0+dur+0.05);
+}catch(e){}
+}
+var S={
+setEnabled:function(on){enabled=!!on;},
+isEnabled:function(){return enabled;},
+click:function(){tone(1400,0.03,'square',0.05);},
+tick:function(){tone(900,0.02,'square',0.03);},
+error:function(){tone(180,0.18,'sawtooth',0.1,0,120);tone(140,0.22,'sawtooth',0.08,0.05,90);},
+warn:function(){tone(520,0.22,'triangle',0.12);tone(520,0.22,'triangle',0.12,0.28);},
+ok:function(){tone(880,0.09,'square',0.08);tone(1320,0.12,'square',0.08,0.07);},
+cash:function(){tone(1040,0.06,'square',0.07);tone(1560,0.09,'square',0.07,0.05);},
+hack:function(){tone(220,0.05,'sawtooth',0.09);tone(330,0.05,'sawtooth',0.09,0.05);tone(495,0.05,'sawtooth',0.09,0.1);tone(660,0.09,'square',0.1,0.15);},
+trace:function(){tone(700,0.1,'triangle',0.12,0,1200);tone(700,0.1,'triangle',0.12,0.16,1400);},
+popup:function(){tone(600,0.08,'sine',0.1);tone(900,0.1,'sine',0.08,0.07);},
+notify:function(){tone(1250,0.09,'sine',0.09);tone(1250,0.09,'sine',0.09,0.13);},
+startup:function(){
+tone(523.25,0.14,'sine',0.16);tone(659.25,0.14,'sine',0.16,0.12);
+tone(783.99,0.14,'sine',0.16,0.24);tone(1046.5,0.5,'sine',0.2,0.36);
+},
+shutdown:function(){
+tone(1046.5,0.12,'sine',0.16);tone(783.99,0.12,'sine',0.16,0.12);
+tone(659.25,0.12,'sine',0.16,0.24);tone(523.25,0.4,'sine',0.16,0.36);
+},
+bootBeep:function(){tone(880,0.05,'square',0.06);}
+};
+NS.Audio=S;
+})();
+</script>
+<script>(function(){
+'use strict';
+var NS=window.NovaOS=window.NovaOS||{};
+var UPGRADES={
+'b-rate':{name:'Mejora de intereses',desc:'El banco paga intereses x2,5 más altos.',cat:'banco',base:300,mult:3.2,max:25,icon:'ic-chart'},
+'b-cd':{name:'Certificado de depósito',desc:'Interés adicional x2 sobre el saldo.',cat:'banco',base:3200,mult:4.0,max:15,icon:'ic-bank'},
+'b-off':{name:'Cuenta offshore',desc:'+0,02 %/s de interés fijo extra.',cat:'banco',base:24000,mult:5.2,max:10,icon:'ic-lock'},
+'s-post':{name:'Cámara digital de 3 MP',desc:'Cada publicación genera el doble de seguidores.',cat:'social',base:250,mult:3.0,max:20,icon:'ic-social'},
+'s-ad':{name:'Agencia de anuncios',desc:'Los seguidores generan el doble de ingresos.',cat:'social',base:1800,mult:3.6,max:15,icon:'ic-chart'},
+'s-vrf':{name:'Chapa verificada',desc:'+15 % de crecimiento de seguidores por segundo.',cat:'social',base:9000,mult:4.2,max:10,icon:'ic-star'},
+'b-count':{name:'Bot zombie',desc:'Añade un bot a tu botnet.',cat:'bots',base:2200,mult:2.1,max:120,icon:'ic-bot'},
+'b-rig':{name:'Granja de minería',desc:'Cada bot mina el doble de NovaCoins.',cat:'bots',base:14000,mult:4.4,max:12,icon:'ic-gear'},
+'d-price':{name:'Acuerdo de datos',desc:'Vendes los datos al doble de precio.',cat:'datos',base:1200,mult:3.4,max:15,icon:'ic-files'},
+'d-cap':{name:'Disco duro mayor',desc:'+500 MB de almacenamiento de datos.',cat:'datos',base:900,mult:2.6,max:60,icon:'ic-computer'},
+'e-max':{name:'Memoria RAM extra',desc:'+1 de energía máxima.',cat:'rig',base:3500,mult:3.1,max:20,icon:'ic-hacker'},
+'e-regen':{name:'Disipador térmico',desc:'La energía se regenera x1,5 más rápido.',cat:'rig',base:6000,mult:3.6,max:12,icon:'ic-settings'},
+'av-level':{name:'Motor de antivirus',desc:'Mejora la detección de amenazas.',cat:'av',base:500,mult:3.5,max:10,icon:'ic-shield'},
+'av-fw':{name:'Cortafuegos',desc:'Bloquea más tráfico malicioso.',cat:'av',base:400,mult:3.5,max:10,icon:'ic-lock'}
+};
+var IMPLANTS={
+'i-energy':{name:'Núcleo de energía',desc:'+1 de energía máxima (base 12).',base:5,mult:2.2,max:25,icon:'ic-hacker'},
+'i-stealth':{name:'Camuflaje digital',desc:'-4 % de rastro acumulado por acción.',base:6,mult:2.3,max:15,icon:'ic-wifi'},
+'i-cpu':{name:'CPU overclockeada',desc:'+12 % de éxito al usar crack.',base:6,mult:2.2,max:15,icon:'ic-computer'},
+'i-loot':{name:'Aumento de botín',desc:'+10 % de datos y dinero por asalto.',base:6,mult:2.2,max:15,icon:'ic-coin'},
+'i-income':{name:'Flujo en la sombra',desc:'+5 % de todos los ingresos pasivos.',base:8,mult:2.4,max:20,icon:'ic-chart'},
+'i-tools':{name:'Botín tecnológico',desc:'+4 % de probabilidad de herramienta.',base:7,mult:2.3,max:15,icon:'ic-key'},
+'i-start':{name:'Kit de inicio',desc:'Empiezas cada asalto con una herramienta.',base:12,mult:2.6,max:8,icon:'ic-download'}
+};
+var TOOLS={
+'exploit':{name:'Kit de explotación',desc:'Elimina 1 capa de firewall al instante.',price:400,icon:'ic-key'},
+'proxy':{name:'Servidor proxy',desc:'Reduce tu rastro a la mitad (uso: proxy).',price:250,icon:'ic-wifi'},
+'worm':{name:'Gusano',desc:'Recuperas +8 de energía.',price:300,icon:'ic-bot'},
+'icmp':{name:'Túnel ICMP',desc:'Revela todas las conexiones del mapa.',price:200,icon:'ic-net'},
+'payload':{name:'Payload cifrado',desc:'+40 % de datos al drenar el nodo objetivo.',price:350,icon:'ic-download'},
+'decrypt':{name:'Descifrador',desc:'Revela una vulnerabilidad extra del nodo.',price:300,icon:'ic-lock'}
+};
+var WALLPAPERS=[
+{id:'bliss',name:'Colinas de la felicidad'},
+{id:'nova',name:'Azul Nova'},
+{id:'grid',name:'Malla del sistema'},
+{id:'sunset',name:'Atardecer digital'},
+{id:'fractal',name:'Fractal 2004'}
+];
+var THEMES=[
+{id:'luna',name:'Luna (azul)'},
+{id:'olive',name:'Oliva (verde)'},
+{id:'silver',name:'Plata'}
+];
+var MALWARE=[
+{id:'trojan',name:'Caballo de Troya',threat:4,desc:'Un archivo infectado entró por el correo.',loss:'cash'},
+{id:'phish',name:'Página de phishing',threat:3,desc:'Un sitio falso intenta robarte la contraseña.',loss:'cash'},
+{id:'portscan',name:'Escaneo de puertos',threat:5,desc:'Alguien sondea tus puertos en busca de huecos.',loss:'data'},
+{id:'botnet',name:'Reclutamiento botnet',threat:6,desc:'Un botnet intenta tomar el control de tu PC.',loss:'income'},
+{id:'worm',name:'Gusano de red',threat:7,desc:'Un gusano se propaga por tu red local.',loss:'data'},
+{id:'rootkit',name:'Rootkit sigiloso',threat:8,desc:'Algo se escondió en el núcleo del sistema.',loss:'cash'}
+];
+var QUESTS=[
+{id:'q-first',title:'Primer asalto',desc:'Drena un nodo en el mapa de red.',check:function(s){return s.stats.nodesDrained;},target:1,reward:3,type:'coins'},
+{id:'q-5nodes',title:'Cazador de nodos',desc:'Drena 5 nodos en total.',check:function(s){return s.stats.nodesDrained;},target:5,reward:6,type:'coins'},
+{id:'q-boss',title:'Rey del servidor',desc:'Drena el MasterServer de un asalto.',check:function(s){return s.stats.bossesDrained;},target:1,reward:10,type:'coins'},
+{id:'q-500',title:'Fama incipiente',desc:'Alcanza 500 seguidores en MyNova.',check:function(s){return s.social.followers;},target:500,reward:3,type:'coins'},
+{id:'q-5k',title:'Estrella del foro',desc:'Alcanza 5.000 seguidores.',check:function(s){return s.social.followers;},target:5000,reward:8,type:'coins'},
+{id:'q-bank10k',title:'Cuenta saneada',desc:'Ten 10.000 $ en el banco.',check:function(s){return s.bank.balance;},target:10000,reward:4,type:'coins'},
+{id:'q-bank100k',title:'Capitalista',desc:'Ten 100.000 $ en el banco.',check:function(s){return s.bank.balance;},target:100000,reward:10,type:'coins'},
+{id:'q-data',title:'Traficante',desc:'Vende 1 GB de datos en total.',check:function(s){return s.broker.dataSold;},target:1024,reward:5,type:'coins'},
+{id:'q-bots',title:'Dueño de botnet',desc:'Ten 5 bots minando NovaCoins.',check:function(s){return s.bots.count;},target:5,reward:5,type:'coins'},
+{id:'q-coins',title:'Acumulador',desc:'Acumula 25 NovaCoins en tu cartera.',check:function(s){return s.currencies.novaCoins;},target:25,reward:8,type:'coins'},
+{id:'q-lvl10',title:'Veterano',desc:'Alcanza el nivel 10 de hacker.',check:function(s){return s.currencies.level;},target:10,reward:8,type:'coins'},
+{id:'q-malware',title:'Bombero digital',desc:'Detén 5 amenazas con NovaShield.',check:function(s){return s.av.malwareStopped;},target:5,reward:4,type:'coins'}
+];
+function upgradeCost(def,lvl){return Math.floor(def.base*Math.pow(def.mult,lvl));}
+function implantCost(def,lvl){return Math.floor(def.base*Math.pow(def.mult,lvl));}
+NS.Catalog={
+UPGRADES:UPGRADES,IMPLANTS:IMPLANTS,TOOLS:TOOLS,
+WALLPAPERS:WALLPAPERS,THEMES:THEMES,MALWARE:MALWARE,QUESTS:QUESTS,
+upgradeCost:upgradeCost,implantCost:implantCost
+};
+})();
+</script>
+<script>(function(){
+'use strict';
+var NS=window.NovaOS=window.NovaOS||{};
+var Util=NS.Util;
+var SAVE_KEY='novavista.save.v2';
+var BACKUP_KEY='novavista.backup.v2';
+var SALT_KEY='novavista.salt.v2';
+var store=null;
+try{
+store=window.localStorage;
+
+var probe='__nv_test__';
+store.setItem(probe,'1');
+store.removeItem(probe);
+}catch(e){store=null;}
+function hasStore(){return!!store;}
+function getSalt(){
+if(!store)return'sin-storage';
+var s=null;
+try{s=store.getItem(SALT_KEY);}catch(e){}
+if(!s){
+var entropy=String(Date.now())+'|'+String(Math.random())+
+(typeof navigator!=='undefined'?navigator.userAgent:'nv')+'|'+String(Math.random());
+s=Util.hashStr(entropy)+Util.cyrb53(entropy,0x5eed).toString(36);
+try{store.setItem(SALT_KEY,s);}catch(e){}
+}
+return s;
+}
+function sign(payload){
+
+var a=Util.hashStr(payload+'::'+getSalt());
+var b=Util.hashStr(payload.split('').reverse().join('')+'::'+getSalt());
+return a+b;
+}
+function verify(payload,sig){
+var a=Util.hashStr(payload+'::'+getSalt());
+var b=Util.hashStr(payload.split('').reverse().join('')+'::'+getSalt());
+var expect=a+b;
+if(expect.length!==sig.length)return false;
+
+var diff=0;
+for(var i=0;i<expect.length;i++)diff|=expect.charCodeAt(i)^sig.charCodeAt(i);
+return diff===0;
+}
+function structuralCheck(o){
+if(!o||typeof o!=='object')return false;
+var need=['meta','profile','settings','currencies','bank','social','bots','broker','data','upg','inventory','av','quests','events','stats'];
+for(var i=0;i<need.length;i++)if(!o[need[i]])return false;
+if(!o.meta.installId)return false;
+var c=o.currencies;
+if(!isFinite(c.cash)||!isFinite(c.novaCoins)||!isFinite(c.xp)||!isFinite(c.energy)||!isFinite(c.maxEnergy))return false;
+if(c.cash<0||c.novaCoins<0||c.xp<0||c.energy<0||c.maxEnergy<1)return false;
+if(!isFinite(o.bank.balance)||o.bank.balance<0)return false;
+if(!isFinite(o.data.mb)||o.data.mb<0)return false;
+if(typeof o.upg!=='object'||typeof o.inventory.tools!=='object')return false;
+return true;
+}
+function save(state){
+if(!hasStore())return false;
+try{
+var payload=JSON.stringify(state);
+var full=JSON.stringify({d:payload,h:sign(payload)});
+
+var prev=store.getItem(SAVE_KEY);
+if(prev)store.setItem(BACKUP_KEY,prev);
+store.setItem(SAVE_KEY,full);
+return true;
+}catch(e){return false;}
+}
+function load(){
+if(!hasStore())return{ok:false,error:'Sin almacenamiento disponible.'};
+var raw=null;
+try{raw=store.getItem(SAVE_KEY);}catch(e){}
+if(!raw)return{ok:false,error:'Sin partida guardada.'};
+try{
+var box=JSON.parse(raw);
+if(!box||typeof box.d!=='string'||typeof box.h!=='string'){
+return{ok:false,tampered:true,error:'Guardado malformado.'};
+}
+if(!verify(box.d,box.h)){
+return{ok:false,tampered:true,error:'La firma de integridad no coincide (guardado editado o corrupto).'};
+}
+var state=JSON.parse(box.d);
+if(!structuralCheck(state)){
+return{ok:false,tampered:true,error:'El estado no pasa la validación estructural.'};
+}
+return{ok:true,state:state};
+}catch(e){
+return{ok:false,tampered:true,error:'Guardado ilegible.'};
+}
+}
+function loadBackup(){
+if(!hasStore())return null;
+try{
+var raw=store.getItem(BACKUP_KEY);
+if(!raw)return null;
+var box=JSON.parse(raw);
+if(!box||!verify(box.d,box.h))return null;
+var state=JSON.parse(box.d);
+return structuralCheck(state)?state:null;
+}catch(e){return null;}
+}
+function wipe(){
+if(!hasStore())return;
+try{store.removeItem(SAVE_KEY);store.removeItem(BACKUP_KEY);}catch(e){}
+}
+function exportSave(state){
+var payload=JSON.stringify(state);
+var full=JSON.stringify({d:payload,h:sign(payload)});
+try{
+return btoa(unescape(encodeURIComponent(full)));
+}catch(e){return null;}
+}
+function importSave(text){
+if(!text||typeof text!=='string')return{ok:false,error:'Texto vacío.'};
+try{
+var full=decodeURIComponent(escape(atob(text.replace(/\s+/g,''))));
+var box=JSON.parse(full);
+if(!box||typeof box.d!=='string'||typeof box.h!=='string'){
+return{ok:false,error:'Código de importación malformado.'};
+}
+if(!verify(box.d,box.h)){
+return{ok:false,error:'La firma de integridad no es válida para esta instalación.'};
+}
+var state=JSON.parse(box.d);
+if(!structuralCheck(state))return{ok:false,error:'Estado no válido.'};
+return{ok:true,state:state};
+}catch(e){
+return{ok:false,error:'No se pudo interpretar el código.'};
+}
+}
+NS.Save={
+hasStore:hasStore,
+save:save,
+load:load,
+loadBackup:loadBackup,
+wipe:wipe,
+exportSave:exportSave,
+importSave:importSave,
+sign:sign
+};
+})();
+</script>
+<script>(function(){
+'use strict';
+var NS=window.NovaOS=window.NovaOS||{};
+var Util=NS.Util;
+var Sec=NS.Sec;
+var Cat=NS.Catalog;
+var S=null;
+var lastTick=0;
+var hooks=[];
+var offlineApplied=false;
+function fresh(){
+return{
+meta:{
+version:2,
+installId:Util.hashStr(String(Date.now())+Math.random()),
+createdAt:Date.now(),lastSeen:Date.now(),bootCount:0,totalPlayMs:0,
+runsDone:0,runsTraced:0,nodesDrained:0,bossesDrained:0,
+allTimeCoins:0,legacy:0,formatsDone:0,threatsStopped:0
+},
+profile:{name:'Usuario',avatar:0},
+settings:{theme:'luna',wallpaper:'bliss',sound:true,notifs:true},
+currencies:{cash:50,novaCoins:0,xp:0,level:1,energy:12,maxEnergy:12,legacy:0},
+bank:{balance:50,loanDebt:0,totalInterest:0,price:12},
+social:{followers:0,lastPostAt:0,totalPosts:0,viralBest:0},
+bots:{count:0},
+broker:{priceLvl:0,dataSold:0},
+data:{mb:0,maxMB:2000},
+upg:{},
+inventory:{tools:{}},
+av:{level:1,firewall:1,malwareStopped:0,lastScanAt:0},
+run:null,
+quests:{},
+events:{nextMalwareAt:0,nextAdAt:0},
+browser:{impressions:0,auto:0,clicks:0},
+stats:{clicks:0,posts:0,hacks:0,traces:0,offlineSessions:0}
+};
+}
+function emit(type,payload){
+hooks.forEach(function(h){try{h(type,payload);}catch(e){}});
+}
+function on(hook){hooks.push(hook);}
+function upg(id){return S.upg[id]||0;}
+function incomeMult(){
+var m=1;
+m*=1+0.02*S.currencies.level;
+m*=1+0.03*S.currencies.legacy;
+m*=1+0.05*upg('i-income');
+return m;
+}
+function bankRate(){
+var r=0.0004*Math.pow(2.5,upg('b-rate'))*Math.pow(2,upg('b-cd'))+0.0002*upg('b-off');
+return r*incomeMult();
+}
+function socialAdRate(){return 0.004*Math.pow(2,upg('s-ad'))*incomeMult();}
+function followerGrowthRate(){return 0.0015*upg('s-vrf')*incomeMult();}
+function botCoinRate(){return S.bots.count*0.002*Math.pow(2,upg('b-rig'))*incomeMult();}
+function energyRegen(){return 0.125*Math.pow(1.5,upg('e-regen'));}
+function maxEnergy(){return 12+upg('e-max')+upg('i-energy');}
+function dataPrice(){return 10*Math.pow(2,upg('d-price'))*incomeMult();}
+function xpForLevel(l){return Math.floor(40*Math.pow(l,1.5));}
+function legacyForCoins(c){return Math.floor(10*Math.sqrt(Math.max(0,c)));}
+function addCash(n){
+n=Sec.guardNum(n,'addCash');
+if(n===0)return;
+S.currencies.cash+=n;
+if(S.currencies.cash<0){Sec.quarantine('Saldo negativo inválido');S.currencies.cash=0;}
+}
+function spendCash(n){
+n=Sec.guardNum(n,'spendCash');
+if(n<0||S.currencies.cash<n)return false;
+S.currencies.cash-=n;
+return true;
+}
+function addCoins(n){
+n=Sec.guardNum(n,'addCoins');
+if(n<=0)return;
+S.currencies.novaCoins+=n;
+S.meta.allTimeCoins+=n;
+}
+function spendCoins(n){
+n=Sec.guardNum(n,'spendCoins');
+if(n<0||S.currencies.novaCoins<n)return false;
+S.currencies.novaCoins-=n;
+return true;
+}
+function addXP(n){
+n=Sec.guardNum(n,'addXP');
+if(n<=0)return;
+S.currencies.xp+=n;
+while(S.currencies.xp>=xpForLevel(S.currencies.level+1)){
+S.currencies.level++;
+emit('levelup',{level:S.currencies.level});
+}
+}
+function addEnergy(n){
+n=Sec.guardNum(n,'addEnergy');
+if(n<=0)return;
+S.currencies.energy=Math.min(maxEnergy(),S.currencies.energy+n);
+}
+function spendEnergy(n){
+n=Sec.guardNum(n,'spendEnergy');
+if(n<0||S.currencies.energy<n)return false;
+S.currencies.energy-=n;
+return true;
+}
+function addFollowers(n){
+n=Sec.guardNum(n,'addFollowers');
+if(n<=0)return;
+S.social.followers+=n;
+}
+function addDataMB(n){
+n=Sec.guardNum(n,'addDataMB');
+if(n<=0)return;
+var free=S.data.maxMB-S.data.mb;
+var added=Math.min(n,free);
+S.data.mb+=added;
+if(added<n)emit('dataOverflow',{lost:n-added});
+return added;
+}
+function sellDataMB(n){
+n=Sec.guardNum(n,'sellDataMB');
+if(n<=0)return 0;
+var real=Math.min(n,S.data.mb);
+if(real<=0)return 0;
+S.data.mb-=real;
+addCash(real*dataPrice());
+S.broker.dataSold+=real;
+return real;
+}
+function buyUpgrade(id){
+var def=Cat.UPGRADES[id];
+if(!def)return{ok:false,why:'inexistente'};
+var lvl=upg(id);
+if(lvl>=def.max)return{ok:false,why:'max'};
+var cost=Cat.upgradeCost(def,lvl);
+if(!spendCash(cost))return{ok:false,why:'dinero'};
+S.upg[id]=lvl+1;
+emit('upgrade',{id:id,lvl:S.upg[id]});
+return{ok:true};
+}
+function buyImplant(id){
+var def=Cat.IMPLANTS[id];
+if(!def)return{ok:false,why:'inexistente'};
+var lvl=upg(id);
+if(lvl>=def.max)return{ok:false,why:'max'};
+var cost=Cat.implantCost(def,lvl);
+if(!spendCoins(cost))return{ok:false,why:'coins'};
+S.upg[id]=lvl+1;
+emit('upgrade',{id:id,lvl:S.upg[id]});
+return{ok:true};
+}
+function buyTool(id,qty){
+var def=Cat.TOOLS[id];
+if(!def)return{ok:false,why:'inexistente'};
+qty=Sec.guardNum(qty||1,'buyTool')||1;
+qty=Math.max(1,Math.min(99,Math.floor(qty)));
+var cost=def.price*qty;
+if(!spendCash(cost))return{ok:false,why:'dinero'};
+S.inventory.tools[id]=(S.inventory.tools[id]||0)+qty;
+emit('tool',{id:id,qty:S.inventory.tools[id]});
+return{ok:true};
+}
+function useTool(id){
+if((S.inventory.tools[id]||0)<=0)return false;
+S.inventory.tools[id]--;
+return true;
+}
+function loanTake(amount){
+amount=Sec.guardNum(amount,'loanTake');
+if(amount<100)return{ok:false};
+S.bank.loanDebt+=amount;
+addCash(amount);
+emit('loan',{debt:S.bank.loanDebt});
+return{ok:true};
+}
+function loanRepay(){
+var debt=S.bank.loanDebt;
+if(debt<=0)return{ok:false};
+if(S.currencies.cash<debt)return{ok:false,why:'dinero'};
+spendCash(debt);
+S.bank.loanDebt=0;
+return{ok:true};
+}
+function stepCoinPrice(dtMs){
+
+var p=S.bank.price;
+var drift=(Math.random()-0.5)*0.6*(dtMs/60000);
+p+=drift;
+if(Math.random()<0.03*(dtMs/60000))p+=(Math.random()-0.5)*8;
+S.bank.price=Math.round(Util.clamp(p,6,60)*100)/100;
+}
+function buyCoins(amount){
+var cost=amount*S.bank.price;
+if(!spendCash(cost))return{ok:false,why:'dinero'};
+addCoins(amount);
+return{ok:true};
+}
+function sellCoins(amount){
+var rate=S.bank.price*0.85;
+amount=Math.min(amount,S.currencies.novaCoins);
+if(amount<=0)return{ok:false,why:'coins'};
+addCash(amount*rate);
+S.currencies.novaCoins-=amount;
+return{ok:true};
+}
+function makePost(){
+var base=8*Math.pow(2,upg('s-post'));
+var viral=0.5+Math.random()*1.2;
+var burst=Math.floor(base*viral*(2+upg('s-vrf')*0.3));
+addFollowers(burst);
+S.social.totalPosts++;
+S.social.lastPostAt=Sec.now();
+S.social.viralBest=Math.max(S.social.viralBest,viral);
+S.stats.posts++;
+emit('post',{gained:burst,viral:viral});
+return burst;
+}
+function tick(dtMs){
+dtMs=Sec.validateDelta(dtMs);
+if(dtMs<=0)return;
+var dt=dtMs/1000;
+
+var interest=S.bank.balance*bankRate()*dt;
+if(interest>0){S.bank.balance+=interest;S.bank.totalInterest+=interest;}
+
+var adRev=S.social.followers*socialAdRate()*dt;
+if(adRev>0)addCash(adRev);
+var growth=S.social.followers*followerGrowthRate()*dt;
+if(growth>0)S.social.followers+=growth;
+
+var coins=botCoinRate()*dt;
+if(coins>0)addCoins(coins);
+
+S.currencies.energy=Math.min(maxEnergy(),S.currencies.energy+energyRegen()*dt);
+
+if(S.bank.loanDebt>0)S.bank.loanDebt+=S.bank.loanDebt*0.00005*dt;
+
+stepCoinPrice(dtMs);
+
+var now=Sec.now();
+if(!S.events.nextMalwareAt)S.events.nextMalwareAt=now+90000;
+if(now>=S.events.nextMalwareAt){
+S.events.nextMalwareAt=now+(150000+Math.random()*200000);
+emit('malware');
+}
+if(!S.events.nextAdAt)S.events.nextAdAt=now+60000;
+if(now>=S.events.nextAdAt){
+S.events.nextAdAt=now+(60000+Math.random()*90000);
+emit('ad');
+}
+S.meta.totalPlayMs+=dtMs;
+S.meta.lastSeen=now;
+lastTick=now;
+}
+function offline(deltaMs){
+if(offlineApplied)return 0;
+offlineApplied=true;
+if(Sec.isQuarantined())return 0;
+deltaMs=Sec.guardNum(deltaMs,'offline');
+var cap=8*3600*1000;
+var real=Math.min(Math.max(0,deltaMs),cap);
+if(real<60000)return 0;
+var dt=real/1000*0.5;
+var gained={cash:0,coins:0,followers:0,interest:0};
+gained.interest=S.bank.balance*bankRate()*dt;
+S.bank.balance+=gained.interest;
+gained.cash=S.social.followers*socialAdRate()*dt;
+addCash(gained.cash);
+var g=S.social.followers*followerGrowthRate()*dt;
+S.social.followers+=g;gained.followers=g;
+gained.coins=botCoinRate()*dt;
+addCoins(gained.coins);
+S.currencies.energy=Math.min(maxEnergy(),S.currencies.energy+maxEnergy()*0.3);
+S.stats.offlineSessions++;
+emit('offline',gained);
+return real;
+}
+function format(){
+var grant=legacyForCoins(S.meta.allTimeCoins)-S.currencies.legacy;
+if(grant<=0)return{ok:false,why:'sin-legado'};
+var keep={
+meta:S.meta,profile:S.profile,settings:S.settings,
+stats:S.stats
+};
+S=fresh();
+
+S.meta=keep.meta;
+S.meta.formatsDone++;
+S.profile=keep.profile;
+S.settings=keep.settings;
+S.stats=keep.stats;
+S.currencies.legacy=keep.meta.legacy+grant;
+S.meta.legacy=S.currencies.legacy;
+S.bank.price=12;
+lastTick=Sec.now();
+emit('format',{grant:grant,legacy:S.currencies.legacy});
+return{ok:true,grant:grant};
+}
+function repair(o){
+
+o.currencies.maxEnergy=12+(o.upg['e-max']||0)+(o.upg['i-energy']||0);
+o.currencies.energy=Util.clamp(o.currencies.energy,0,o.currencies.maxEnergy);
+o.data.maxMB=2000+500*(o.upg['d-cap']||0);
+o.data.mb=Util.clamp(o.data.mb,0,o.data.maxMB);
+o.av.level=o.upg['av-level']||0;
+o.av.firewall=o.upg['av-fw']||0;
+if(!o.events.nextMalwareAt)o.events.nextMalwareAt=0;
+if(!o.browser)o.browser={impressions:0,auto:0,clicks:0};
+return o;
+}
+function loadGame(){
+var res=NS.Save.load();
+if(res.ok){
+S=repair(res.state);
+offlineApplied=false;
+lastTick=Sec.now();
+return{ok:true,restored:false};
+}
+if(res.tampered){
+var backup=NS.Save.loadBackup();
+if(backup){
+S=repair(backup);
+offlineApplied=false;
+lastTick=Sec.now();
+NS.Save.save(S);
+return{ok:true,restored:true};
+}
+
+S=fresh();
+Sec.quarantine('Guardado modificado detectado al cargar');
+lastTick=Sec.now();
+return{ok:true,fresh:true,quarantined:true};
+}
+S=fresh();
+lastTick=Sec.now();
+return{ok:true,fresh:true};
+}
+function newGame(){
+NS.Save.wipe();
+S=fresh();
+lastTick=Sec.now();
+offlineApplied=false;
+emit('reset');
+}
+function saveNow(){
+if(!S||Sec.isQuarantined())return false;
+S.meta.lastSeen=Sec.now();
+return NS.Save.save(S);
+}
+function get(){return S;}
+function snapshot(){return Util.deepCopy(S);}
+function verify(){
+if(!S||Sec.isQuarantined())return true;
+var c=S.currencies;
+var bad=function(v){return typeof v!=='number'||!isFinite(v)||v<0;};
+var ok=true;
+if(bad(c.cash)||bad(c.novaCoins)||bad(c.xp)||bad(c.energy)||bad(c.level))ok=false;
+if(c.level<1)ok=false;
+if(c.energy>maxEnergy()+0.5)ok=false;
+if(bad(S.bank.balance)||bad(S.bank.loanDebt))ok=false;
+if(S.bank.price<4||S.bank.price>62||!isFinite(S.bank.price))ok=false;
+if(bad(S.data.mb)||S.data.mb>S.data.maxMB+0.5)ok=false;
+if(bad(S.social.followers)||bad(S.bots.count))ok=false;
+Object.keys(S.inventory.tools).forEach(function(k){
+if(bad(S.inventory.tools[k]))ok=false;
+});
+Object.keys(S.upg).forEach(function(k){
+var v=S.upg[k];
+if(typeof v!=='number'||!isFinite(v)||v<0||v>100000||Math.floor(v)!==v)ok=false;
+});
+if(S.run){
+var r=S.run;
+if(bad(r.trace)||r.trace>100||bad(r.loot.data)||bad(r.loot.cash))ok=false;
+}
+if(!ok)Sec.quarantine('Estado manipulado en memoria (valores inválidos)');
+return ok;
+}
+S=fresh();
+NS.State={
+fresh:fresh,get:get,snapshot:snapshot,on:on,verify:verify,
+tick:tick,offline:offline,loadGame:loadGame,newGame:newGame,saveNow:saveNow,
+addCash:addCash,spendCash:spendCash,addCoins:addCoins,spendCoins:spendCoins,
+addXP:addXP,addEnergy:addEnergy,spendEnergy:spendEnergy,
+addFollowers:addFollowers,addDataMB:addDataMB,sellDataMB:sellDataMB,
+buyUpgrade:buyUpgrade,buyImplant:buyImplant,buyTool:buyTool,useTool:useTool,
+loanTake:loanTake,loanRepay:loanRepay,
+buyCoins:buyCoins,sellCoins:sellCoins,makePost:makePost,format:format,
+bankRate:bankRate,socialAdRate:socialAdRate,followerGrowthRate:followerGrowthRate,
+botCoinRate:botCoinRate,energyRegen:energyRegen,maxEnergy:maxEnergy,
+dataPrice:dataPrice,xpForLevel:xpForLevel,incomeMult:incomeMult
+};
+})();
+</script>
+<script>(function(){
+'use strict';
+var NS=window.NovaOS=window.NovaOS||{};
+var Util=NS.Util;
+var defs={};
+var wins={};
+var zCounter=100;
+var cascade=0;
+var drag=null;
+var appDefs={};
+var Apps={
+register:function(def){
+appDefs[def.id]=def;
+NS.WM.register(def);
+},
+list:function(){return Object.keys(appDefs).map(function(k){return appDefs[k];});},
+get:function(id){return appDefs[id];},
+desktop:function(){return Object.keys(appDefs).filter(function(k){return appDefs[k].desktop;}).map(function(k){return appDefs[k];});}
+};
+NS.Apps=Apps;
+function layer(){return Util.$('#windows-layer');}
+function register(def){
+def.single=def.single!==false;
+defs[def.id]=def;
+}
+function isOpen(id){return!!wins[id];}
+function open(id){
+var def=defs[id];
+if(!def)return null;
+if(def.single&&wins[id]){focus(id);return wins[id];}
+var win={def:def,minimized:false,maximized:false,rect:null};
+var dom=Util.el('div',{class:'window',id:'win-'+def.id});
+var tb=Util.el('div',{class:'win-titlebar'});
+var title=Util.el('div',{class:'wt-title'});
+var ico=Util.el('svg',{class:'icon'});
+ico.innerHTML='<use href="#'+def.icon+'"/>';
+title.appendChild(ico);
+title.appendChild(Util.el('span',{text:def.title}));
+var btns=Util.el('div',{class:'win-btns'});
+var bMin=Util.el('button',{class:'wc-min',text:'_',title:'Minimizar'});
+var bMax=Util.el('button',{class:'wc-max',text:'□',title:'Maximizar'});
+var bCls=Util.el('button',{class:'wc-close',text:'✕',title:'Cerrar'});
+bMin.addEventListener('click',function(e){e.stopPropagation();minimize(id);});
+bMax.addEventListener('click',function(e){e.stopPropagation();toggleMaximize(id);});
+bCls.addEventListener('click',function(e){e.stopPropagation();close(id);});
+btns.appendChild(bMin);btns.appendChild(bMax);btns.appendChild(bCls);
+tb.appendChild(title);tb.appendChild(btns);
+var body=Util.el('div',{class:'win-body'});
+dom.appendChild(tb);dom.appendChild(body);
+
+if(def.status){
+var sb=Util.el('div',{class:'win-statusbar'});
+sb.innerHTML='<span class="ws-status"></span><span style="flex:1"></span>';
+dom.appendChild(sb);
+win.statusbar=Util.$('.ws-status',sb);
+}
+layer().appendChild(dom);
+var w=Math.min(def.w||480,window.innerWidth-40);
+var h=Math.min(def.h||360,window.innerHeight-80);
+var x=def.x!==undefined?def.x:40+(cascade%8)*26;
+var y=def.y!==undefined?def.y:20+(cascade%8)*22;
+cascade++;
+dom.style.width=w+'px';
+dom.style.height=h+'px';
+dom.style.left=Math.max(0,x)+'px';
+dom.style.top=Math.max(0,y)+'px';
+wins[id]=win;win.dom=dom;win.body=body;
+dom.dataset.app=def.id;
+
+tb.addEventListener('mousedown',function(e){onDragStart(e,id,dom);});
+if(def.onOpen)def.onOpen(win);
+if(def.render)def.render(body,win);
+focus(id);
+refreshTaskbar();
+return win;
+}
+function onDragStart(e,id,dom){
+if(e.target.closest('.win-btns'))return;
+if(wins[id].maximized)return;
+focus(id);
+drag={
+id:id,dom:dom,
+dx:e.clientX-dom.offsetLeft,dy:e.clientY-dom.offsetTop,
+moved:false
+};
+document.addEventListener('mousemove',onDragMove);
+document.addEventListener('mouseup',onDragEnd);
+e.preventDefault();
+}
+function onDragMove(e){
+if(!drag)return;
+drag.moved=true;
+var x=Util.clamp(e.clientX-drag.dx,-200,window.innerWidth-40);
+var y=Util.clamp(e.clientY-drag.dy,0,window.innerHeight-60);
+drag.dom.style.left=x+'px';
+drag.dom.style.top=y+'px';
+}
+function onDragEnd(){
+drag=null;
+document.removeEventListener('mousemove',onDragMove);
+document.removeEventListener('mouseup',onDragEnd);
+}
+function focus(id){
+var win=wins[id];
+if(!win)return;
+zCounter++;
+win.dom.style.zIndex=zCounter;
+Object.keys(wins).forEach(function(k){
+wins[k].dom.classList.toggle('focused',k===id);
+});
+if(win.minimized){win.minimized=false;win.dom.classList.remove('minimized');win.dom.style.display='';}
+refreshTaskbar();
+}
+function minimize(id){
+var win=wins[id];
+if(!win)return;
+win.minimized=true;
+win.dom.style.display='none';
+refreshTaskbar();
+}
+function toggleMaximize(id){
+var win=wins[id];
+if(!win)return;
+if(!win.maximized){
+win.rect={w:win.dom.style.width,h:win.dom.style.height,l:win.dom.style.left,t:win.dom.style.top};
+win.dom.classList.add('maximized');
+win.dom.style.width='100%';
+win.dom.style.height='calc(100% - 0px)';
+win.dom.style.left='0';
+win.dom.style.top='0';
+win.maximized=true;
+}else{
+win.dom.classList.remove('maximized');
+win.dom.style.width=win.rect.w;win.dom.style.height=win.rect.h;
+win.dom.style.left=win.rect.l;win.dom.style.top=win.rect.t;
+win.maximized=false;
+}
+}
+function close(id){
+var win=wins[id];
+if(!win)return;
+if(win.def.onClose){try{win.def.onClose(win);}catch(e){}}
+if(win.dom.parentNode)win.dom.parentNode.removeChild(win.dom);
+delete wins[id];
+refreshTaskbar();
+}
+function rerender(id){
+var win=wins[id];
+if(!win)return;
+win.body.innerHTML='';
+if(win.def.render)win.def.render(win.body,win);
+}
+function refreshTaskbar(){
+if(NS.Taskbar)NS.Taskbar.refresh();
+}
+function tickAll(){
+Object.keys(wins).forEach(function(id){
+var win=wins[id];
+if(!win||win.minimized)return;
+var def=win.def;
+if(def.tick){try{def.tick(win);}catch(e){}}
+if(def.status&&win.statusbar){
+var txt=def.status(NS.State.get());
+win.statusbar.textContent=txt===undefined?'':txt;
+}
+});
+}
+function openDefs(){return defs;}
+function openList(){
+return Object.keys(wins).map(function(id){
+return{id:id,win:wins[id],def:defs[id]};
+});
+}
+NS.WM={
+register:register,open:open,close:close,focus:focus,
+minimize:minimize,toggleMaximize:toggleMaximize,rerender:rerender,
+isOpen:isOpen,openDefs:openDefs,openList:openList,
+tickAll:tickAll,layer:layer
+};
+})();
+</script>
+<script>(function(){
+'use strict';
+var NS=window.NovaOS=window.NovaOS||{};
+var Util=NS.Util;
+var malwareBusy=false;
+var lastThreat=null;
+function pickMalware(){
+var list=NS.Catalog.MALWARE;
+return list[Math.floor(Math.random()*list.length)];
+}
+function threatLevel(mw){
+
+var s=NS.State.get();
+return 2+(s.upg['av-level']||0)+(s.upg['av-fw']||0);
+}
+function resolveMalware(mw){
+var s=NS.State.get();
+var prot=threatLevel(mw);
+var chance=Util.clamp(0.25+prot*0.075,0,0.95);
+var success=Math.random()<chance;
+var UI=NS.UI;
+if(success){
+s.av.malwareStopped++;
+s.meta.threatsStopped++;
+NS.State.addXP(6+prot*2);
+if(UI)UI.toast('Amenaza neutralizada','NovaShield bloqueó «'+mw.name+'» ('+Math.round(chance*100)+' % de éxito).','good','ic-shield');
+NS.Audio.ok();
+}else{
+s.stats.traces=(s.stats.traces||0)+1;
+var lossCash=0;
+if(mw.loss==='cash')lossCash=s.currencies.cash*(0.04+Math.random()*0.06);
+else if(mw.loss==='data'){
+var lossData=s.data.mb*(0.1+Math.random()*0.15);
+s.data.mb=Math.max(0,s.data.mb-lossData);
+}else{
+lossCash=s.currencies.cash*0.05;
+}
+if(lossCash>0){
+s.currencies.cash=Math.max(0,s.currencies.cash-lossCash);
+NS.State.addXP(1);
+}
+if(UI)UI.toast('¡Infección!','«'+mw.name+'» superó tus defensas'+(lossCash>0?' y te costó '+Util.fmtMoney(lossCash):' y borró parte de tus datos')+'. Mejora NovaShield.','important','ic-shield-bad');
+NS.Audio.warn();
+}
+malwareBusy=false;
+}
+function onMalware(){
+if(malwareBusy)return;
+if(NS.Sec.isQuarantined())return;
+var mw=pickMalware();
+lastThreat=mw;
+malwareBusy=true;
+var UI=NS.UI;
+NS.Audio.warn();
+if(!UI||!UI.dialog){resolveMalware(mw);return;}
+var s=NS.State.get();
+var prot=threatLevel(mw);
+var chance=Util.clamp(0.25+prot*0.075,0,0.95);
+UI.dialog({
+title:'¡Amenaza detectada!',
+icon:'ic-shield-bad',
+message:'NovaShield ha interceptado: <b>'+Util.esc(mw.name)+'</b><br><br>'+
+Util.esc(mw.desc)+'<br><br>Protección actual: <b>'+prot+'</b> — Probabilidad de bloquearlo: <b>'+Math.round(chance*100)+' %</b>',
+buttons:[
+{label:'Ejecutar NovaShield',value:'go',primary:true},
+{label:'Ignorar',value:'ignore'}
+]
+}).then(function(v){
+if(v==='go')resolveMalware(mw);
+else{
+
+if(Math.random()<0.15){resolveMalware(mw);}
+else{
+malwareBusy=false;
+var s2=NS.State.get();
+var l=s2.currencies.cash*0.03;
+s2.currencies.cash=Math.max(0,s2.currencies.cash-l);
+if(UI)UI.toast('Sistema comprometido','Ignoraste la amenaza y perdiste '+Util.fmtMoney(l)+'.','important','ic-warning');
+}
+}
+});
+}
+function onAd(){
+var UI=NS.UI;
+if(!UI)return;
+var gifts=['¡Has ganado un cupón de 5 $!','¡Descarga gratis el protector de pantalla!','¡Tu PC está en riesgo! ¡Limpia YA!','¡Conoce a nuevas personas en NovaChat!','¡Internet Explorer es lento! ¡Prueba NovaSurf!'];
+var g=gifts[Math.floor(Math.random()*gifts.length)];
+UI.toast('Anuncio emergente',g+' <span style="color:#888">(ventana emergente)</span>','ad','ic-info');
+}
+function hook(type,payload){
+var UI=NS.UI;
+switch(type){
+case'malware':onMalware();break;
+case'ad':onAd();break;
+case'levelup':
+if(UI)UI.toast('¡Nivel '+payload.level+'!','Tu habilidad de hacker aumenta. +2 % de ingresos por nivel.','good','ic-star');
+NS.Audio.ok();
+break;
+case'offline':
+if(UI)UI.toast('Informe de ausencia','Mientras no estabas: '+Util.fmtMoney(payload.interest)+' de intereses, '+Util.fmtMoney(payload.cash)+' de publicidad y '+payload.coins.toFixed(3).replace('.',',')+' NovaCoins minados.','good','ic-info');
+NS.Audio.notify();
+break;
+case'dataOverflow':
+if(UI)UI.toast('Disco lleno','No cabían '+Util.fmtBytes(payload.lost*1024*1024)+' de datos. Vende datos en Mis Archivos.','important','ic-warning');
+break;
+case'format':
+if(UI)UI.toast('Formato completado','Tu legado crece: +'+payload.grant+' puntos de legado (+3 % de ingresos cada uno).','good','ic-gear');
+NS.Audio.startup();
+break;
+case'quarantine':
+if(UI)UI.toast('¡Integridad comprometida!','Se detectó una manipulación del juego. El sistema entra en CUARENTENA: no se guardará el progreso hasta restaurar.','important','ic-error');
+NS.Audio.error();
+break;
+case'upgrade':
+NS.Audio.cash();
+break;
+case'post':
+if(payload&&payload.gained>0)NS.Audio.cash();
+break;
+}
+}
+function init(){
+NS.State.on(hook);
+}
+NS.Event={init:init,fire:hook,lastThreat:function(){return lastThreat;}};
+})();
+</script>
+<script>(function(){
+'use strict';
+var NS=window.NovaOS=window.NovaOS||{};
+var BIOS_LINES=[
+['NovaVista 2004 Edition — BIOS v2.04','b-ok'],
+['Copyright (C) 2004 NovaCorp Systems, Ltd.',''],
+['',''],
+['CPU: Pentium IV 2.4 GHz','b-ok'],
+['Memoria: 256 MB DDR (comprobando...)  OK','b-ok'],
+['Disco: 40 GB ATA 100  OK','b-ok'],
+['Tarjeta de red: Realtek RTL8139  OK','b-ok'],
+['Módem: 56K V.92  detectado','b-warn'],
+['Detectando dispositivos IDE...  OK','b-ok'],
+['Detectando unidades USB...  ninguna','b-warn'],
+['',''],
+['Iniciando NovaVista 2004...','b-ok']
+];
+var booting=false;
+var bootDone=false;
+function setBootVis(vis){
+var el=NS.Util.$('#boot-screen');
+if(el)el.classList.toggle('hidden',!vis);
+}
+function run(){
+if(booting||bootDone)return;
+booting=true;
+var biosEl=NS.Util.$('#boot-bios');
+var barEl=NS.Util.$('#boot-bar');
+var skipEl=NS.Util.$('#boot-skip');
+biosEl.innerHTML='';
+barEl.style.width='0%';
+var lineIdx=0;
+var cancel=false;
+var onSkip=function(){cancel=true;finish();};
+NS.Util.$('#boot-screen').addEventListener('click',onSkip);
+function typeLine(line,cls){
+if(cancel)return;
+var div=document.createElement('div');
+if(cls)div.className=cls;
+var i=0;
+return new Promise(function(res){
+(function step(){
+if(cancel){div.textContent=line;res();return;}
+div.textContent=line.slice(0,i);
+i+=2;
+if(i<=line.length)setTimeout(step,4);
+else res();
+})();
+}).then(function(){
+biosEl.appendChild(div);
+biosEl.scrollTop=biosEl.scrollHeight;
+});
+}
+function nextLine(){
+if(cancel)return Promise.resolve();
+if(lineIdx>=BIOS_LINES.length)return Promise.resolve();
+var l=BIOS_LINES[lineIdx++];
+if(!l[0]){biosEl.appendChild(document.createElement('br'));return nextLine();}
+return typeLine(l[0],l[1]).then(function(){
+return new Promise(function(r){setTimeout(r,lineIdx<3?160:40);});
+}).then(nextLine);
+}
+function progress(){
+return new Promise(function(res){
+var p=0;
+(function step(){
+if(cancel){barEl.style.width='100%';res();return;}
+p+=1+Math.random()*3;
+barEl.style.width=Math.min(100,p)+'%';
+if(p>=100){setTimeout(res,250);}
+else setTimeout(step,24);
+})();
+});
+}
+function finish(){
+if(booting===false)return;
+booting=false;
+bootDone=true;
+NS.Util.$('#boot-screen').removeEventListener('click',onSkip);
+setTimeout(function(){
+setBootVis(false);
+NS.Main.afterBoot();
+},300);
+}
+nextLine().then(progress).then(finish);
+}
+function doShutdown(){
+NS.State.saveNow();
+NS.Audio.shutdown();
+NS.Util.$('#shutdown-screen').classList.remove('hidden');
+NS.Util.$('#shutdown-msg').textContent='Es seguro apagar el equipo.';
+NS.Util.$('#btn-power-on').textContent='Encender';
+NS.Util.$('#btn-power-on').onclick=function(){
+NS.Util.$('#shutdown-screen').classList.add('hidden');
+window.location.reload();
+};
+}
+function doRestart(){
+NS.State.saveNow();
+NS.Audio.shutdown();
+NS.Util.$('#shutdown-screen').classList.remove('hidden');
+NS.Util.$('#shutdown-msg').textContent='Reiniciando NovaVista 2004...';
+NS.Util.$('#btn-power-on').textContent='Continuar';
+NS.Util.$('#btn-power-on').onclick=function(){
+NS.Util.$('#shutdown-screen').classList.add('hidden');
+window.location.reload();
+};
+
+}
+function startSound(){
+try{NS.Audio.startup();}catch(e){}
+}
+NS.Boot={run:run,doShutdown:doShutdown,doRestart:doRestart,startSound:startSound};
+})();
+</script>
+<script>(function(){
+'use strict';
+var NS=window.NovaOS=window.NovaOS||{};
+var Util=NS.Util;
+var toastCount=0;
+var modalStack=[];
+function toast(title,body,cls,icon){
+var wrap=Util.$('#toasts');
+if(!wrap)return;
+var t=Util.el('div',{class:'toast '+(cls||'')});
+var ic=icon||'ic-info';
+t.appendChild(Util.el('svg',{class:'icon t-icon'}));
+Util.$('svg',t).innerHTML='<use href="#'+ic+'"/>';
+var box=Util.el('div',{style:{flex:'1'}});
+box.appendChild(Util.el('div',{class:'t-title',text:title}));
+var b=Util.el('div',{class:'t-body',html:body});
+box.appendChild(b);
+t.appendChild(box);
+var btn=Util.el('button',{class:'t-close',text:'✕',title:'Cerrar'});
+btn.addEventListener('click',function(){t.remove();});
+t.appendChild(btn);
+wrap.appendChild(t);
+toastCount++;
+setTimeout(function(){if(t.parentNode)t.remove();},cls==='important'?12000:7000);
+while(wrap.children.length>5)wrap.removeChild(wrap.firstChild);
+}
+function dialog(opts){
+return new Promise(function(resolve){
+var overlay=Util.el('div',{
+style:{
+position:'fixed',inset:'0',background:'rgba(0,0,0,.35)',
+zIndex:950,display:'flex',alignItems:'center',justifyContent:'center'
+}
+});
+var box=Util.el('div',{
+class:'window',
+style:{position:'relative',width:Math.min(460,window.innerWidth-60)+'px',minHeight:'0'}
+});
+var tb=Util.el('div',{class:'win-titlebar'});
+var title=Util.el('div',{class:'wt-title'});
+var ico=Util.el('svg',{class:'icon'});
+ico.innerHTML='<use href="#'+(opts.icon||'ic-info')+'"/>';
+title.appendChild(ico);
+title.appendChild(Util.el('span',{text:opts.title||'NovaVista'}));
+tb.appendChild(title);
+box.appendChild(tb);
+var body=Util.el('div',{class:'win-body'});
+body.appendChild(Util.el('div',{class:'dialog-msg',html:opts.message||''}));
+if(opts.input){
+var inpWrap=Util.el('div',{class:'dialog-input'});
+var inp=Util.el('input',{class:'xp-input',type:opts.inputType||'text',value:opts.inputValue||''});
+inp.style.width='100%';
+inpWrap.appendChild(inp);
+body.appendChild(inpWrap);
+}
+var btns=Util.el('div',{class:'dialog-btns'});
+(opts.buttons||[{label:'Aceptar',value:true,primary:true}]).forEach(function(b){
+var btn=Util.el('button',{
+class:'xp-btn'+(b.primary?' primary':'')+(b.danger?' danger':''),
+text:b.label
+});
+btn.addEventListener('click',function(){
+overlay.remove();
+var val=opts.input?inp.value:b.value;
+resolve(val);
+});
+btns.appendChild(btn);
+});
+body.appendChild(btns);
+box.appendChild(body);
+overlay.appendChild(box);
+document.body.appendChild(overlay);
+modalStack.push(overlay);
+if(opts.input)setTimeout(function(){try{inp.focus();}catch(e){}},50);
+});
+}
+function confirm(title,message){
+return dialog({
+title:title,icon:'ic-warning',message:message,
+buttons:[
+{label:'Sí',value:true,primary:true},
+{label:'No',value:false}
+]
+});
+}
+function alertBox(title,message,icon){
+return dialog({title:title,icon:icon||'ic-info',message:message});
+}
+function ctxMenu(x,y,items){
+closeCtx();
+var menu=Util.el('div',{class:'ctx-menu'});
+items.forEach(function(it){
+if(it.sep){menu.appendChild(Util.el('hr'));return;}
+var btn=Util.el('button',{});
+if(it.icon){
+var svg=Util.el('svg',{class:'icon'});
+svg.innerHTML='<use href="#'+it.icon+'"/>';
+btn.appendChild(svg);
+}
+btn.appendChild(document.createTextNode(' '+it.label));
+btn.addEventListener('click',function(){closeCtx();it.action&&it.action();});
+menu.appendChild(btn);
+});
+menu.style.left=Math.min(x,window.innerWidth-190)+'px';
+menu.style.top=Math.min(y,window.innerHeight-menu.offsetHeight-10)+'px';
+document.body.appendChild(menu);
+setTimeout(function(){
+document.addEventListener('mousedown',closeCtx);
+document.addEventListener('keydown',closeCtx);
+},10);
+}
+function closeCtx(){
+Util.$$('.ctx-menu').forEach(function(m){m.remove();});
+document.removeEventListener('mousedown',closeCtx);
+document.removeEventListener('keydown',closeCtx);
+}
+function closeModals(){
+modalStack.forEach(function(o){o.remove();});
+modalStack=[];
+}
+NS.UI={
+toast:toast,dialog:dialog,confirm:confirm,alert:alertBox,
+ctxMenu:ctxMenu,closeCtx:closeCtx,closeModals:closeModals
+};
+})();
+</script>
+<script>(function(){
+'use strict';
+var NS=window.NovaOS=window.NovaOS||{};
+var Util=NS.Util;
+var selected=null;
+function applyWallpaper(){
+var s=NS.State.get();
+var wp=s.settings.wallpaper||'bliss';
+var desk=Util.$('#desktop');
+desk.className='wp-'+wp;
+}
+function applyTheme(){
+var s=NS.State.get();
+document.body.className='theme-'+(s.settings.theme||'luna');
+}
+function buildIcons(){
+var layer=Util.$('#desktop-icons');
+layer.innerHTML='';
+var apps=NS.Apps.desktop();
+apps.forEach(function(def){
+var ic=Util.el('div',{class:'desktop-icon',title:def.title});
+var svg=Util.el('svg',{class:'icon icon-32'});
+svg.innerHTML='<use href="#'+def.icon+'"/>';
+ic.appendChild(svg);
+ic.appendChild(Util.el('div',{class:'di-name',text:def.title}));
+ic.addEventListener('mousedown',function(e){
+e.stopPropagation();
+select(ic);
+});
+ic.addEventListener('dblclick',function(){
+NS.WM.open(def.id);
+NS.Audio.click();
+});
+layer.appendChild(ic);
+});
+
+var trash=Util.el('div',{class:'desktop-icon',title:'Papelera de reciclaje'});
+var svg2=Util.el('svg',{class:'icon icon-32'});
+svg2.innerHTML='<use href="#ic-trash"/>';
+trash.appendChild(svg2);
+trash.appendChild(Util.el('div',{class:'di-name',text:'Papelera'}));
+trash.addEventListener('dblclick',function(){
+Util.UI.alert('Papelera de reciclaje','La papelera está vacía. (Casi todo lo borrado se vende o se pierde en este sistema).','ic-trash');
+});
+layer.appendChild(trash);
+}
+function select(iconEl){
+if(selected)selected.classList.remove('sel');
+selected=iconEl;
+if(selected)selected.classList.add('sel');
+}
+function clearSelection(){
+if(selected){selected.classList.remove('sel');selected=null;}
+}
+function onDesktopContext(e){
+e.preventDefault();
+e.stopPropagation();
+NS.UI.ctxMenu(e.clientX,e.clientY,[
+{label:'Actualizar',icon:'ic-gear',action:function(){
+Util.$('#desktop-icons').innerHTML='';
+buildIcons();
+NS.UI.toast('Escritorio','Escritorio actualizado.','','ic-info');
+}},
+{label:'Propiedades',icon:'ic-settings',action:function(){NS.WM.open('settings');}},
+{sep:true},
+{label:'Abrir terminal',icon:'ic-terminal',action:function(){NS.WM.open('terminal');}},
+{label:'Abrir navegador',icon:'ic-browser',action:function(){NS.WM.open('browser');}}
+]);
+}
+function refresh(){
+applyWallpaper();
+applyTheme();
+}
+NS.Desktop={
+buildIcons:buildIcons,select:select,clearSelection:clearSelection,
+refresh:refresh,onContext:onDesktopContext
+};
+})();
+</script>
+<script>(function(){
+'use strict';
+var NS=window.NovaOS=window.NovaOS||{};
+var Util=NS.Util;
+function init(){
+var btnStart=Util.$('#btn-start');
+var menu=Util.$('#start-menu');
+btnStart.addEventListener('click',function(e){
+e.stopPropagation();
+menu.classList.toggle('hidden');
+NS.Audio.click();
+});
+Util.$('#desktop').addEventListener('mousedown',function(){
+menu.classList.add('hidden');
+NS.Desktop.clearSelection();
+});
+
+Util.$$('#start-menu [data-action]').forEach(function(b){
+b.addEventListener('click',function(){
+var a=b.getAttribute('data-action');
+menu.classList.add('hidden');
+if(a==='shutdown')NS.Boot.doShutdown();
+else if(a==='restart')NS.Boot.doRestart();
+});
+});
+
+var ql=Util.$('#quicklaunch');
+[['browser','ic-browser','NovaNet Explorer'],['bank','ic-bank','Primer Banco Nova'],['net','ic-net','Mapa de red']].forEach(function(a){
+var b=Util.el('button',{title:a[2]});
+var svg=Util.el('svg',{class:'icon'});
+svg.innerHTML='<use href="#'+a[1]+'"/>';
+b.appendChild(svg);
+b.addEventListener('click',function(){NS.WM.open(a[0]);});
+ql.appendChild(b);
+});
+
+Util.$('#tray-av').addEventListener('click',function(){NS.WM.open('av');});
+Util.$('#tray-wifi').addEventListener('click',function(){
+NS.UI.toast('RED-NOVA','Conectado a RED-NOVA — 54 Mbps. Señal: buena.','','ic-wifi');
+});
+Util.$('#tray-vol').addEventListener('click',function(){
+var s=NS.State.get();
+NS.Audio.setEnabled(!s.settings.sound);
+s.settings.sound=!s.settings.sound;
+NS.UI.toast('Volumen',s.settings.sound?'Sonido activado.':'Sonido desactivado.','','ic-volume');
+});
+}
+function refresh(){
+var wrap=Util.$('#taskbar-apps');
+wrap.innerHTML='';
+NS.WM.openList().forEach(function(o){
+var btn=Util.el('button',{class:'tb-btn'+(o.win.minimized?'':' active')});
+var svg=Util.el('svg',{class:'icon'});
+svg.innerHTML='<use href="#'+o.def.icon+'"/>';
+btn.appendChild(svg);
+btn.appendChild(Util.el('span',{class:'tb-title',text:o.def.title}));
+btn.addEventListener('click',function(){
+if(o.win.minimized){NS.WM.focus(o.id);}
+else if(NS.WM.isOpen(o.id)){NS.WM.minimize(o.id);}
+});
+wrap.appendChild(btn);
+});
+}
+function buildStartMenu(){
+var col=Util.$('#sm-programs');
+col.innerHTML='';
+NS.Apps.list().forEach(function(def){
+var b=Util.el('button',{class:'sm-item'});
+var svg=Util.el('svg',{class:'icon'});
+svg.innerHTML='<use href="#'+def.icon+'"/>';
+b.appendChild(svg);
+b.appendChild(document.createTextNode(def.title));
+b.addEventListener('click',function(){
+Util.$('#start-menu').classList.add('hidden');
+NS.WM.open(def.id);
+NS.Audio.click();
+});
+col.appendChild(b);
+});
+var user=Util.$('#sm-username');
+if(user)user.textContent=NS.State.get().profile.name;
+var userIcon=Util.$('.sm-user-icon svg use');
+var AVS=['ic-hacker','ic-users','ic-bot','ic-star','ic-phone','ic-game'];
+if(userIcon)userIcon.setAttribute('href','#'+AVS[(NS.State.get().profile.avatar||0)%AVS.length]);
+}
+function tickClock(){
+var el=Util.$('#tray-clock');
+if(!el)return;
+var d=new Date();
+el.innerHTML=Util.pad2(d.getHours())+':'+Util.pad2(d.getMinutes())+'<br>'+Util.pad2(d.getDate())+'/'+Util.pad2(d.getMonth()+1)+'/'+d.getFullYear();
+}
+function refreshTray(){
+var s=NS.State.get();
+var av=Util.$('#tray-av');
+av.classList.toggle('suspect',NS.Sec.isQuarantined());
+if(NS.Sec.isQuarantined()){
+var svg=Util.$('svg',av);
+svg.innerHTML='<use href="#ic-shield-bad"/>';
+av.title='¡Integridad comprometida! Abre NovaShield para restaurar.';
+}else{
+var svg2=Util.$('svg',av);
+svg2.innerHTML='<use href="#ic-shield"/>';
+av.title='NovaShield — Protección nivel '+(s.av.level+s.av.firewall);
+}
+}
+NS.Taskbar={init:init,refresh:refresh,buildStartMenu:buildStartMenu,tickClock:tickClock,refreshTray:refreshTray};
+})();
+</script>
+<script>(function(){
+'use strict';
+var NS=window.NovaOS=window.NovaOS||{};
+var Util=NS.Util;
+function tabBar(){
+var bar=Util.el('div',{class:'tabbar'});
+return bar;
+}
+function section(title){
+var s=Util.el('div',{class:'cfg-section'});
+if(title)s.appendChild(Util.el('div',{class:'cfg-title',text:title}));
+return s;
+}
+function row(label,control){
+var r=Util.el('div',{class:'cfg-row'});
+r.appendChild(Util.el('span',{text:label}));
+r.appendChild(control);
+return r;
+}
+function render(body){
+var S=NS.State.get();
+body.innerHTML='';
+body.className='app-pad';
+var tabs=Util.el('div',{class:'tabs'});
+var content=Util.el('div',{class:'tab-content'});
+function makeTab(id,label,fn){
+var b=Util.el('button',{class:'tab-btn',text:label});
+b.addEventListener('click',function(){
+Util.$$('.tab-btn',tabs).forEach(function(x){x.classList.remove('on');});
+b.classList.add('on');
+content.innerHTML='';
+fn();
+});
+tabs.appendChild(b);
+return b;
+}
+makeTab('apariencia','Apariencia',function(){
+var sc=section('Fondo de pantalla');
+NS.Catalog.WALLPAPERS.forEach(function(wp){
+var b=Util.el('button',{
+class:'xp-btn small wp-pick',
+text:wp.name
+});
+if(S.settings.wallpaper===wp.id)b.classList.add('on');
+b.addEventListener('click',function(){
+S.settings.wallpaper=wp.id;
+NS.Desktop.refresh();
+render(body);
+});
+sc.appendChild(b);
+});
+content.appendChild(sc);
+var st=section('Tema de colores');
+NS.Catalog.THEMES.forEach(function(t){
+var b=Util.el('button',{
+class:'xp-btn small wp-pick',
+text:t.name
+});
+if(S.settings.theme===t.id)b.classList.add('on');
+b.addEventListener('click',function(){
+S.settings.theme=t.id;
+NS.Desktop.refresh();
+render(body);
+});
+st.appendChild(b);
+});
+content.appendChild(st);
+var av=section('Avatar de usuario');
+for(var i=0;i<6;i++){
+(function(idx){
+var b=Util.el('button',{class:'avatar-pick'});
+var svg=Util.el('svg',{class:'icon icon-32'});
+svg.innerHTML='<use href="#'+(['ic-hacker','ic-users','ic-bot','ic-star','ic-phone','ic-game'])[idx]+'"/>';
+b.appendChild(svg);
+if(S.profile.avatar===idx)b.classList.add('on');
+b.addEventListener('click',function(){
+S.profile.avatar=idx;
+NS.Taskbar.buildStartMenu();
+render(body);
+});
+av.appendChild(b);
+})(i);
+}
+content.appendChild(av);
+});
+makeTab('sonido','Sonido',function(){
+var sc=section('Efectos de sonido');
+var toggle=Util.el('button',{
+class:'xp-btn',text:S.settings.sound?'Sonido: ACTIVADO':'Sonido: DESACTIVADO'
+});
+toggle.addEventListener('click',function(){
+S.settings.sound=!S.settings.sound;
+NS.Audio.setEnabled(S.settings.sound);
+render(body);
+});
+sc.appendChild(row('Sonido del sistema',toggle));
+var test=Util.el('button',{class:'xp-btn',text:'Probar sonido'});
+test.addEventListener('click',function(){NS.Audio.startup();});
+sc.appendChild(row('',test));
+content.appendChild(sc);
+});
+makeTab('cuenta','Cuenta',function(){
+var sc=section('Identidad de usuario');
+var inp=Util.el('input',{class:'xp-input',value:S.profile.name,maxlength:'20'});
+var save=Util.el('button',{class:'xp-btn',text:'Cambiar nombre'});
+save.addEventListener('click',function(){
+var v=inp.value.trim().slice(0,20);
+if(!v){NS.UI.alert('Cuenta','Escribe un nombre válido.','ic-info');return;}
+S.profile.name=v;
+NS.Taskbar.buildStartMenu();
+NS.UI.toast('Cuenta','Nombre actualizado a «'+Util.esc(v)+'».','good','ic-users');
+});
+sc.appendChild(row('Nombre de usuario',inp));
+sc.appendChild(row('',save));
+content.appendChild(sc);
+var st=section('Estadísticas de la partida');
+st.appendChild(Util.el('div',{class:'cfg-info',html:
+'Instalado el: <b>'+Util.fmtDate(S.meta.createdAt)+'</b><br>'+
+'Tiempo jugado: <b>'+Util.fmtDuration(S.meta.totalPlayMs)+'</b><br>'+
+'Asaltos completados: <b>'+S.meta.runsDone+'</b> · Rastreados: <b>'+S.meta.runsTraced+'</b><br>'+
+'Nodos drenados: <b>'+S.meta.nodesDrained+'</b> · NovaCoins acumuladas (histórico): <b>'+Util.fmtNum(S.meta.allTimeCoins)+'</b><br>'+
+'Puntos de legado: <b>'+S.currencies.legacy+'</b> (+'+(S.currencies.legacy*3)+' % de ingresos)'
+}));
+content.appendChild(st);
+});
+makeTab('sistema','Sistema',function(){
+var sc=section('Guardado');
+var exp=Util.el('button',{class:'xp-btn',text:'Exportar código de guardado'});
+exp.addEventListener('click',function(){
+var code=NS.Save.exportSave(S);
+if(!code){NS.UI.alert('Sistema','No se pudo exportar.','ic-error');return;}
+NS.UI.dialog({
+title:'Exportar guardado',icon:'ic-save',
+message:'Copia este código (incluye firma de integridad). Para importarlo en otro equipo, necesitas la misma instalación.',
+input:true,inputValue:code
+});
+});
+sc.appendChild(row('Exportar',exp));
+var imp=Util.el('button',{class:'xp-btn',text:'Importar código de guardado'});
+imp.addEventListener('click',function(){
+NS.UI.dialog({
+title:'Importar guardado',icon:'ic-save',
+message:'Pega el código de guardado. Debe tener una firma válida.',
+input:true
+}).then(function(code){
+if(!code)return;
+var res=NS.Save.importSave(code);
+if(!res.ok){NS.UI.alert('Importar','Importación rechazada: '+Util.esc(res.error),'ic-error');return;}
+NS.UI.confirm('Importar','¿Sustituir la partida actual por la importada? Se guardará con la firma de esta instalación.')
+.then(function(ok){
+if(!ok)return;
+var st=res.state;
+st.meta.installId=S.meta.installId;
+NS.Save.wipe();
+NS.Save.save(st);
+window.location.reload();
+});
+});
+});
+sc.appendChild(row('Importar',imp));
+content.appendChild(sc);
+var sf=section('Sistema');
+var fmt=Util.el('button',{class:'xp-btn danger',text:'Formatear C: (prestige)'});
+fmt.addEventListener('click',function(){
+var s=NS.State.get();
+var pending=Math.floor(10*Math.sqrt(Math.max(0,s.meta.allTimeCoins)))-s.currencies.legacy;
+if(pending<=0){
+NS.UI.alert('Formatear','Aún no has acumulado suficiente legado. Sigue ganando NovaCoins (en total, histórico).','ic-warning');
+return;
+}
+NS.UI.confirm('Formatear C:',
+'Esto borra TODO tu progreso actual (dinero, seguidores, bots, mejoras, implantes, asaltos) a cambio de <b>'+pending+
+' puntos de legado</b> (+3 % de ingresos permanentes cada uno).<br><br>Es el «prestige» de NovaVista. ¿Continuar?')
+.then(function(ok){
+if(!ok)return;
+var r=NS.State.format();
+if(r.ok){
+NS.Desktop.refresh();
+NS.Taskbar.buildStartMenu();
+NS.State.saveNow();
+if(NS.WM.isOpen('settings'))NS.WM.rerender('settings');
+}else NS.UI.alert('Formatear','No se pudo formatear.','ic-warning');
+});
+});
+sf.appendChild(row('Formatear sistema',fmt));
+content.appendChild(sf);
+var ab=section('Acerca de NovaVista 2004');
+ab.appendChild(Util.el('div',{class:'cfg-info',html:
+'NovaVista 2004 Edition — un sistema operativo de ficción con juego incremental y rasgos roguelite.<br>'+
+'© 2004 NovaCorp Systems. Todo lo que ves es simulado. Ninguna conexión real se realiza.<br>'+
+'Núcleo v2 · Integridad de guardado: <b>firma verificada</b>.'
+}));
+content.appendChild(ab);
+});
+body.appendChild(tabs);
+body.appendChild(content);
+
+var first=Util.$('.tab-btn',tabs);
+if(first)first.click();
+}
+NS.Apps.register({
+id:'settings',title:'Panel de control',icon:'ic-settings',
+desktop:true,w:520,h:460,minW:400,minH:340,
+render:render
+});
+})();
+</script>
+<script>(function(){
+'use strict';
+var NS=window.NovaOS=window.NovaOS||{};
+var Util=NS.Util;
+function upgBtn(id,label){
+var S=NS.State.get();
+var def=NS.Catalog.UPGRADES[id];
+var lvl=S.upg[id]||0;
+var cost=NS.Catalog.upgradeCost(def,lvl);
+var maxed=lvl>=def.max;
+var b=Util.el('button',{
+class:'xp-btn small',
+text:label+' ('+lvl+'/'+def.max+') — '+(maxed?'MÁX':Util.fmtMoney(cost))
+});
+b.disabled=maxed||S.currencies.cash<cost;
+b.addEventListener('click',function(){
+var r=NS.State.buyUpgrade(id);
+if(!r.ok&&r.why==='dinero')NS.UI.toast('Mis Archivos','No tienes suficiente dinero.','important','ic-error');
+NS.WM.rerender('files');
+});
+return b;
+}
+function render(body){
+var S=NS.State.get();
+body.innerHTML='';
+body.className='app-pad';
+var col=Util.el('div',{class:'files-cols'});
+
+var left=Util.el('div',{class:'files-col'});
+var box=Util.el('div',{class:'panel'});
+box.appendChild(Util.el('div',{class:'panel-title',text:'Almacenamiento de datos'}));
+box.appendChild(Util.el('div',{class:'files-disk'}));
+var bar=Util.el('div',{class:'xp-progress'});
+var fill=Util.el('div',{});
+fill.style.width=Math.min(100,S.data.mb/S.data.maxMB*100)+'%';
+bar.appendChild(fill);
+box.appendChild(bar);
+box.appendChild(Util.el('div',{class:'cfg-info',text:Util.fmtBytes(S.data.mb*1024*1024)+' usados de '+Util.fmtBytes(S.data.maxMB*1024*1024)}));
+box.appendChild(Util.el('div',{class:'cfg-info',html:'Vendes datos a <b>'+Util.fmtMoney(NS.State.dataPrice())+'/MB</b>.'}));
+var sell=Util.el('button',{class:'xp-btn primary',text:'Vender todos los datos ('+Util.fmtMoney(S.data.mb*NS.State.dataPrice())+')'});
+sell.disabled=S.data.mb<=0;
+sell.addEventListener('click',function(){
+if(S.data.mb<=0)return;
+var mb=NS.State.sellDataMB(S.data.mb);
+NS.UI.toast('Mis Archivos','Vendidos '+Util.fmtBytes(mb*1024*1024)+' de datos.','good','ic-coin');
+NS.Audio.cash();
+NS.WM.rerender('files');
+});
+box.appendChild(sell);
+left.appendChild(box);
+var bx2=Util.el('div',{class:'panel'});
+bx2.appendChild(Util.el('div',{class:'panel-title',text:'Acuerdos y hardware'}));
+bx2.appendChild(upgBtn('d-price','Acuerdo de datos'));
+bx2.appendChild(upgBtn('d-cap','Disco duro mayor'));
+left.appendChild(bx2);
+col.appendChild(left);
+
+var right=Util.el('div',{class:'files-col'});
+var box3=Util.el('div',{class:'panel'});
+box3.appendChild(Util.el('div',{class:'panel-title',text:'Herramientas de intrusión'}));
+var any=false;
+Object.keys(NS.Catalog.TOOLS).forEach(function(tid){
+var qty=S.inventory.tools[tid]||0;
+if(qty<=0)return;
+any=true;
+var def=NS.Catalog.TOOLS[tid];
+var r=Util.el('div',{class:'inv-row'});
+var svg=Util.el('svg',{class:'icon'});
+svg.innerHTML='<use href="#'+def.icon+'"/>';
+r.appendChild(svg);
+var info=Util.el('div',{style:{flex:'1'}});
+info.appendChild(Util.el('div',{text:def.name+' ×'+qty}));
+info.appendChild(Util.el('div',{class:'cfg-sub',text:def.desc}));
+r.appendChild(info);
+box3.appendChild(r);
+});
+if(!any)box3.appendChild(Util.el('div',{class:'cfg-info',text:'Sin herramientas. Consíguelas en Descargas (navegador) o como botín en los asaltos de red.'}));
+right.appendChild(box3);
+var box4=Util.el('div',{class:'panel'});
+box4.appendChild(Util.el('div',{class:'panel-title',text:'Documentos'}));
+var docs=[
+['ic-doc','leeme.txt','«Bienvenido a NovaVista 2004. Tu PC es tu imperio. Gana dinero, fama y datos.»'],
+['ic-doc','mapa_de_red.txt','«El Mapa de Red es tu puerta al subsuelo. Conecta, escanea, drena. Y no te dejes rastrear.»'],
+['ic-doc','consejo.txt','«No vendas todos los datos: los asaltos profundos pagan mejor con payload.»']
+];
+docs.forEach(function(d){
+var r=Util.el('div',{class:'inv-row clickable'});
+var svg=Util.el('svg',{class:'icon'});
+svg.innerHTML='<use href="#'+d[0]+'"/>';
+r.appendChild(svg);
+var info=Util.el('div',{style:{flex:'1'}});
+info.appendChild(Util.el('div',{text:d[1]}));
+info.appendChild(Util.el('div',{class:'cfg-sub',text:d[2]}));
+r.appendChild(info);
+r.addEventListener('click',function(){
+NS.UI.alert(d[1],Util.esc(d[2]),'ic-doc');
+});
+box4.appendChild(r);
+});
+right.appendChild(box4);
+col.appendChild(right);
+body.appendChild(col);
+}
+NS.Apps.register({
+id:'files',title:'Mis Archivos',icon:'ic-files',
+desktop:true,w:560,h:440,minW:460,minH:360,
+render:render,
+tick:function(){
+
+}
+});
+})();
+</script>
+<script>(function(){
+'use strict';
+var NS=window.NovaOS=window.NovaOS||{};
+var Util=NS.Util;
+var history=[];
+var histIdx=0;
+var inputEl=null;
+var outEl=null;
+function line(txt,cls){
+var div=Util.el('div',{text:txt});
+if(cls)div.className='term-'+cls;
+outEl.appendChild(div);
+outEl.scrollTop=outEl.scrollHeight;
+}
+function banner(){
+line('NovaVista 2004 Edition [Versión 5.1.2600]','ok');
+line('(C) Copyright 2004 NovaCorp Systems, Ltd.','dim');
+line('');
+line('Escriba HELP para ver los comandos disponibles.','dim');
+line('');
+}
+function exec(cmd){
+var c=cmd.trim();
+var parts=c.split(/\s+/);
+var head=(parts[0]||'').toLowerCase();
+var S=NS.State.get();
+switch(head){
+case'help':
+line('Comandos disponibles:','dim');
+['HELP     — muestra esta ayuda','VER      — versión del sistema','CLS      — limpia la pantalla',
+'DIR      — contenido del disco','ECHO     — repite un texto','TIME     — hora actual','DATE     — fecha actual',
+'NOVA     — resumen de tu estado','PING     — comprueba la red','RED      — información de red',
+'CONECTAR — abre el mapa de red (asaltos)','IPCONFIG — configuración de red','WHOAMI   — usuario actual',
+'FORMAT   — formatear C: (prestige)','MASCOTA  — secretito'].forEach(function(h){line(h);});
+break;
+case'ver':line('NovaVista 2004 Edition [Versión 5.1.2600]','ok');break;
+case'cls':outEl.innerHTML='';break;
+case'dir':
+line('Volumen en C: tiene etiqueta NOVA.','dim');
+line('Directorio de C:\\','dim');
+line('');
+line('DOCUMENTOS   <CARPETA>   datos personales','');
+line('DESCARGAS    <CARPETA>   software adquirido','');
+line('DATOS        <CARPETA>   '+Util.fmtBytes(S.data.mb*1024*1024)+' en paquetes','');
+line('BOTNET       <CARPETA>   '+S.bots.count+' bots','');
+line('  '+(S.data.maxMB-S.data.mb)+' MB libres de '+S.data.maxMB+' MB','dim');
+break;
+case'echo':line(parts.slice(1).join(' '));break;
+case'time':line('La hora actual es: '+Util.fmtClock(Date.now()));break;
+case'date':line('La fecha actual es: '+Util.fmtDate(Date.now()));break;
+case'nova':
+line('=== ESTADO DEL SISTEMA ===','ok');
+line('Efectivo: '+Util.fmtMoney(S.currencies.cash),'');
+line('Banco: '+Util.fmtMoney(S.bank.balance)+' (interés '+Util.fmtPct(NS.State.bankRate())+'/s)','');
+line('Seguidores: '+Util.fmtInt(S.social.followers),'');
+line('NovaCoins: '+S.currencies.novaCoins.toFixed(2).replace('.',',')+' (+'+(NS.State.botCoinRate()).toFixed(3).replace('.',',')+'/s)','');
+line('Datos: '+Util.fmtBytes(S.data.mb*1024*1024),'');
+line('Nivel: '+S.currencies.level+' · XP: '+Util.fmtInt(S.currencies.xp),'');
+break;
+case'ping':
+line('Haciendo ping a novanet.com [192.168.1.1] con 32 bytes de datos:','');
+line('Respuesta desde 192.168.1.1: bytes=32 tiempo=28ms TTL=128','ok');
+line('Respuesta desde 192.168.1.1: bytes=32 tiempo=31ms TTL=128','ok');
+line('Respuesta desde 192.168.1.1: bytes=32 tiempo=29ms TTL=128','ok');
+line('Respuesta desde 192.168.1.1: bytes=32 tiempo=27ms TTL=128','ok');
+line('Estadísticas de ping: enviados = 4, recibidos = 4, perdidos = 0 (0 % perdidos)','dim');
+break;
+case'red':
+line('=== RED-NOVA (inalámbrica) ===','ok');
+line('SSID: RED-NOVA · Velocidad: 54 Mbps · Señal: 92 %','');
+line('IP: 192.168.1.42 · Puerta de enlace: 192.168.1.1 · DNS: 8.8.4.4','');
+line('Paquetes enviados: '+Util.fmtInt(S.stats.hacks*37+1337)+' · Perdidos: 0','dim');
+break;
+case'ipconfig':
+line('Adaptador de red inalámbrica RED-NOVA:','');
+line('   Dirección IP......: 192.168.1.42','');
+line('   Máscara...........: 255.255.255.0','');
+line('   Puerta de enlace..: 192.168.1.1','');
+line('   DNS...............: 8.8.4.4 / 8.8.8.8','dim');
+break;
+case'whoami':line('novavista\\'+S.profile.name.toLowerCase().replace(/[^a-z0-9]/g,''),'ok');break;
+case'conectar':case'connect':
+line('Abriendo el mapa de red...','ok');
+NS.WM.open('net');
+break;
+case'format':
+NS.UI.confirm('Formatear C:','¿Seguro? Esto es el prestige del juego. Requiere NovaCoins acumuladas en total. ¿Abrir el panel de control?')
+.then(function(ok){if(ok)NS.WM.open('settings');});
+break;
+case'mascota':
+line('(^._.^)ノ — el gato de NovaVista te saluda. Te desea suerte en la red.','ok');
+break;
+case'limpiar':
+line('No existe ese comando. Pruebe HELP.','err');
+break;
+case'':break;
+default:
+line('«'+head+'» no se reconoce como comando interno o externo.','err');
+line('Pruebe HELP para ver la lista de comandos.','dim');
+}
+}
+function render(body){
+body.innerHTML='';
+body.className='term-body';
+outEl=Util.el('div',{class:'term-out'});
+var inputRow=Util.el('div',{class:'term-inrow'});
+var prompt=Util.el('span',{class:'term-prompt',text:'C:\\>'});
+inputEl=Util.el('input',{class:'term-in',type:'text',autocomplete:'off',spellcheck:'false'});
+inputRow.appendChild(prompt);
+inputRow.appendChild(inputEl);
+body.appendChild(outEl);
+body.appendChild(inputRow);
+banner();
+inputEl.focus();
+inputEl.addEventListener('keydown',function(e){
+if(e.key==='Enter'){
+var v=inputEl.value;
+line('C:\\>'+v,'cmd');
+exec(v);
+if(v.trim()){history.push(v);histIdx=history.length;}
+inputEl.value='';
+e.preventDefault();
+}else if(e.key==='ArrowUp'){
+e.preventDefault();
+if(histIdx>0){histIdx--;inputEl.value=history[histIdx]||'';}
+}else if(e.key==='ArrowDown'){
+e.preventDefault();
+if(histIdx<history.length){histIdx++;inputEl.value=history[histIdx]||'';}
+}
+});
+setTimeout(function(){try{inputEl.focus();}catch(e){}},60);
+}
+NS.Apps.register({
+id:'terminal',title:'Símbolo del sistema',icon:'ic-terminal',
+desktop:true,w:560,h:380,minW:420,minH:260,
+render:render,
+status:function(){return'Console — NovaVista 2004';}
+});
+})();
+</script>
+<script>(function(){
+'use strict';
+var NS=window.NovaOS=window.NovaOS||{};
+var Util=NS.Util;
+var notifs=[];
+function notify(title,body,icon){
+notifs.unshift({title:title,body:body,icon:icon||'ic-mail',at:Date.now()});
+if(notifs.length>40)notifs.length=40;
+if(NS.WM.isOpen('email'))NS.WM.rerender('email');
+}
+function questProgress(s,q){
+var v=q.check(s);
+return Math.min(v,q.target);
+}
+function render(body){
+var S=NS.State.get();
+body.innerHTML='';
+body.className='app-pad';
+var title=Util.el('div',{class:'mail-title',text:'Bandeja de entrada'});
+body.appendChild(title);
+var box=Util.el('div',{class:'panel'});
+box.appendChild(Util.el('div',{class:'panel-title',text:'Misiones'}));
+NS.Catalog.QUESTS.forEach(function(q){
+var st=S.quests[q.id]||{};
+var prog=questProgress(S,q);
+var done=prog>=q.target;
+var claimed=!!st.claimed;
+var r=Util.el('div',{class:'mail-row'+(done&&!claimed?' mail-done':'')});
+var ic=Util.el('svg',{class:'icon'});
+ic.innerHTML='<use href="#'+(done?'ic-star':'ic-mail')+'"/>';
+r.appendChild(ic);
+var info=Util.el('div',{style:{flex:'1'}});
+info.appendChild(Util.el('div',{class:'mail-subj',text:q.title+(claimed?' ✓':'')}));
+info.appendChild(Util.el('div',{class:'cfg-sub',text:q.desc}));
+var bar=Util.el('div',{class:'xp-progress',style:{height:'10px',marginTop:'4px'}});
+var fill=Util.el('div',{});
+fill.style.width=Math.min(100,prog/q.target*100)+'%';
+bar.appendChild(fill);
+info.appendChild(bar);
+info.appendChild(Util.el('div',{class:'cfg-sub',text:Util.fmtInt(prog)+' / '+Util.fmtInt(q.target)+' — Recompensa: '+q.reward+' NovaCoins'}));
+r.appendChild(info);
+if(done&&!claimed){
+var btn=Util.el('button',{class:'xp-btn small primary',text:'Reclamar'});
+btn.addEventListener('click',function(){
+S.quests[q.id]={claimed:true,at:Date.now()};
+NS.State.addCoins(q.reward);
+NS.Audio.cash();
+NS.UI.toast('Misión completada','«'+Util.esc(q.title)+'» — +'+q.reward+' NovaCoins.','good','ic-coin');
+NS.WM.rerender('email');
+});
+r.appendChild(btn);
+}else if(claimed){
+r.appendChild(Util.el('span',{class:'cfg-sub',text:'reclamada'}));
+}
+box.appendChild(r);
+});
+body.appendChild(box);
+var box2=Util.el('div',{class:'panel'});
+box2.appendChild(Util.el('div',{class:'panel-title',text:'Notificaciones del sistema'}));
+if(!notifs.length){
+box2.appendChild(Util.el('div',{class:'cfg-info',text:'Aún no hay notificaciones. Los resultados de tus asaltos aparecerán aquí.'}));
+}else{
+notifs.forEach(function(n){
+var r=Util.el('div',{class:'mail-row'});
+var ic=Util.el('svg',{class:'icon'});
+ic.innerHTML='<use href="#'+n.icon+'"/>';
+r.appendChild(ic);
+var info=Util.el('div',{style:{flex:'1'}});
+info.appendChild(Util.el('div',{class:'mail-subj',text:n.title+' — '+Util.fmtClock(n.at)}));
+info.appendChild(Util.el('div',{class:'cfg-sub',html:n.body}));
+r.appendChild(info);
+box2.appendChild(r);
+});
+}
+body.appendChild(box2);
+}
+NS.Apps.register({
+id:'email',title:'NovaMail',icon:'ic-mail',
+desktop:true,w:540,h:460,minW:440,minH:360,
+render:render
+});
+NS.Mail={notify:notify};
+})();
+</script>
+<script>(function(){
+'use strict';
+var NS=window.NovaOS=window.NovaOS||{};
+var Util=NS.Util;
+var priceHist=[];
+function upgBtn(id,label){
+var S=NS.State.get();
+var def=NS.Catalog.UPGRADES[id];
+var lvl=S.upg[id]||0;
+var cost=NS.Catalog.upgradeCost(def,lvl);
+var maxed=lvl>=def.max;
+var b=Util.el('button',{
+class:'xp-btn small',
+text:label+' (nivel '+lvl+')'+(maxed?' — MÁX':' — '+Util.fmtMoney(cost))
+});
+b.disabled=maxed||S.currencies.cash<cost;
+b.addEventListener('click',function(){
+var r=NS.State.buyUpgrade(id);
+if(!r.ok&&r.why==='dinero')NS.UI.toast('Banco','Fondos insuficientes.','important','ic-error');
+NS.WM.rerender('bank');
+});
+return b;
+}
+function panel(title){
+var p=Util.el('div',{class:'panel'});
+p.appendChild(Util.el('div',{class:'panel-title',text:title}));
+return p;
+}
+function renderTabs(body){
+var tabs=Util.el('div',{class:'tabs'});
+var content=Util.el('div',{class:'tab-content'});
+function makeTab(id,label,fn){
+var b=Util.el('button',{class:'tab-btn',text:label});
+b.addEventListener('click',function(){
+Util.$$('.tab-btn',tabs).forEach(function(x){x.classList.remove('on');});
+b.classList.add('on');
+content.innerHTML='';
+fn();
+});
+tabs.appendChild(b);
+return b;
+}
+makeTab('cuenta','Cuenta',function(){
+var S=NS.State.get();
+var p=panel('Saldo e intereses');
+p.appendChild(Util.el('div',{class:'bank-balance',text:Util.fmtMoney(S.bank.balance)}));
+p.appendChild(Util.el('div',{class:'cfg-info',html:
+'Interés actual: <b>'+Util.fmtPct(NS.State.bankRate())+'/s</b> → <b>'+Util.fmtMoney(S.bank.balance*NS.State.bankRate())+'/s</b><br>'+
+'Interés total acumulado: <b>'+Util.fmtMoney(S.bank.totalInterest)+'</b>'
+}));
+content.appendChild(p);
+var p2=panel('Mejoras de interés');
+p2.appendChild(upgBtn('b-rate','Mejora de intereses'));
+p2.appendChild(upgBtn('b-cd','Certificado de depósito'));
+p2.appendChild(upgBtn('b-off','Cuenta offshore'));
+content.appendChild(p2);
+});
+makeTab('mineria','Minería',function(){
+var S=NS.State.get();
+var p=panel('Botnet de NovaCoins');
+p.appendChild(Util.el('div',{class:'bank-balance',text:S.bots.count+' bots'}));
+p.appendChild(Util.el('div',{class:'cfg-info',html:
+'Producción: <b>'+NS.State.botCoinRate().toFixed(3).replace('.',',')+' NovaCoins/s</b> '+
+'(≈ '+(NS.State.botCoinRate()*60).toFixed(1).replace('.',',')+' /min)<br>'+
+'Cartera de NovaCoins: <b>'+S.currencies.novaCoins.toFixed(2).replace('.',',')+'</b>'
+}));
+content.appendChild(p);
+var p2=panel('Hardware de minería');
+p2.appendChild(upgBtn('b-count','Comprar bot zombie'));
+p2.appendChild(upgBtn('b-rig','Granja de minería'));
+content.appendChild(p2);
+var p3=panel('¿Qué son las NovaCoins?');
+p3.appendChild(Util.el('div',{class:'cfg-info',html:'Las NovaCoins son la moneda <b>meta</b>: sobreviven a cada asalto y se gastan en implantes (app Mapa de Red → Equipo). También alimentan tu <b>legado</b> al formatear el sistema.'}));
+content.appendChild(p3);
+});
+makeTab('mercado','Mercado',function(){
+var S=NS.State.get();
+var p=panel('Mercado de NovaCoins');
+p.appendChild(Util.el('div',{class:'bank-balance',text:'1 NC = '+Util.fmtMoney(S.bank.price)}));
+p.appendChild(Util.el('div',{class:'cfg-info',text:'Compra barato, vende caro. El precio fluctúa con el tiempo.'}));
+
+var chart=Util.el('div',{class:'spark'});
+priceHist.slice(-40).forEach(function(v){
+var d=Util.el('div',{class:'spark-bar'});
+d.style.height=(v/60*100)+'%';
+chart.appendChild(d);
+});
+p.appendChild(chart);
+var buyRow=Util.el('div',{class:'trade-row'});
+buyRow.appendChild(Util.el('span',{text:'Comprar:'}));
+[10,50,250].forEach(function(n){
+var b=Util.el('button',{
+class:'xp-btn small',
+text:n+' NC ('+Util.fmtMoney(n*S.bank.price)+')'
+});
+b.disabled=S.currencies.cash<n*S.bank.price;
+b.addEventListener('click',function(){
+var r=NS.State.buyCoins(n);
+if(!r.ok)NS.UI.toast('Mercado','No tienes efectivo suficiente.','important','ic-error');
+NS.Audio.cash();
+NS.WM.rerender('bank');
+});
+buyRow.appendChild(b);
+});
+p.appendChild(buyRow);
+var sellRow=Util.el('div',{class:'trade-row'});
+sellRow.appendChild(Util.el('span',{text:'Vender:'}));
+[10,50,250].forEach(function(n){
+var b=Util.el('button',{
+class:'xp-btn small',
+text:n+' NC ('+Util.fmtMoney(n*S.bank.price*0.85)+')'
+});
+b.disabled=S.currencies.novaCoins<n;
+b.addEventListener('click',function(){
+var r=NS.State.sellCoins(n);
+if(!r.ok)NS.UI.toast('Mercado','No tienes suficientes NovaCoins.','important','ic-error');
+NS.Audio.cash();
+NS.WM.rerender('bank');
+});
+sellRow.appendChild(b);
+});
+p.appendChild(sellRow);
+content.appendChild(p);
+});
+makeTab('prestamos','Préstamos',function(){
+var S=NS.State.get();
+var p=panel('Crédito personal');
+p.appendChild(Util.el('div',{class:'cfg-info',html:
+'Deuda pendiente: <b>'+Util.fmtMoney(S.bank.loanDebt)+'</b><br>'+
+'Interés de la deuda: 0,18 %/h (se acumula solo).'
+}));
+if(S.bank.loanDebt>0){
+var repay=Util.el('button',{
+class:'xp-btn primary',
+text:'Pagar toda la deuda ('+Util.fmtMoney(S.bank.loanDebt)+')'
+});
+repay.disabled=S.currencies.cash<S.bank.loanDebt;
+repay.addEventListener('click',function(){
+var r=NS.State.loanRepay();
+if(!r.ok)NS.UI.toast('Banco','No tienes efectivo para cubrir la deuda.','important','ic-error');
+NS.Audio.cash();
+NS.WM.rerender('bank');
+});
+p.appendChild(repay);
+}
+content.appendChild(p);
+var p2=panel('Pedir dinero prestado');
+[1000,5000,20000].forEach(function(amt){
+var b=Util.el('button',{
+class:'xp-btn small',
+text:'Pedir '+Util.fmtMoney(amt)
+});
+b.addEventListener('click',function(){
+var r=NS.State.loanTake(amt);
+if(r.ok){NS.Audio.cash();NS.UI.toast('Banco','Préstamo de '+Util.fmtMoney(amt)+' ingresado. ¡No olvides pagarlo!','good','ic-bank');}
+NS.WM.rerender('bank');
+});
+p2.appendChild(b);
+});
+content.appendChild(p2);
+});
+body.appendChild(tabs);
+body.appendChild(content);
+var first=Util.$('.tab-btn',tabs);
+if(first)first.click();
+}
+function render(body){
+body.innerHTML='';
+body.className='app-pad';
+renderTabs(body);
+}
+NS.Apps.register({
+id:'bank',title:'Primer Banco Nova',icon:'ic-bank',
+desktop:true,w:520,h:460,minW:440,minH:380,
+render:render,
+tick:function(){
+var S=NS.State.get();
+priceHist.push(S.bank.price);
+if(priceHist.length>60)priceHist.shift();
+}
+});
+})();
+</script>
+<script>(function(){
+'use strict';
+var NS=window.NovaOS=window.NovaOS||{};
+var Util=NS.Util;
+var AVATARS=['ic-hacker','ic-users','ic-bot','ic-star','ic-phone','ic-game'];
+var SLOGANS=[
+'¡He conectado con gente de todo el mundo!',
+'Hoy subiré fotos de mi nuevo PC.',
+'¿Alguien más usa NovaVista 2004?',
+'Mi botnet llega a 5 bots, ¡genial!',
+'Interés bancario pasivo: la clave del éxito.',
+'El rastreo de red me pone nervioso...',
+'Descubrí un nodo secreto en la red. No cuentes a nadie.'
+];
+function upgBtn(id,label){
+var S=NS.State.get();
+var def=NS.Catalog.UPGRADES[id];
+var lvl=S.upg[id]||0;
+var cost=NS.Catalog.upgradeCost(def,lvl);
+var maxed=lvl>=def.max;
+var b=Util.el('button',{
+class:'xp-btn small',
+text:label+' (nivel '+lvl+')'+(maxed?' — MÁX':' — '+Util.fmtMoney(cost))
+});
+b.disabled=maxed||S.currencies.cash<cost;
+b.addEventListener('click',function(){
+var r=NS.State.buyUpgrade(id);
+if(!r.ok&&r.why==='dinero')NS.UI.toast('MyNova','No tienes suficiente dinero.','important','ic-error');
+NS.WM.rerender('social');
+});
+return b;
+}
+function render(body){
+var S=NS.State.get();
+body.innerHTML='';
+body.className='app-pad';
+var col=Util.el('div',{class:'files-cols'});
+
+var left=Util.el('div',{class:'files-col'});
+var prof=Util.el('div',{class:'myspace-profile'});
+var head=Util.el('div',{class:'myspace-head',text:S.profile.name+' est@n en MyNova'});
+prof.appendChild(head);
+var inner=Util.el('div',{class:'myspace-inner'});
+var av=Util.el('svg',{class:'icon icon-64'});
+av.innerHTML='<use href="#'+AVATARS[S.profile.avatar%AVATARS.length]+'"/>';
+inner.appendChild(av);
+var info=Util.el('div',{style:{flex:'1'}});
+info.appendChild(Util.el('div',{class:'myspace-name',text:S.profile.name}));
+info.appendChild(Util.el('div',{class:'cfg-sub',text:'Última conexión: ahora mismo'}));
+info.appendChild(Util.el('div',{class:'cfg-sub',text:SLOGANS[Math.floor(S.profile.avatar%SLOGANS.length)]}));
+inner.appendChild(info);
+prof.appendChild(inner);
+left.appendChild(prof);
+var stats=Util.el('div',{class:'panel'});
+stats.appendChild(Util.el('div',{class:'panel-title',text:'Tus cifras'}));
+stats.appendChild(Util.el('div',{class:'social-big',text:Util.fmtInt(S.social.followers)+' seguidores'}));
+stats.appendChild(Util.el('div',{class:'cfg-info',html:
+'Ingresos por publicidad: <b>'+Util.fmtMoney(S.social.followers*NS.State.socialAdRate())+'/s</b><br>'+
+'Crecimiento orgánico: <b>'+Util.fmtNum(S.social.followers*NS.State.followerGrowthRate())+' seg/s</b><br>'+
+'Publicaciones: <b>'+S.social.totalPosts+'</b> · Mejor viralidad: <b>'+(S.social.viralBest||0).toFixed(2).replace('.',',')+'×</b>'
+}));
+left.appendChild(stats);
+var p2=Util.el('div',{class:'panel'});
+p2.appendChild(Util.el('div',{class:'panel-title',text:'Mejoras de MyNova'}));
+p2.appendChild(upgBtn('s-post','Cámara digital'));
+p2.appendChild(upgBtn('s-ad','Agencia de anuncios'));
+p2.appendChild(upgBtn('s-vrf','Chapa verificada'));
+left.appendChild(p2);
+col.appendChild(left);
+
+var right=Util.el('div',{class:'files-col'});
+var pub=Util.el('div',{class:'panel'});
+pub.appendChild(Util.el('div',{class:'panel-title',text:'Escribe una publicación'}));
+var ta=Util.el('textarea',{class:'xp-input post-box',maxlength:'200',placeholder:'¿Qué estás haciendo, '+S.profile.name+'?'});
+pub.appendChild(ta);
+var btn=Util.el('button',{class:'xp-btn primary',text:'Publicar ahora'});
+btn.addEventListener('click',function(){
+var txt=ta.value.trim()||SLOGANS[Math.floor(Math.random()*SLOGANS.length)];
+var gained=NS.State.makePost();
+NS.Mail.notify('Publicación en MyNova','«'+Util.esc(txt.slice(0,60))+'…» ganó <b>'+Util.fmtInt(gained)+' seguidores</b>.','ic-social');
+NS.Audio.cash();
+NS.WM.rerender('social');
+});
+pub.appendChild(btn);
+pub.appendChild(Util.el('div',{class:'cfg-sub',text:'Cada publicación da un golpe de seguidores con viralidad aleatoria (0,5× a 1,7×). El crecimiento pasivo viene de la chapa verificada.'}));
+right.appendChild(pub);
+var feed=Util.el('div',{class:'panel'});
+feed.appendChild(Util.el('div',{class:'panel-title',text:'Últimas publicaciones de tus contactos'}));
+var posts=[
+['ic-game','xX_NovaGamer_Xx','¡He llegado al nivel 99 en el minijuego del navegador! (hace 2 min)'],
+['ic-bot','BotMaster_77','Mi granja de bots ya mina 0.5 NC/min 🔥 (hace 8 min)'],
+['ic-phone','Sara_2004','Nuevo wallpaper de atardecer digital, ¿qué opináis? (hace 15 min)'],
+['ic-star','CriptoPepe','Compré NovaCoins a 9 $, ¡van a volar! (hace 30 min)']
+];
+posts.forEach(function(p){
+var r=Util.el('div',{class:'mail-row'});
+var ic=Util.el('svg',{class:'icon'});
+ic.innerHTML='<use href="#'+p[0]+'"/>';
+r.appendChild(ic);
+var info=Util.el('div',{style:{flex:'1'}});
+info.appendChild(Util.el('div',{class:'mail-subj',text:p[1]}));
+info.appendChild(Util.el('div',{class:'cfg-sub',text:p[2]}));
+r.appendChild(info);
+feed.appendChild(r);
+});
+right.appendChild(feed);
+col.appendChild(right);
+body.appendChild(col);
+}
+NS.Apps.register({
+id:'social',title:'MyNova',icon:'ic-social',
+desktop:true,w:580,h:480,minW:480,minH:400,
+render:render
+});
+})();
+</script>
+<script>(function(){
+'use strict';
+var NS=window.NovaOS=window.NovaOS||{};
+var Util=NS.Util;
+var history=[];
+var histIdx=-1;
+var pageEl=null;
+var addrEl=null;
+var contentEl=null;
+var currentRoute='nova://inicio';
+var loading=false;
+var pendingRoute=null;
+var FAVS=[
+['nova://inicio','ic-browser','Inicio'],
+['nova://noticias','ic-doc','Noticias'],
+['nova://foros','ic-users','Foros'],
+['nova://descargas','ic-download','Descargas'],
+['nova://novaclick','ic-game','NovaClick'],
+['nova://ayuda','ic-help','Ayuda']
+];
+function page(title,inner,opts){
+return'<div class="web-page'+(opts&&opts.dark?' web-dark':'')+'">'+
+(title?'<div class="web-title">'+Util.esc(title)+'</div>':'')+
+inner+'</div>';
+}
+function link(route,label){
+return'<a class="web-link" data-route="'+Util.esc(route)+'">'+Util.esc(label)+'</a>';
+}
+function adBox(text){
+var id='ad'+Math.floor(Math.random()*1e6);
+return'<div class="web-ad" id="'+id+'">📢 '+Util.esc(text)+' <span style="color:#c03030">[anuncio]</span></div>';
+}
+function wireLinks(root){
+Util.$$('.web-link',root).forEach(function(a){
+a.addEventListener('click',function(){navigate(a.getAttribute('data-route'));});
+});
+Util.$$('.web-quick-item[data-route]',root).forEach(function(a){
+a.addEventListener('click',function(){navigate(a.getAttribute('data-route'));});
+});
+Util.$$('.web-ad',root).forEach(function(a){
+a.addEventListener('click',function(){
+var s=NS.State.get();
+var win=Math.random()<0.5;
+if(win){NS.State.addCash(2+Math.random()*8);NS.Audio.cash();}
+NS.UI.toast('Anuncio',win?'El anuncio te dio '+Util.fmtMoney(2+Math.random()*8)+' por «hacer clic».':'El anuncio era fraudulento. Perdiste 1 $.',win?'good':'important','ic-info');
+});
+});
+}
+function pgHome(){
+var s=NS.State.get();
+var h='<div class="web-search-wrap">'+
+'<div class="web-logo">Nova<span style="color:#c33">Search</span></div>'+
+'<div class="web-searchbox"><input id="web-q" class="xp-input web-q" type="text" placeholder="Buscar en NovaNet..." '+
+'onkeydown="if(event.key===\'Enter\'){NovaOS.Browser.search(document.getElementById(\'web-q\').value);}"></div>'+
+'<button class="xp-btn" onclick="NovaOS.Browser.search(document.getElementById(\'web-q\').value)">Buscar</button>'+
+'</div>';
+h+='<div class="web-quick">';
+FAVS.slice(0,5).forEach(function(f){
+h+='<div class="web-quick-item" data-route="'+f[0]+'"><svg class="icon icon-32"><use href="#'+f[1]+'"/></svg><span>'+Util.esc(f[2])+'</span></div>';
+});
+h+='</div>';
+h+=adBox('¡NovaAntivirus 2005 YA DISPONIBLE! Protégete por solo 29,99 $');
+h+=adBox('Descarga 10.000 canciones MP3 en 1 minuto — ¡sin virus! (prometido)');
+h+='<div class="web-footer">Hora local del servidor: '+Util.fmtClock(Date.now())+' · Estás en la red RED-NOVA (54 Mbps)</div>';
+return page('NovaSearch — el buscador de los 2000s',h);
+}
+function pgSearch(q){
+var qs=Util.esc(q||'');
+var results=[
+{t:'Noticias NovaVista — edición de hoy',u:'nova://noticias',d:'Última hora: suben los intereses bancarios, cae la bolsa de NovaCoins, y un gusano ataca RED-NOVA.'},
+{t:'Foros NovaNet — tema: «Cómo evitar el rastreo en asaltos»',u:'nova://foros',d:'Stealth, proxies y buenos hábitos. Los veteranos cuentan sus trucos.'},
+{t:'Descargas NovaNet — herramientas y software',u:'nova://descargas',d:'Kits de explotación, gusanos, payloads cifrados. Todo con garantía de 30 días.'},
+{t:'NovaClick — el minijuego más adictivo de la red',u:'nova://novaclick',d:'¡Haz clic! ¡Haz clic! Gana dinero con las impresiones.'},
+{t:'Mapa de red — guía de asaltos (roguelite)',u:'nova://red',d:'Cómo funciona la intrusión: energía, rastro, firewall y botín.'},
+{t:'Ayuda de NovaVista 2004',u:'nova://ayuda',d:'Todo lo que necesitas saber para dominar el sistema.'}
+];
+var h='<div class="web-results">';
+h+='<div class="web-rcount">Resultados de «'+qs+'» (0,12 segundos)</div>';
+results.forEach(function(r){
+h+='<div class="web-result">'+
+'<div class="web-rtitle">'+link(r.u,r.t)+'</div>'+
+'<div class="web-route">'+Util.esc(r.u)+'</div>'+
+'<div class="web-rd">'+Util.esc(r.d)+'</div></div>';
+});
+h+='<div class="web-rcount" style="margin-top:14px">¿No encuentras lo que buscas? Prueba con «foros», «descargas» o «ayuda».</div>';
+h+='</div>';
+return page('Resultados de búsqueda',h);
+}
+function pgNews(){
+var s=NS.State.get();
+var items=[
+{t:'El Banco Nova sube los intereses un 12 %',d:'Los analistas recomiendan mantener el saldo alto para aprovechar el interés compuesto. Los certificados de depósito siguen siendo la opción conservadora.'},
+{t:'Las NovaCoins, ¿burbuja o futuro?',d:'El precio de la NovaCoin fluctúa entre 6 $ y 60 $. Expertos advierten: «minar es gratis, comprar es un riesgo».'},
+{t:'Nueva oleada de malware en RED-NOVA',d:'Un gusano desconocido intenta colarse en los PCs de los usuarios. NovaShield recomienda mantener el antivirus al día y el cortafuegos activo.'},
+{t:'MyNova supera los 100 millones de usuarios',d:'La red social más popular del 2004 estrena cámara digital de 3 megapíxeles. Los «seguidores» se han convertido en moneda.'},
+{t:'Entrevista: «Yo mino NovaCoins con una botnet casera»',d:'Un vecino de NovaVista cuenta cómo su granja de 5 bots le paga la conexión a internet. «Es legal... creo», bromea.'}
+];
+var h='<div class="web-news">';
+h+='<div class="web-rcount">NovaNoticias — '+Util.fmtDate(Date.now())+'</div>';
+items.forEach(function(it){
+h+='<div class="web-news-item"><div class="web-rtitle">'+Util.esc(it.t)+'</div><div class="web-rd">'+Util.esc(it.d)+'</div></div>';
+});
+h+='</div>';
+return page('NovaNoticias',h);
+}
+function pgForos(){
+var h='<div class="web-news">';
+h+='<div class="web-rcount">Foros NovaNet — '+Util.fmtInt(Math.floor(5000+NS.State.get().stats.posts*3))+' usuarios conectados</div>';
+var threads=[
+{t:'[Guía] Cómo evitar el rastreo en asaltos de red',a:'RastreadorPro',r:'42',d:'Usa stealth antes de cada acción, guarda proxies para el final y no subestimes el escaneo: revela vulnerabilidades gratis.'},
+{t:'¿Merece la pena la chapa verificada?',a:'Fama_Total',r:'17',d:'El crecimiento orgánico de seguidores se dispara. Recomendada si ya tienes 1.000 seguidores.'},
+{t:'Vendí 1 GB de datos y me compré el disco duro mayor',a:'DataLord',r:'9',d:'Con el acuerdo de datos al nivel 5, cada MB paga casi nada... invierte antes en precio.'},
+{t:'El MasterServer es IMPOSIBLE',a:'noob_2004',r:'38',d:'Necesitas al menos nivel 4 de firewall para abrirlo sin morir en el intento. Y el payload cifrado ayuda mucho.'},
+{t:'¿Alguien ha formateado C:?',a:'Veterano',r:'21',d:'El legado da +3 % por punto y es permanente. Espera a tener 100+ NovaCoins acumuladas en total.'}
+];
+threads.forEach(function(t){
+h+='<div class="web-news-item">'+
+'<div class="web-rtitle">'+Util.esc(t.t)+'</div>'+
+'<div class="web-rd">por <b>'+Util.esc(t.a)+'</b> · '+t.r+' respuestas · '+Util.esc(t.d)+'</div></div>';
+});
+h+='</div>';
+return page('Foros NovaNet',h);
+}
+function pgDescargas(){
+var S=NS.State.get();
+var h='<div class="web-news"><div class="web-rcount">Tienda de software — pagas con tu efectivo (no con NovaCoins)</div>';
+Object.keys(NS.Catalog.TOOLS).forEach(function(tid){
+var def=NS.Catalog.TOOLS[tid];
+var owned=S.inventory.tools[tid]||0;
+h+='<div class="web-dl-item">'+
+'<svg class="icon icon-24"><use href="#'+def.icon+'"/></svg>'+
+'<div style="flex:1"><div class="web-rtitle">'+Util.esc(def.name)+'</div>'+
+'<div class="web-rd">'+Util.esc(def.desc)+' (tienes: '+owned+')</div></div>'+
+'<button class="xp-btn small" data-tool="'+tid+'">Comprar — '+Util.fmtMoney(def.price)+'</button></div>';
+});
+h+='<div class="web-rd" style="margin-top:8px">Las herramientas se usan durante los asaltos del <b>Mapa de Red</b>. También pueden caer como botín.</div>';
+h+='</div>';
+return page('Descargas NovaNet',h);
+}
+function pgNovaClick(){
+var s=NS.State.get();
+var b=s.browser||{};
+var autoLvl=b.autoLvl||0;
+var cpmLvl=b.cpmLvl||0;
+var autoCost=Math.floor(150*Math.pow(2.2,autoLvl));
+var cpmCost=Math.floor(400*Math.pow(3,cpmLvl));
+var imp=b.impressions||0;
+var value=imp*0.02*Math.pow(2,cpmLvl);
+var h='<div class="web-click">'+
+'<div class="web-logo" style="font-size:26px">Nova<span style="color:#c33">Click</span></div>'+
+'<div class="web-click-count">'+Util.fmtInt(imp)+' impresiones</div>'+
+'<div class="web-click-value">Valor: '+Util.fmtMoney(value)+'</div>'+
+'<button class="xp-btn click-big" onclick="NovaOS.Browser.clickImp()">¡HAZ CLIC!</button>'+
+'<div class="cfg-sub">Cada clic = 1 impresión · 0,02 $ por impresión (CPM mejorable)</div>'+
+'<div class="web-dl-item"><div style="flex:1"><div class="web-rtitle">Autoclic de marquesina</div><div class="web-rd">+1 impresión/s (nivel '+autoLvl+')</div></div>'+
+'<button class="xp-btn small" onclick="NovaOS.Browser.buyAuto('+autoCost+')">'+Util.fmtMoney(autoCost)+'</button></div>'+
+'<div class="web-dl-item"><div style="flex:1"><div class="web-rtitle">Mejor CPM</div><div class="web-rd">x2 valor por impresión (nivel '+cpmLvl+')</div></div>'+
+'<button class="xp-btn small" onclick="NovaOS.Browser.buyCpm('+cpmCost+')">'+Util.fmtMoney(cpmCost)+'</button></div>'+
+'<div class="web-dl-item"><div style="flex:1"><div class="web-rtitle">Cobrar publicidad</div><div class="web-rd">Convierte impresiones en efectivo</div></div>'+
+'<button class="xp-btn primary small" onclick="NovaOS.Browser.cashImp()">Cobrar '+Util.fmtMoney(value)+'</button></div>'+
+'</div>';
+return page('NovaClick — el minijuego',h,{dark:true});
+}
+function pgRed(){
+var s=NS.State.get();
+var h='<div class="web-news"><div class="web-rcount">Guía oficial del Mapa de Red</div>';
+h+='<div class="web-news-item"><div class="web-rtitle">¿Qué es un asalto?</div><div class="web-rd">Entras en la red, escaneas nodos, rompes su firewall y drenas sus datos. Cada acción gasta energía y genera rastro. Si el rastro llega a 100, te rastrean y pierdes el botín no guardado.</div></div>';
+h+='<div class="web-news-item"><div class="web-rtitle">Comandos clave</div><div class="web-rd">scan (revela), crack (rompe 1 capa), exploit (usa vulnerabilidad), bruteforce (lento pero seguro), upload (drena), stealth (baja el rastro), proxy (lo parte por la mitad), disconnect (cobra y sale).</div></div>';
+h+='<div class="web-news-item"><div class="web-rtitle">Consejo roguelite</div><div class="web-rd">Los implantes (comprados con NovaCoins) persisten entre asaltos. Invierte en energía y sigilo antes de intentar el MasterServer.</div></div>';
+h+='</div>';
+return page('Mapa de red — guía',h);
+}
+function pgAyuda(){
+var h='<div class="web-news"><div class="web-rcount">Centro de ayuda de NovaVista 2004</div>';
+var faqs=[
+['¿Cómo gano dinero?','Intereses del banco (mantén saldo alto), publicidad de MyNova (según seguidores), venta de datos robados y las impresiones de NovaClick.'],
+['¿Qué son las NovaCoins?','La moneda meta del roguelite: se minan con bots, se obtienen en asaltos profundos y se gastan en implantes. Acumúlalas para el legado.'],
+['¿Qué es el legado?','Al formatear C: conviertes tu historial de NovaCoins en puntos de legado permanentes (+3 % de ingresos cada uno).'],
+['¿Por qué me rastrean?','Cada acción en un asalto suma rastro. El sigilo, los proxies y la energía bien gestionada son la clave. Si llega a 100, pierdes el botín.'],
+['¿Qué hago con los datos?','Véndelos en Mis Archivos. Invierte en el acuerdo de datos y en disco duro antes de acumular mucho.'],
+['¿Es seguro este navegador?','NovaNet Explorer solo muestra páginas internas de NovaVista. Las páginas externas están bloqueadas por el filtro de seguridad (según el diseño del sistema).']
+];
+faqs.forEach(function(f){
+h+='<div class="web-news-item"><div class="web-rtitle">'+Util.esc(f[0])+'</div><div class="web-rd">'+Util.esc(f[1])+'</div></div>';
+});
+h+='</div>';
+return page('Ayuda de NovaVista',h);
+}
+function pg404(route){
+return page('No se puede mostrar la página','<div class="web-404">'+
+'<div class="web-404-code">404</div>'+
+'<div class="web-rd">No se pudo encontrar «'+Util.esc(route)+'».</div>'+
+'<div class="web-rd">El filtro de seguridad de NovaVista bloquea el acceso a páginas externas (http://). Prueba un destino interno.</div>'+
+link('nova://inicio','Volver al inicio')+'</div>');
+}
+function routeToHtml(route){
+if(route.indexOf('nova://buscar')===0){
+var q=decodeURIComponent(route.split('q=')[1]||'');
+return pgSearch(q);
+}
+switch(route){
+case'nova://inicio':return pgHome();
+case'nova://noticias':return pgNews();
+case'nova://foros':return pgForos();
+case'nova://descargas':return pgDescargas();
+case'nova://novaclick':return pgNovaClick();
+case'nova://red':return pgRed();
+case'nova://ayuda':return pgAyuda();
+default:return pg404(route);
+}
+}
+function navigate(route,push){
+var s=NS.State.get();
+if(route.indexOf('http')===0){
+NS.UI.toast('NovaNet Explorer','El filtro de seguridad bloqueó la página externa: '+Util.esc(route),'important','ic-lock');
+NS.Audio.error();
+return;
+}
+if(loading){pendingRoute=route;return;}
+if(push!==false){
+history=history.slice(0,histIdx+1);
+history.push(route);
+histIdx=history.length-1;
+}
+currentRoute=route;
+renderPage(route);
+}
+function renderPage(route){
+loading=true;
+pendingRoute=null;
+if(addrEl)addrEl.value=route;
+var s=NS.State.get();
+if(contentEl)contentEl.innerHTML='<div class="web-loading"><div class="web-loading-bar"></div><div>Cargando '+Util.esc(route)+'...</div></div>';
+NS.Audio.tick();
+setTimeout(function(){
+loading=false;
+if(!contentEl)return;
+contentEl.innerHTML=routeToHtml(route);
+wireLinks(contentEl);
+
+Util.$$('[data-tool]',contentEl).forEach(function(b){
+var tid=b.getAttribute('data-tool');
+b.addEventListener('click',function(){
+var r=NS.State.buyTool(tid,1);
+if(r.ok){
+NS.Audio.cash();
+NS.UI.toast('Descargas','Compraste 1× '+Util.esc(NS.Catalog.TOOLS[tid].name)+'.','good','ic-download');
+renderPage(route);
+}else NS.UI.toast('Descargas','No tienes efectivo suficiente.','important','ic-error');
+});
+});
+if(pendingRoute){var r2=pendingRoute;pendingRoute=null;navigate(r2,true);}
+},280+Math.random()*220);
+}
+function search(q){
+q=String(q||'').trim().slice(0,60);
+if(!q)return;
+navigate('nova://buscar?q='+encodeURIComponent(q));
+}
+function clickImp(){
+var s=NS.State.get();
+s.browser.impressions=(s.browser.impressions||0)+1;
+s.browser.clicks=(s.browser.clicks||0)+1;
+s.stats.clicks++;
+NS.Audio.tick();
+if(NS.WM.isOpen('browser'))NS.WM.rerender('browser');
+}
+function buyAuto(cost){
+var s=NS.State.get();
+if(s.currencies.cash<cost){NS.UI.toast('NovaClick','Sin dinero.','important','ic-error');return;}
+s.currencies.cash-=cost;
+s.browser.autoLvl=(s.browser.autoLvl||0)+1;
+NS.Audio.cash();
+if(NS.WM.isOpen('browser'))NS.WM.rerender('browser');
+}
+function buyCpm(cost){
+var s=NS.State.get();
+if(s.currencies.cash<cost){NS.UI.toast('NovaClick','Sin dinero.','important','ic-error');return;}
+s.currencies.cash-=cost;
+s.browser.cpmLvl=(s.browser.cpmLvl||0)+1;
+NS.Audio.cash();
+if(NS.WM.isOpen('browser'))NS.WM.rerender('browser');
+}
+function cashImp(){
+var s=NS.State.get();
+var imp=s.browser.impressions||0;
+if(imp<=0)return;
+var val=imp*0.02*Math.pow(2,s.browser.cpmLvl||0);
+NS.State.addCash(val);
+s.browser.impressions=0;
+NS.Audio.cash();
+NS.UI.toast('NovaClick','Cobraste '+Util.fmtMoney(val)+' por '+Util.fmtInt(imp)+' impresiones.','good','ic-coin');
+if(NS.WM.isOpen('browser'))NS.WM.rerender('browser');
+}
+function render(body){
+body.innerHTML='';
+body.className='web-root';
+var toolbar=Util.el('div',{class:'web-toolbar'});
+function navBtn(label,fn,title){
+var b=Util.el('button',{class:'xp-btn small',text:label,title:title||''});
+b.addEventListener('click',fn);
+toolbar.appendChild(b);
+}
+navBtn('←',function(){if(histIdx>0){histIdx--;renderPage(history[histIdx]);}},'Atrás');
+navBtn('→',function(){if(histIdx<history.length-1){histIdx++;renderPage(history[histIdx]);}},'Adelante');
+navBtn('↻',function(){renderPage(currentRoute);},'Actualizar');
+navBtn('⌂',function(){navigate('nova://inicio');},'Inicio');
+addrEl=Util.el('input',{class:'xp-input web-addr',type:'text',value:currentRoute,spellcheck:'false'});
+addrEl.addEventListener('keydown',function(e){
+if(e.key==='Enter')navigate(addrEl.value);
+});
+toolbar.appendChild(addrEl);
+var go=Util.el('button',{class:'xp-btn small',text:'Ir'});
+go.addEventListener('click',function(){navigate(addrEl.value);});
+toolbar.appendChild(go);
+var favs=Util.el('div',{class:'web-favs'});
+FAVS.forEach(function(f){
+var b=Util.el('button',{class:'web-fav',title:f[2]});
+var svg=Util.el('svg',{class:'icon'});
+svg.innerHTML='<use href="#'+f[1]+'"/>';
+b.appendChild(svg);
+b.appendChild(document.createTextNode(f[2]));
+b.addEventListener('click',function(){navigate(f[0]);});
+favs.appendChild(b);
+});
+contentEl=Util.el('div',{class:'web-content'});
+var status=Util.el('div',{class:'web-status',text:'Listo'});
+body.appendChild(toolbar);
+body.appendChild(favs);
+body.appendChild(contentEl);
+body.appendChild(status);
+pageEl=body;
+renderPage(currentRoute);
+}
+function tick(){
+var s=NS.State.get();
+if(!s.browser)s.browser={impressions:0,auto:0,clicks:0};
+var auto=s.browser.autoLvl||0;
+if(auto>0){
+s.browser.impressions=(s.browser.impressions||0)+auto*0.2;
+}
+if(NS.WM.isOpen('browser')&&currentRoute==='nova://novaclick'&&Math.floor(Math.random()*6)===0){
+
+}
+}
+NS.Apps.register({
+id:'browser',title:'NovaNet Explorer',icon:'ic-browser',
+desktop:true,w:680,h:480,minW:520,minH:360,
+render:render,tick:tick
+});
+NS.Browser={
+navigate:navigate,search:search,clickImp:clickImp,
+buyAuto:buyAuto,buyCpm:buyCpm,cashImp:cashImp
+};
+})();
+</script>
+<script>(function(){
+'use strict';
+var NS=window.NovaOS=window.NovaOS||{};
+var Util=NS.Util;
+var log=[];
+function addLog(txt,cls){
+log.unshift({txt:txt,cls:cls||'',at:Date.now()});
+if(log.length>30)log.length=30;
+}
+function avBtn(id,label){
+var S=NS.State.get();
+var def=NS.Catalog.UPGRADES[id];
+var lvl=S.upg[id]||0;
+var cost=NS.Catalog.upgradeCost(def,lvl);
+var maxed=lvl>=def.max;
+var b=Util.el('button',{
+class:'xp-btn small',
+text:label+' (nivel '+lvl+')'+(maxed?' — MÁX':' — '+Util.fmtMoney(cost))
+});
+b.disabled=maxed||S.currencies.cash<cost;
+b.addEventListener('click',function(){
+var r=NS.State.buyUpgrade(id);
+if(!r.ok&&r.why==='dinero')NS.UI.toast('NovaShield','Fondos insuficientes para la licencia.','important','ic-error');
+NS.WM.rerender('av');
+});
+return b;
+}
+function render(body){
+var S=NS.State.get();
+body.innerHTML='';
+body.className='app-pad';
+var q=NS.Sec.isQuarantined();
+if(q){
+var warn=Util.el('div',{class:'panel av-quarantine'});
+warn.appendChild(Util.el('div',{class:'panel-title',text:'¡INTEGRIDAD COMPROMETIDA!'}));
+warn.appendChild(Util.el('div',{class:'cfg-info',html:
+'NovaShield detectó que se intentó <b>modificar o manipular</b> el juego/guardado.<br><br>'+
+'Mientras el sistema esté en cuarentena, <b>no se guarda el progreso</b> y los ingresos están suspendidos.<br><br>'+
+'Soluciones:'}));
+var restore=Util.el('button',{class:'xp-btn primary',text:'Restaurar copia de seguridad válida'});
+restore.addEventListener('click',function(){
+var backup=NS.Save.loadBackup();
+if(!backup){
+NS.UI.alert('NovaShield','No hay ninguna copia de seguridad válida. Solo queda formatear el sistema.','ic-error');
+return;
+}
+NS.UI.confirm('NovaShield','Se restaurará la última copia firmada correctamente. Todo el progreso posterior a esa copia se perderá. ¿Continuar?')
+.then(function(ok){
+if(!ok)return;
+NS.Save.save(backup);
+NS.Sec.clearQuarantine();
+window.location.reload();
+});
+});
+warn.appendChild(restore);
+var fmt=Util.el('button',{class:'xp-btn danger',text:'Formatear C: (empezar de cero)'});
+fmt.addEventListener('click',function(){
+NS.UI.confirm('Formatear','Se borrará todo y se generará una instalación limpia. ¿Continuar?')
+.then(function(ok){
+if(!ok)return;
+NS.Save.wipe();
+NS.Sec.clearQuarantine();
+window.location.reload();
+});
+});
+warn.appendChild(fmt);
+body.appendChild(warn);
+return;
+}
+var cols=Util.el('div',{class:'files-cols'});
+var left=Util.el('div',{class:'files-col'});
+var box=Util.el('div',{class:'panel av-box'});
+box.appendChild(Util.el('div',{class:'panel-title',text:'Estado de protección'}));
+var prot=2+(S.upg['av-level']||0)+(S.upg['av-fw']||0);
+var grade=prot>=14?'EXCELENTE':prot>=10?'BUENA':prot>=6?'ACEPTABLE':'DÉBIL';
+box.appendChild(Util.el('div',{class:'av-grade',text:grade}));
+box.appendChild(Util.el('div',{class:'cfg-info',html:
+'Antivirus: <b>nivel '+(S.upg['av-level']||0)+'</b> · Cortafuegos: <b>nivel '+(S.upg['av-fw']||0)+'</b><br>'+
+'Amenazas detenidas: <b>'+S.av.malwareStopped+'</b><br>'+
+'Probabilidad de bloquear una amenaza: <b>'+Math.round(Util.clamp(0.25+prot*0.075,0,0.95)*100)+' %</b>'
+}));
+left.appendChild(box);
+var bx2=Util.el('div',{class:'panel'});
+bx2.appendChild(Util.el('div',{class:'panel-title',text:'Mejoras de seguridad'}));
+bx2.appendChild(avBtn('av-level','Motor de antivirus'));
+bx2.appendChild(avBtn('av-fw','Cortafuegos'));
+left.appendChild(bx2);
+cols.appendChild(left);
+var right=Util.el('div',{class:'files-col'});
+var bx3=Util.el('div',{class:'panel'});
+bx3.appendChild(Util.el('div',{class:'panel-title',text:'Escaneo manual'}));
+var scan=Util.el('button',{class:'xp-btn',text:'Analizar sistema'});
+var scanInfo=Util.el('div',{class:'cfg-sub',text:'Da XP y puede revelar amenazas latentes.'});
+var scanning=false;
+scan.addEventListener('click',function(){
+if(scanning)return;
+scanning=true;
+scan.disabled=true;
+scan.textContent='Analizando...';
+var p=0;
+(function step(){
+p+=4+Math.random()*10;
+if(p>=100){
+scanning=false;
+scan.disabled=false;
+scan.textContent='Analizar sistema';
+NS.State.addXP(4+S.av.level*2);
+var clean=Math.random()>0.25;
+addLog(clean?'Escaneo completo: ningún archivo infectado encontrado.':'Escaneo completo: se eliminaron 2 archivos sospechosos en cuarentena.',clean?'ok':'warn');
+NS.Audio.ok();
+NS.WM.rerender('av');
+}else{
+scan.textContent='Analizando... '+Math.floor(p)+' %';
+setTimeout(step,60);
+}
+})();
+});
+bx3.appendChild(scan);
+bx3.appendChild(scanInfo);
+right.appendChild(bx3);
+var bx4=Util.el('div',{class:'panel'});
+bx4.appendChild(Util.el('div',{class:'panel-title',text:'Registro de eventos'}));
+if(!log.length)log.push({txt:'NovaShield iniciado. Protección activa.',cls:'ok',at:Date.now()});
+log.forEach(function(l){
+var r=Util.el('div',{class:'mail-row'});
+var ic=Util.el('svg',{class:'icon'});
+ic.innerHTML='<use href="#'+(l.cls==='warn'?'ic-warning':'ic-shield')+'"/>';
+r.appendChild(ic);
+var info=Util.el('div',{style:{flex:'1'}});
+info.appendChild(Util.el('div',{class:'cfg-sub',html:Util.esc(l.txt)+' <span style="color:#999">('+Util.fmtClock(l.at)+')</span>'}));
+r.appendChild(info);
+bx4.appendChild(r);
+});
+right.appendChild(bx4);
+cols.appendChild(right);
+body.appendChild(cols);
+}
+NS.Apps.register({
+id:'av',title:'NovaShield',icon:'ic-shield',
+desktop:true,w:560,h:460,minW:460,minH:380,
+render:render
+});
+NS.AV={addLog:addLog};
+})();
+</script>
+<script>(function(){
+'use strict';
+var NS=window.NovaOS=window.NovaOS||{};
+var Util=NS.Util;
+var NAMES={
+home:['PC de Ana','PC de Roberto','PC familiar','PC de la vecina'],
+cafe:['CiberCafé NovaNet','Ciber@24 horas','Café Internet El Navegante'],
+office:['Oficina de diseño XS','Gestoría El Águila','Despacho López y Cía'],
+news:['Servidor NovaNoticias','Portal de deportes Golazo'],
+bank:['Banco del Sur S.A.','Caja de Ahorros Nova','Crédito Hipotecario Global'],
+corp:['MegaSoft Corp','DataCorp Central','Telefónica del Norte'],
+dark:['Nodo Oscuro #7','Bazar del Subsuelo','Servidor Fantasma']
+};
+function genNode(rng,kind,lvl,name,conn){
+var fw=1+Math.floor(lvl/2)+(rng()<0.45?1:0);
+var vulns=[];
+var pool=['buffer','openport','weakpass','backdoor'];
+var nv=rng()<0.3?0:rng()<0.7?1:2;
+for(var i=0;i<nv;i++){
+var v=pool[Math.floor(rng()*pool.length)];
+if(vulns.indexOf(v)===-1)vulns.push(v);
+}
+return{
+id:'n'+Math.floor(rng()*1e9).toString(36),
+kind:kind,name:name,
+lvl:lvl,
+fw:kind==='isp'?0:fw,
+fwMax:fw,
+trace:3+lvl*2+Math.floor(rng()*4),
+data:Math.round(Math.pow(lvl,1.35)*15*(0.8+rng()*0.6)),
+cash:Math.round(Math.pow(lvl,2.05)*40*(0.8+rng()*0.5)),
+coins:0,
+coinsChance:kind==='dark'?0.65:kind==='boss'?1:0,
+vulns:vulns,
+conn:conn||[],
+explored:kind==='isp',
+drained:false,
+usedVulns:{}
+};
+}
+function genRun(seed){
+var rng=Util.mulberry32(seed>>>0);
+var nodes=[];
+var boss;
+var isp=genNode(rng,'isp',0,'Proveedor ISP (tú)',[]);
+nodes.push(isp);
+function addLayer(count,kinds,lvlMin,lvlMax){
+var layer=[];
+for(var i=0;i<count;i++){
+var k=kinds[Math.floor(rng()*kinds.length)];
+var lvl=lvlMin+Math.floor(rng()*(lvlMax-lvlMin+1));
+var n=genNode(rng,k,lvl,NAMES[k][Math.floor(rng()*NAMES[k].length)],[]);
+nodes.push(n);
+layer.push(n);
+}
+return layer;
+}
+var d1=addLayer(2+Math.floor(rng()*2),['home','home','cafe'],1,3);
+var d2=addLayer(2+Math.floor(rng()*2),['office','office','news'],3,5);
+var d3=addLayer(1+Math.floor(rng()*2),['bank','bank','corp'],5,8);
+var d4=addLayer(1,['dark'],7,9);
+boss=genNode(rng,'boss',10,'MASTER SERVER',[]);
+boss.data=4000+Math.floor(rng()*2000);
+boss.cash=25000+Math.floor(rng()*15000);
+boss.coins=8+Math.floor(rng()*10);
+nodes.push(boss);
+
+isp.conn=d1.map(function(n){return n.id;});
+function wire(prev,next){
+prev.forEach(function(p,i){
+var targets=next.slice();
+
+var picks=1+(rng()<0.6?1:0);
+for(var k=0;k<picks&&targets.length;k++){
+var t=targets.splice(Math.floor(rng()*targets.length),1)[0];
+p.conn.push(t.id);
+}
+if(!p.conn.length&&next.length)p.conn.push(next[0].id);
+});
+}
+wire(d1,d2);
+wire(d2,d3);
+wire(d3,d4);
+d4.forEach(function(n){n.conn.push(boss.id);});
+
+if(rng()<0.3)d2[Math.floor(rng()*d2.length)].conn.push(boss.id);
+return{
+seed:seed,nodes:nodes,ispId:isp.id,bossId:boss.id,
+trace:0,loot:{data:0,cash:0},tools:{},
+status:'active',startedAt:Date.now(),mapRevealed:false,
+summary:null
+};
+}
+function nodeById(run,id){
+for(var i=0;i<run.nodes.length;i++)if(run.nodes[i].id===id)return run.nodes[i];
+return null;
+}
+function isReachable(run,node){
+if(node.kind==='isp')return true;
+
+for(var i=0;i<run.nodes.length;i++){
+var p=run.nodes[i];
+if(p.id===node.id)continue;
+if((p.kind==='isp'||p.drained)&&p.conn.indexOf(node.id)!==-1)return true;
+}
+return false;
+}
+function hasTool(run,tid){
+if(run.tools[tid]>0)return true;
+return(NS.State.get().inventory.tools[tid]||0)>0;
+}
+function takeTool(run,tid){
+if(run.tools[tid]>0){run.tools[tid]--;return true;}
+if(NS.State.useTool(tid))return true;
+return false;
+}
+function traceRisk(run,node){
+var S=NS.State.get();
+var stealth=1-0.04*(S.upg['i-stealth']||0);
+return Math.max(1,node.trace*stealth*(0.85+Math.random()*0.3));
+}
+function addTrace(run,node){
+run.trace+=traceRisk(run,node);
+if(run.trace>=100){
+run.trace=100;
+traced(run);
+return true;
+}
+return false;
+}
+function spendE(n){
+if(!NS.State.spendEnergy(n))return false;
+return true;
+}
+function lootMult(){
+var S=NS.State.get();
+return 1+0.1*(S.upg['i-loot']||0);
+}
+function toolDropChance(){
+var S=NS.State.get();
+return 0.12+0.04*(S.upg['i-tools']||0);
+}
+function actScan(run,node){
+if(!isReachable(run,node))return log('err','No puedes alcanzar «'+node.name+'» todavía. Drena antes un nodo conectado.');
+if(!spendE(1))return log('err','Energía insuficiente.');
+node.explored=true;
+var vulnTxt=node.vulns.length?node.vulns.map(vulnName).join(', '):'ninguna conocida';
+log('ok','ESCANEO de '+node.name+' (nivel '+node.lvl+')');
+log('dim','  Firewall: '+'▓'.repeat(node.fw)+'░'.repeat(node.fwMax-node.fw)+' · Vulnerabilidades: '+vulnTxt);
+log('dim','  Botín estimado: '+Util.fmtBytes(node.data*1024*1024)+' · '+Util.fmtMoney(node.cash)+(node.coinsChance>0?' · posible monedas':''));
+addTrace(run,node);
+NS.State.addXP(2);
+NS.Audio.tick();
+refresh();
+}
+function actCrack(run,node){
+if(!isReachable(run,node))return log('err','Nodo inalcanzable.');
+if(node.fw<=0)return log('dim','El firewall de '+node.name+' ya está caído. Usa UPLOAD.');
+if(!spendE(1))return log('err','Energía insuficiente.');
+var S=NS.State.get();
+var chance=0.55+0.12*(S.upg['i-cpu']||0);
+if(node.usedVulns.openport)chance+=0.25;
+var autoWin=node.usedVulns.weakpass?false:(node.vulns.indexOf('weakpass')!==-1);
+if(autoWin){node.usedVulns.weakpass=true;chance=1;}
+chance=Util.clamp(chance,0.15,0.95);
+if(Math.random()<chance){
+node.fw--;
+log('ok','CRACK exitoso en '+node.name+' — capa de firewall eliminada ('+node.fw+' restantes).');
+NS.State.addXP(3);
+NS.Audio.hack();
+}else{
+log('warn','CRACK fallido en '+node.name+'. Aumenta el rastro...');
+NS.Audio.error();
+}
+addTrace(run,node);
+refresh();
+}
+function actExploit(run,node){
+if(!isReachable(run,node))return log('err','Nodo inalcanzable.');
+if(node.fw<=0)return log('dim','Sin firewall que explotar.');
+var usesTool=false;
+if(node.vulns.indexOf('buffer')===-1){
+
+if(hasTool(run,'exploit')){takeTool(run,'exploit');usesTool=true;}
+else return log('err','No hay vulnerabilidad de desbordamiento conocida en '+node.name+'. Escanéalo antes o usa un Kit de explotación.');
+}
+if(!spendE(1))return log('err','Energía insuficiente.');
+node.usedVulns.buffer=true;
+node.fw=Math.max(0,node.fw-1);
+log('ok','EXPLOIT aplicado'+(usesTool?' (kit de explotación)':' (desbordamiento)')+'. Capa eliminada sin rastro ('+node.fw+' restantes).');
+NS.State.addXP(4);
+NS.Audio.hack();
+refresh();
+}
+function actBruteforce(run,node){
+if(!isReachable(run,node))return log('err','Nodo inalcanzable.');
+if(node.fw<=0)return log('dim','El firewall ya está caído.');
+if(!spendE(2))return log('err','Energía insuficiente (cuesta 2).');
+node.fw--;
+log('warn','BRUTEFORCE: capa rota a la fuerza ('+node.fw+' restantes). El rastro aumenta mucho.');
+addTrace(run,node);
+addTrace(run,node);
+NS.State.addXP(2);
+NS.Audio.error();
+refresh();
+}
+function actUpload(run,node){
+if(!isReachable(run,node))return log('err','Nodo inalcanzable.');
+if(node.drained)return log('dim','Ya drenaste '+node.name+'.');
+if(node.fw>0)return log('err','El firewall de '+node.name+' sigue activo ('+node.fw+' capas).');
+if(!spendE(2))return log('err','Energía insuficiente (cuesta 2).');
+var payloadUsed=false;
+if(hasTool(run,'payload')){
+takeTool(run,'payload');
+payloadUsed=true;
+log('ok','Payload cifrado inyectado: +40 % de datos.');
+}
+var mult=lootMult()*(payloadUsed?1.4:1);
+var d=Math.round(node.data*mult);
+var c=Math.round(node.cash*mult);
+run.loot.data+=d;
+run.loot.cash+=c;
+node.drained=true;
+NS.State.get().stats.hacks++;
+NS.State.get().meta.nodesDrained++;
+NS.State.addXP(6+node.lvl*2);
+var msg='UPLOAD completado en '+node.name+' — +'+Util.fmtBytes(d*1024*1024)+' de datos y '+Util.fmtMoney(c)+' al botín.';
+if(node.coinsChance>0&&(node.kind==='boss'||Math.random()<node.coinsChance)){
+NS.State.addCoins(node.coins);
+msg+=' ¡+'+node.coins+' NovaCoins a tu cartera!';
+}
+log('ok',msg);
+NS.Audio.hack();
+
+if(Math.random()<toolDropChance()){
+var tids=Object.keys(NS.Catalog.TOOLS);
+var tid=tids[Math.floor(Math.random()*tids.length)];
+NS.State.get().inventory.tools[tid]=(NS.State.get().inventory.tools[tid]||0)+1;
+log('dim','Botín extra: 1× '+NS.Catalog.TOOLS[tid].name+'.');
+}
+addTrace(run,node);
+if(node.kind==='boss'){
+run.status='done';
+run.summary='victory';
+var bonus=10+Math.floor(Math.random()*15);
+NS.State.addCoins(bonus);
+NS.State.addXP(60);
+NS.State.get().meta.bossesDrained++;
+log('ok','★★★★★ MASTER SERVER DRENADO — ASALTO COMPLETADO ★★★★★');
+log('ok','Bonus de victoria: +'+bonus+' NovaCoins y +60 XP.');
+NS.Audio.startup();
+endRun(true);
+}
+refresh();
+}
+function actStealth(run){
+if(!spendE(1))return log('err','Energía insuficiente.');
+run.trace=Math.floor(run.trace*0.7);
+log('ok','SIGILO activado. Rastro reducido al 70 % ('+Math.floor(run.trace)+').');
+NS.State.addXP(1);
+NS.Audio.tick();
+refresh();
+}
+function actProxy(run){
+if(!takeTool(run,'proxy'))return log('err','No tienes servidores proxy.');
+run.trace=Math.floor(run.trace*0.5);
+log('ok','PROXY quemado. Rastro reducido a la mitad ('+Math.floor(run.trace)+').');
+NS.Audio.tick();
+refresh();
+}
+function actWorm(run){
+if(!takeTool(run,'worm'))return log('err','No tienes gusanos.');
+NS.State.addEnergy(8);
+log('ok','GUSANO desplegado: +8 de energía ('+NS.State.get().currencies.energy+'/max).');
+NS.Audio.ok();
+refresh();
+}
+function actIcmp(run){
+if(!takeTool(run,'icmp'))return log('err','No tienes túneles ICMP.');
+run.mapRevealed=true;
+run.nodes.forEach(function(n){n.explored=true;});
+log('ok','TÚNEL ICMP: se ha revelado todo el mapa de red.');
+NS.Audio.ok();
+refresh();
+}
+function actDecrypt(run,node){
+if(!node||!node.explored)return log('err','Selecciona y escanea antes un nodo.');
+var extra=['buffer','openport','weakpass','backdoor'].filter(function(v){return node.vulns.indexOf(v)===-1;});
+if(!extra.length){log('dim','El nodo no tiene más vulnerabilidades que revelar.');return;}
+if(!takeTool(run,'decrypt'))return log('err','No tienes descifradores.');
+var v=extra[Math.floor(Math.random()*extra.length)];
+node.vulns.push(v);
+log('ok','DESCIFRADOR: vulnerabilidad revelada — '+vulnName(v));
+refresh();
+}
+function actDisconnect(run){
+log('dim','Desconectando de la red...');
+NS.Audio.tick();
+endRun(false);
+}
+function vulnName(v){
+return{buffer:'desbordamiento',openport:'puerto abierto',weakpass:'contraseña débil',backdoor:'puerta trasera'}[v]||v;
+}
+function commitLoot(run){
+var S=NS.State.get();
+var added=NS.State.addDataMB(run.loot.data);
+NS.State.addCash(run.loot.cash);
+return{data:added,cash:run.loot.cash};
+}
+function endRun(victoryRun){
+var S=NS.State.get();
+var run=S.run;
+if(!run)return;
+S.run=null;
+var bonusXP=0;
+var drained=0;
+run.nodes.forEach(function(n){if(n.drained)drained++;});
+if(run.status==='traced'){
+S.meta.runsTraced++;
+NS.UI.toast('¡RASTREADO!','Te localizaron y perdiste el botín sin cobrar. Mantuviste las NovaCoins obtenidas.','important','ic-error');
+NS.Audio.trace();
+NS.Mail.notify('Alerta de rastreo','El asalto a la red terminó mal: te rastrearon y el botín se perdió. <b>Consejo:</b> usa stealth antes de cada acción y guarda proxies.','ic-error');
+refresh();
+return;
+}
+var loot=commitLoot(run);
+bonusXP=drained*4;
+NS.State.addXP(bonusXP);
+S.meta.runsDone++;
+S.stats.traces=S.stats.traces||0;
+var title=victoryRun?'ASALTO COMPLETADO':'ASALTO FINALIZADO';
+NS.UI.toast(title,'Cobraste '+Util.fmtMoney(loot.cash)+' y '+Util.fmtBytes(loot.data*1024*1024)+' de datos ('+drained+' nodos drenados, +'+bonusXP+' XP).','good','ic-coin');
+NS.Audio.cash();
+NS.Mail.notify(title,'Resumen: <b>'+drained+'</b> nodos drenados · <b>'+Util.fmtMoney(loot.cash)+'</b> cobrados · <b>'+Util.fmtBytes(loot.data*1024*1024)+'</b> de datos en el almacén'+(victoryRun?' · ¡MasterServer destruido!':'')+'.','ic-net');
+refresh();
+}
+function traced(run){
+run.status='traced';
+NS.State.get().stats.traces++;
+endRun(false);
+}
+var outEl=null;
+var inpEl=null;
+var mapEl=null;
+var infoEl=null;
+var curTab='mapa';
+var selectedId=null;
+var cmdHist=[];
+var cmdIdx=0;
+function log(cls,txt){
+if(!outEl)return;
+var div=Util.el('div',{class:'term-'+cls,text:txt});
+outEl.appendChild(div);
+outEl.scrollTop=outEl.scrollHeight;
+}
+function refresh(){
+if(curTab==='mapa')renderMap();
+else if(curTab==='equipo')renderEquipo();
+else if(curTab==='registro')renderRegistro();
+}
+function startRun(){
+var S=NS.State.get();
+if(S.run){log('warn','Ya hay un asalto activo.');return;}
+var seed=(Date.now()^(Math.random()*0xffffffff))>>>0;
+var run=genRun(seed);
+var startTools=S.upg['i-start']||0;
+if(startTools>0)run.tools.exploit=(run.tools.exploit||0)+startTools;
+S.run=run;
+log('ok','=== NUEVO ASALTO ===');
+log('dim','Conexión establecida con el Proveedor ISP.');
+log('dim','Objetivo: drenar el MASTER SERVER. Drena nodos para abrir el camino.');
+log('dim','Consejo: SCAN antes de atacar. Usa SIGILO si el rastro sube.');
+NS.Audio.hack();
+renderMap();
+renderTop();
+}
+function actionButtons(container,run,node){
+var b=function(label,fn,disabled,title){
+var btn=Util.el('button',{class:'xp-btn small',text:label,title:title||''});
+btn.disabled=!!disabled;
+btn.addEventListener('click',fn);
+container.appendChild(btn);
+};
+if(!run||run.status!=='active')return;
+var reach=node&&isReachable(run,node);
+b('Escanear',function(){actScan(run,node);},!reach);
+b('Crack',function(){actCrack(run,node);},!reach||(node&&node.fw<=0));
+b('Exploit',function(){actExploit(run,node);},!reach||(node&&node.fw<=0));
+b('Bruteforce',function(){actBruteforce(run,node);},!reach||(node&&node.fw<=0));
+b('Descifrar',function(){actDecrypt(run,node);},!reach);
+b('¡Upload!',function(){actUpload(run,node);},!reach||!node||node.fw>0||node.drained);
+}
+function renderTop(){
+var top=Util.$('#net-top');
+if(!top)return;
+var S=NS.State.get();
+var run=S.run;
+var energyPct=S.currencies.energy/NS.State.maxEnergy()*100;
+var html='';
+html+='<div class="net-stat"><span class="net-lbl">Energía</span><div class="xp-progress xp-blue" style="width:110px"><div style="width:'+energyPct+'%"></div></div><span>'+Math.floor(S.currencies.energy)+'/'+NS.State.maxEnergy()+'</span></div>';
+if(run){
+html+='<div class="net-stat"><span class="net-lbl">Rastro</span><div class="xp-progress" style="width:110px"><div style="width:'+Math.floor(run.trace)+'%;'+(run.trace>70?'background:#c03030':'')+'"></div></div><span>'+Math.floor(run.trace)+'/100</span></div>';
+html+='<div class="net-stat"><span class="net-lbl">Botín</span><span>'+Util.fmtBytes(run.loot.data*1024*1024)+' · '+Util.fmtMoney(run.loot.cash)+'</span></div>';
+}else{
+html+='<div class="net-stat"><span class="net-lbl">Sin asalto activo</span></div>';
+}
+top.innerHTML=html;
+}
+function renderMap(){
+if(!mapEl)return;
+var S=NS.State.get();
+var run=S.run;
+mapEl.innerHTML='';
+if(!run){
+mapEl.appendChild(Util.el('div',{class:'net-empty'}));
+Util.$('.net-empty',mapEl).innerHTML='<div style="font-size:20px;margin-bottom:10px">Mapa de red inactivo</div>'+
+'<div class="cfg-sub" style="margin-bottom:12px">Conecta para generar un asalto procedural. Drena nodos, esquiva el rastreo y alcanza el MasterServer.</div>';
+var btn=Util.el('button',{class:'xp-btn primary',text:'Conectar a la red'});
+btn.addEventListener('click',startRun);
+Util.$('.net-empty',mapEl).appendChild(btn);
+return;
+}
+renderTop();
+
+var depths={};
+var visited={};
+var queue=[[run.ispId,0]];
+visited[run.ispId]=0;
+while(queue.length){
+var cur=queue.shift();
+var n=nodeById(run,cur[0]);
+(depths[cur[1]]=depths[cur[1]]||[]).push(n);
+n.conn.forEach(function(cid){
+if(visited[cid]===undefined){visited[cid]=cur[1]+1;queue.push([cid,cur[1]+1]);}
+});
+}
+var colWrap=Util.el('div',{class:'net-cols'});
+Object.keys(depths).sort(function(a,b){return a-b;}).forEach(function(d){
+var col=Util.el('div',{class:'net-col'});
+depths[d].forEach(function(node){
+var reach=isReachable(run,node);
+var visible=node.explored||run.mapRevealed;
+var box=Util.el('div',{
+class:'net-node'+(node.drained?' drained':'')+(reach?' reach':'')+(!visible?' hidden':'')+(selectedId===node.id?' sel':'')+(node.kind==='boss'?' boss':'')
+});
+var svg=Util.el('svg',{class:'icon'});
+svg.innerHTML='<use href="#'+(node.kind==='boss'?'ic-error':node.kind==='isp'?'ic-computer':node.kind==='dark'?'ic-hacker':'ic-net')+'"/>';
+box.appendChild(svg);
+box.appendChild(Util.el('div',{class:'net-node-name',text:(visible?node.name:'???')}));
+box.appendChild(Util.el('div',{class:'net-node-sub',text:visible?('nivel '+node.lvl+' · FW '+node.fw):''}));
+if(node.drained)box.appendChild(Util.el('div',{class:'net-node-sub ok',text:'✓ drenado'}));
+box.addEventListener('click',function(){
+selectedId=node.id;
+if(visible){
+log('dim','Seleccionado: '+node.name+(reach?' (alcanzable)':' (bloqueado)')+(node.drained?' — ya drenado':''));
+}
+renderMap();
+});
+col.appendChild(box);
+});
+colWrap.appendChild(col);
+});
+mapEl.appendChild(colWrap);
+renderTop();
+}
+function renderActions(){
+var S=NS.State.get();
+var run=S.run;
+var bar=Util.$('#net-actions');
+if(!bar)return;
+bar.innerHTML='';
+if(!run||run.status!=='active'){
+if(!run){
+var b0=Util.el('button',{class:'xp-btn primary',text:'Conectar a la red'});
+b0.addEventListener('click',startRun);
+bar.appendChild(b0);
+}
+return;
+}
+var node=selectedId?nodeById(run,selectedId):null;
+var actions=Util.el('span',{class:'net-actionset'});
+actionButtons(actions,run,node);
+bar.appendChild(actions);
+var glob=Util.el('span',{class:'net-actionset'});
+var sBtn=Util.el('button',{class:'xp-btn small',text:'SIGILO'});
+sBtn.addEventListener('click',function(){actStealth(run);});
+glob.appendChild(sBtn);
+['proxy','worm','icmp'].forEach(function(tid){
+var def=NS.Catalog.TOOLS[tid];
+var cnt=(run.tools[tid]||0)+(NS.State.get().inventory.tools[tid]||0);
+var b=Util.el('button',{class:'xp-btn small',text:def.name.split(' ')[0]+' ('+cnt+')'});
+b.disabled=cnt<=0;
+b.title=def.desc;
+b.addEventListener('click',function(){
+if(tid==='proxy')actProxy(run);
+else if(tid==='worm')actWorm(run);
+else actIcmp(run);
+});
+glob.appendChild(b);
+});
+var dc=Util.el('button',{class:'xp-btn small danger',text:'Desconectar y cobrar'});
+dc.addEventListener('click',function(){actDisconnect(run);});
+glob.appendChild(dc);
+bar.appendChild(glob);
+}
+function renderConsole(){
+if(!outEl)return;
+
+}
+function renderEquipo(){
+if(!infoEl)return;
+var S=NS.State.get();
+infoEl.innerHTML='';
+var col=Util.el('div',{class:'files-cols'});
+var left=Util.el('div',{class:'files-col'});
+var p1=Util.el('div',{class:'panel'});
+p1.appendChild(Util.el('div',{class:'panel-title',text:'Implantes (NovaCoins — persistencia meta)'}));
+p1.appendChild(Util.el('div',{class:'cfg-sub',text:'Cartera: '+S.currencies.novaCoins.toFixed(2).replace('.',',')+' NC · '+Util.fmtNum(S.meta.allTimeCoins)+' NC acumuladas en total.'}));
+Object.keys(NS.Catalog.IMPLANTS).forEach(function(id){
+var def=NS.Catalog.IMPLANTS[id];
+var lvl=S.upg[id]||0;
+var cost=NS.Catalog.implantCost(def,lvl);
+var maxed=lvl>=def.max;
+var row=Util.el('div',{class:'inv-row'});
+var svg=Util.el('svg',{class:'icon'});
+svg.innerHTML='<use href="#'+def.icon+'"/>';
+row.appendChild(svg);
+var mid=Util.el('div',{style:{flex:'1'}});
+mid.appendChild(Util.el('div',{class:'mail-subj',text:def.name+' (nivel '+lvl+')'}));
+mid.appendChild(Util.el('div',{class:'cfg-sub',text:def.desc}));
+row.appendChild(mid);
+var btn=Util.el('button',{class:'xp-btn small',text:maxed?'MÁX':cost+' NC'});
+btn.disabled=maxed||S.currencies.novaCoins<cost;
+btn.addEventListener('click',function(){
+var r=NS.State.buyImplant(id);
+if(!r.ok&&r.why==='coins')NS.UI.toast('Equipo','No tienes suficientes NovaCoins. Mina o haz asaltos.','important','ic-coin');
+refresh();
+});
+row.appendChild(btn);
+p1.appendChild(row);
+});
+left.appendChild(p1);
+col.appendChild(left);
+var right=Util.el('div',{class:'files-col'});
+var p2=Util.el('div',{class:'panel'});
+p2.appendChild(Util.el('div',{class:'panel-title',text:'Hardware del rig (dólares)'}));
+['e-max','e-regen'].forEach(function(id){
+var def=NS.Catalog.UPGRADES[id];
+var lvl=S.upg[id]||0;
+var cost=NS.Catalog.upgradeCost(def,lvl);
+var maxed=lvl>=def.max;
+var row=Util.el('div',{class:'inv-row'});
+var svg=Util.el('svg',{class:'icon'});
+svg.innerHTML='<use href="#'+def.icon+'"/>';
+row.appendChild(svg);
+var mid=Util.el('div',{style:{flex:'1'}});
+mid.appendChild(Util.el('div',{class:'mail-subj',text:def.name+' (nivel '+lvl+')'}));
+mid.appendChild(Util.el('div',{class:'cfg-sub',text:def.desc}));
+row.appendChild(mid);
+var btn=Util.el('button',{class:'xp-btn small',text:maxed?'MÁX':Util.fmtMoney(cost)});
+btn.disabled=maxed||S.currencies.cash<cost;
+btn.addEventListener('click',function(){
+var r=NS.State.buyUpgrade(id);
+if(!r.ok&&r.why==='dinero')NS.UI.toast('Equipo','Fondos insuficientes.','important','ic-error');
+refresh();
+});
+row.appendChild(btn);
+p2.appendChild(row);
+});
+right.appendChild(p2);
+var p3=Util.el('div',{class:'panel'});
+p3.appendChild(Util.el('div',{class:'panel-title',text:'Estadísticas del equipo'}));
+p3.appendChild(Util.el('div',{class:'cfg-info',html:
+'Energía máxima: <b>'+NS.State.maxEnergy()+'</b> (regeneración '+(NS.State.energyRegen()*60).toFixed(1).replace('.',',')+'/min)<br>'+
+'Sigilo: <b>-'+((S.upg['i-stealth']||0)*4)+' %</b> de rastro por acción<br>'+
+'CPU: <b>+'+((S.upg['i-cpu']||0)*12)+' %</b> de éxito en crack<br>'+
+'Botín: <b>+'+((S.upg['i-loot']||0)*10)+' %</b> · Caída de herramientas: <b>'+Math.round(toolDropChance()*100)+' %</b><br>'+
+'Ingresos globales: <b>+'+Math.round((NS.State.incomeMult()-1)*100)+' %</b>'
+}));
+right.appendChild(p3);
+var p4=Util.el('div',{class:'panel'});
+p4.appendChild(Util.el('div',{class:'panel-title',text:'Legado (prestige)'}));
+p4.appendChild(Util.el('div',{class:'cfg-info',html:
+'Puntos de legado: <b>'+S.currencies.legacy+'</b> (+'+(S.currencies.legacy*3)+' % de ingresos)<br>'+
+'NovaCoins acumuladas (total histórico): <b>'+Util.fmtNum(S.meta.allTimeCoins)+'</b>'
+}));
+var fmtBtn=Util.el('button',{class:'xp-btn danger small',text:'Formatear C: (abrir panel)'});
+fmtBtn.addEventListener('click',function(){NS.WM.open('settings');});
+p4.appendChild(fmtBtn);
+right.appendChild(p4);
+col.appendChild(right);
+infoEl.appendChild(col);
+}
+function renderRegistro(){
+if(!infoEl)return;
+var S=NS.State.get();
+infoEl.innerHTML='';
+var p=Util.el('div',{class:'panel'});
+p.appendChild(Util.el('div',{class:'panel-title',text:'Historial del operador'}));
+p.appendChild(Util.el('div',{class:'cfg-info',html:
+'Asaltos completados: <b>'+S.meta.runsDone+'</b> · Rastreado: <b>'+S.meta.runsTraced+'</b><br>'+
+'Nodos drenados: <b>'+S.meta.nodesDrained+'</b> · MasterServers: <b>'+S.meta.bossesDrained+'</b><br>'+
+'Amenazas detenidas: <b>'+S.meta.threatsStopped+'</b> · Clics: <b>'+Util.fmtInt(S.stats.clicks)+'</b><br>'+
+'Publicaciones: <b>'+S.stats.posts+'</b> · Formateos: <b>'+S.meta.formatsDone+'</b>'
+}));
+infoEl.appendChild(p);
+}
+function render(body){
+body.innerHTML='';
+body.className='net-root';
+var top=Util.el('div',{class:'net-top',id:'net-top'});
+var tabs=Util.el('div',{class:'tabs'});
+var content=Util.el('div',{class:'net-content'});
+var actions=Util.el('div',{class:'net-actions',id:'net-actions'});
+function makeTab(id,label,fn){
+var b=Util.el('button',{class:'tab-btn',text:label});
+b.addEventListener('click',function(){
+curTab=id;
+Util.$$('.tab-btn',tabs).forEach(function(x){x.classList.remove('on');});
+b.classList.add('on');
+fn();
+});
+tabs.appendChild(b);
+return b;
+}
+makeTab('mapa','Mapa',function(){
+content.innerHTML='';
+mapEl=Util.el('div',{class:'net-map'});
+content.appendChild(mapEl);
+content.appendChild(actions);
+renderMap();
+renderActions();
+renderConsole();
+});
+makeTab('equipo','Equipo',function(){
+content.innerHTML='';
+infoEl=Util.el('div',{class:'app-pad'});
+content.appendChild(infoEl);
+renderEquipo();
+});
+makeTab('registro','Registro',function(){
+content.innerHTML='';
+infoEl=Util.el('div',{class:'app-pad'});
+content.appendChild(infoEl);
+renderRegistro();
+});
+body.appendChild(top);
+body.appendChild(tabs);
+body.appendChild(content);
+
+var cons=Util.el('div',{class:'term-body net-console'});
+outEl=Util.el('div',{class:'term-out'});
+var row=Util.el('div',{class:'term-inrow'});
+var prompt=Util.el('span',{class:'term-prompt',text:'net>'});
+inpEl=Util.el('input',{class:'term-in',type:'text',autocomplete:'off',spellcheck:'false'});
+row.appendChild(prompt);
+row.appendChild(inpEl);
+cons.appendChild(outEl);
+cons.appendChild(row);
+body.appendChild(cons);
+inpEl.addEventListener('keydown',function(e){
+if(e.key==='Enter'){
+var v=inpEl.value.trim();
+if(v){
+log('cmd','net>'+v);
+cmd(v);
+cmdHist.push(v);cmdIdx=cmdHist.length;
+}
+inpEl.value='';
+}else if(e.key==='ArrowUp'){
+e.preventDefault();
+if(cmdIdx>0){cmdIdx--;inpEl.value=cmdHist[cmdIdx]||'';}
+}else if(e.key==='ArrowDown'){
+e.preventDefault();
+if(cmdIdx<cmdHist.length){cmdIdx++;inpEl.value=cmdHist[cmdIdx]||'';}
+}
+});
+var first=Util.$('.tab-btn',tabs);
+if(first)first.click();
+renderTop();
+}
+function resolveNode(run,token){
+token=String(token).toLowerCase();
+for(var i=0;i<run.nodes.length;i++){
+if(run.nodes[i].id===token||run.nodes[i].name.toLowerCase().indexOf(token)!==-1)return run.nodes[i];
+}
+return null;
+}
+function cmd(v){
+var S=NS.State.get();
+var parts=v.split(/\s+/);
+var head=parts[0].toLowerCase();
+var run=S.run;
+if(!run&&head!=='conectar'&&head!=='connect'&&head!=='help'&&head!=='ayuda'&&head!=='?'){
+log('err','No hay asalto activo. Escribe CONECTAR.');
+return;
+}
+var target=parts[1]?(run?resolveNode(run,parts[1]):null):null;
+switch(head){
+case'conectar':case'connect':startRun();break;
+case'scan':case'escaneo':if(target)actScan(run,target);else log('err','Uso: scan <nombre>');break;
+case'crack':case'romper':if(target)actCrack(run,target);else log('err','Uso: crack <nombre>');break;
+case'exploit':case'explotar':if(target)actExploit(run,target);else log('err','Uso: exploit <nombre>');break;
+case'bruteforce':case'fuerza':if(target)actBruteforce(run,target);else log('err','Uso: bruteforce <nombre>');break;
+case'upload':case'drenar':if(target)actUpload(run,target);else log('err','Uso: upload <nombre>');break;
+case'stealth':case'sigilo':actStealth(run);break;
+case'proxy':actProxy(run);break;
+case'worm':case'gusano':actWorm(run);break;
+case'icmp':actIcmp(run);break;
+case'decrypt':case'descifrar':if(target)actDecrypt(run,target);else log('err','Uso: decrypt <nombre>');break;
+case'disconnect':case'salir':actDisconnect(run);break;
+case'trace':case'rastro':log('dim','Rastro actual: '+Math.floor(run.trace)+'/100.');break;
+case'energy':case'energia':log('dim','Energía: '+Math.floor(S.currencies.energy)+'/'+NS.State.maxEnergy()+'.');break;
+case'loot':case'botin':log('dim','Botín sin cobrar: '+Util.fmtBytes(run.loot.data*1024*1024)+' · '+Util.fmtMoney(run.loot.cash)+'.');break;
+case'help':case'ayuda':case'?':
+['scan <n> · crack <n> · exploit <n> · bruteforce <n>','upload <n> · stealth · proxy · worm · icmp','decrypt <n> · disconnect · trace · energy · loot','conectar — inicia un asalto'].forEach(function(l){log('dim',l);});
+break;
+default:log('err','Comando desconocido. Escribe help.');
+}
+}
+function tick(){
+renderTop();
+renderActions();
+}
+NS.Apps.register({
+id:'net',title:'Mapa de Red',icon:'ic-net',
+desktop:true,w:720,h:540,minW:600,minH:440,
+render:render,tick:tick,
+status:function(){
+var s=NS.State.get();
+return s.run?'Asalto activo · Rastro '+Math.floor(s.run.trace)+'/100':'Sin asalto activo';
+}
+});
+NS.Net={genRun:genRun,startRun:startRun};
+})();
+</script>
+<script>(function(){
+'use strict';
+var NS=window.NovaOS=window.NovaOS||{};
+var Util=NS.Util;
+var started=false;
+var prev=0;
+var trayTick=0;
+function init(){
+if(started)return;
+started=true;
+NS.Taskbar.init();
+NS.Event.init();
+
+var res=NS.State.loadGame();
+var S=NS.State.get();
+S.meta.bootCount++;
+
+NS.Desktop.buildIcons();
+NS.Desktop.refresh();
+NS.Audio.setEnabled(S.settings.sound);
+NS.Taskbar.buildStartMenu();
+NS.Taskbar.refreshTray();
+
+NS.Taskbar.tickClock();
+setInterval(function(){NS.Taskbar.tickClock();},1000);
+
+if(res.restored){
+NS.UI.toast('Integridad del guardado','El guardado principal estaba modificado o corrupto. Se restauró la última copia de seguridad válida.','important','ic-warning');
+}
+if(res.quarantined){
+NS.UI.toast('¡CUARENTENA!','Se detectó un guardado manipulado y no había copia válida. El sistema se reinició en modo seguro: no se guardará progreso hasta restaurar en NovaShield.','important','ic-error');
+}
+
+NS.Boot.run();
+}
+function afterBoot(){
+var S=NS.State.get();
+
+if(S.settings.sound)NS.Boot.startSound();
+
+if(S.meta.bootCount<=1){
+NS.UI.dialog({
+title:'Bienvenido a NovaVista 2004',
+icon:'ic-hacker',
+message:'Este sistema operativo simulado esconde un <b>juego incremental con rasgos roguelite</b>.<br><br>'+
+'Gana dinero con el banco y MyNova, roba datos en los asaltos de red, mina NovaCoins y acumula <b>legado</b> formateando el sistema.<br><br>'+
+'¿Cómo te llamas, hacker?',
+input:true,inputValue:'Hacker'
+}).then(function(name){
+var v=String(name||'Hacker').trim().slice(0,20)||'Hacker';
+S.profile.name=v;
+NS.Taskbar.buildStartMenu();
+NS.UI.toast('Bienvenido, '+Util.esc(v),'Tu misión: construir un imperio digital desde un PC de 2004. ¡No te dejes rastrear!','good','ic-hacker');
+NS.Audio.ok();
+});
+}
+
+var now=Date.now();
+var delta=now-(S.meta.lastSeen||now);
+if(delta>60000&&!NS.Sec.isQuarantined()){
+NS.State.offline(delta);
+}
+
+prev=Date.now();
+setInterval(loop,200);
+
+setInterval(function(){NS.State.saveNow();},15000);
+document.addEventListener('visibilitychange',function(){
+if(document.visibilityState==='hidden')NS.State.saveNow();
+});
+window.addEventListener('beforeunload',function(){NS.State.saveNow();});
+window.addEventListener('pagehide',function(){NS.State.saveNow();});
+
+Util.$('#desktop').addEventListener('contextmenu',function(e){
+if(e.target.closest('.window'))return;
+NS.Desktop.onContext(e);
+});
+}
+function loop(){
+var now=Date.now();
+var dt=now-prev;
+prev=now;
+try{
+NS.Sec.periodicChecks();
+NS.State.tick(dt);
+NS.WM.tickAll();
+trayTick++;
+if(trayTick%10===0){
+NS.Taskbar.refreshTray();
+NS.State.verify();
+}
+}catch(e){
+
+if(window.console&&console.error)console.error('[NovaVista]',e);
+}
+}
+NS.Main={init:init,afterBoot:afterBoot};
+if(document.readyState==='loading'){
+document.addEventListener('DOMContentLoaded',init);
+}else{
+init();
+}
+})();
+</script>
+</body>
+</html>
