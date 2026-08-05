@@ -57,11 +57,11 @@ function ok(cond, name, extra) {
   var N = win.NovaOS;
   ok(!!N, 'NovaOS cargado');
   ok(!!N.State && !!N.WM && !!N.Browser && !!N.Net, 'módulos principales expuestos');
-  ok(N.Apps.list().length >= 9, 'apps registradas: ' + N.Apps.list().length);
+  ok(N.Apps.list().length >= 10, 'apps registradas: ' + N.Apps.list().length);
 
   // aplicaciones registradas esperadas
   var ids = N.Apps.list().map(function (a) { return a.id; });
-  ['browser', 'bank', 'social', 'files', 'terminal', 'email', 'av', 'net', 'settings'].forEach(function (id) {
+  ['browser', 'bank', 'social', 'files', 'terminal', 'email', 'av', 'net', 'settings', 'manual'].forEach(function (id) {
     ok(ids.indexOf(id) !== -1, 'app registrada: ' + id);
   });
 
@@ -72,7 +72,8 @@ function ok(cond, name, extra) {
 
   // escritorio con iconos
   var icons = doc.querySelectorAll('.desktop-icon');
-  ok(icons.length >= 9, 'iconos del escritorio: ' + icons.length);
+  ok(icons.length >= 10, 'iconos del escritorio: ' + icons.length);
+  ok(!!doc.querySelector('.di-badge'), 'icono de correo con badge en el escritorio');
 
   // cerrar diálogo de bienvenida si está abierto
   var okBtn = doc.querySelector('.dialog-btns .xp-btn');
@@ -182,6 +183,49 @@ function ok(cond, name, extra) {
   }
   await wait(150);
   ok(N.WM.isOpen('terminal'), 'acción del menú contextual abre la terminal');
+
+  // --- iconos: todas las apps abiertas y todas las referencias <use> resuelven ---
+  ids.forEach(function (id) { N.WM.open(id); });
+  await wait(400);
+  var uses = doc.querySelectorAll('use');
+  var missing = [];
+  uses.forEach(function (u) {
+    var h = u.getAttribute('href') || u.getAttribute('xlink:href') || '';
+    var id = h.replace('#', '');
+    if (id && !doc.getElementById(id)) missing.push(id);
+  });
+  ok(missing.length === 0, 'todas las referencias de icono resuelven (' + uses.length + ' usos)' + (missing.length ? ' faltan: ' + missing.join(',') : ''));
+
+  // manual de usuario abierto y con contenido
+  ok(N.WM.isOpen('manual'), 'ventana del manual abierta');
+  ok(doc.querySelector('.manual-h2') !== null, 'manual con secciones');
+  var steps = doc.querySelectorAll('.manual-steps li');
+  ok(steps.length >= 5, 'manual con pasos de inicio: ' + steps.length);
+
+  // selector de avatares: 16 opciones en el panel
+  N.WM.rerender('settings');
+  await wait(100);
+  var avatars = doc.querySelectorAll('.avatar-pick');
+  ok(avatars.length >= 14, 'selector con 16 avatares: ' + avatars.length);
+
+  // wallpaper nuevo en el catálogo
+  ok(N.Catalog.WALLPAPERS.some(function (w) { return w.id === 'bosque'; }), 'wallpaper Bosque nocturno en catálogo');
+
+  // badge de correo: tras drenar un nodo hay misiones reclamables
+  N.Mail.refreshBadge();
+  var badge = doc.querySelector('.di-badge');
+  ok(!!badge && !badge.classList.contains('hidden') && parseInt(badge.textContent, 10) >= 1, 'badge de correo muestra misiones reclamables: ' + (badge ? badge.textContent : '?'));
+
+  // terminal: comando explorer abre el navegador
+  N.WM.close('browser');
+  var termInput = doc.querySelector('#win-terminal .term-in');
+  if (termInput) {
+    termInput.value = 'explorer';
+    termInput.dispatchEvent(new win.KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+  }
+  await wait(100);
+  ok(N.WM.isOpen('browser'), 'comando "explorer" abre el navegador');
+  N.WM.close('browser');
 
   console.log('\n' + passed + ' pasaron, ' + failed + ' fallaron');
   process.exit(failed ? 1 : 0);

@@ -14,6 +14,11 @@
   function toast(title, body, cls, icon) {
     var wrap = Util.$('#toasts');
     if (!wrap) return;
+    // Toggle "notificaciones": silencia los avisos informativos (no los importantes)
+    try {
+      var s = NS.State.get();
+      if (s && s.settings && s.settings.notifs === false && cls !== 'important' && cls !== 'good') return;
+    } catch (e) {}
     var t = Util.el('div', { class: 'toast ' + (cls || '') });
     var ic = icon || 'ic-info';
     t.appendChild(Util.el('svg', { class: 'icon t-icon' }));
@@ -54,7 +59,7 @@
       tb.appendChild(title);
       box.appendChild(tb);
 
-      var body = Util.el('div', { class: 'win-body' });
+      var body = Util.el('div', { class: 'win-body', style: { overflow: 'auto' } });
       body.appendChild(Util.el('div', { class: 'dialog-msg', html: opts.message || '' }));
       if (opts.input) {
         var inpWrap = Util.el('div', { class: 'dialog-input' });

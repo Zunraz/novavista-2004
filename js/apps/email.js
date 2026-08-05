@@ -8,9 +8,24 @@
 
   var notifs = [];
 
+  function claimableCount() {
+    var s = NS.State.get();
+    var n = 0;
+    NS.Catalog.QUESTS.forEach(function (q) {
+      var st = s.quests[q.id] || {};
+      if (!st.claimed && questProgress(s, q) >= q.target) n++;
+    });
+    return n;
+  }
+
+  function refreshBadge() {
+    if (NS.Desktop && NS.Desktop.setMailBadge) NS.Desktop.setMailBadge(claimableCount());
+  }
+
   function notify(title, body, icon) {
     notifs.unshift({ title: title, body: body, icon: icon || 'ic-mail', at: Date.now() });
     if (notifs.length > 40) notifs.length = 40;
+    refreshBadge();
     if (NS.WM.isOpen('email')) NS.WM.rerender('email');
   }
 
@@ -55,6 +70,7 @@
           NS.State.addCoins(q.reward);
           NS.Audio.cash();
           NS.UI.toast('Misión completada', '«' + Util.esc(q.title) + '» — +' + q.reward + ' NovaCoins.', 'good', 'ic-coin');
+          refreshBadge();
           NS.WM.rerender('email');
         });
         r.appendChild(btn);
@@ -90,5 +106,5 @@
     desktop: true, w: 540, h: 460, minW: 440, minH: 360,
     render: render
   });
-  NS.Mail = { notify: notify };
+  NS.Mail = { notify: notify, refreshBadge: refreshBadge, claimableCount: claimableCount };
 })();

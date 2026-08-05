@@ -6,7 +6,7 @@
   var NS = window.NovaOS = window.NovaOS || {};
   var Util = NS.Util;
 
-  var AVATARS = ['ic-hacker', 'ic-users', 'ic-bot', 'ic-star', 'ic-phone', 'ic-game'];
+  var AVATARS = NS.Catalog.AVATARS;
   var SLOGANS = [
     '¡He conectado con gente de todo el mundo!',
     'Hoy subiré fotos de mi nuevo PC.',

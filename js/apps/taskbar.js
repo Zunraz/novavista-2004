@@ -89,8 +89,16 @@
     var user = Util.$('#sm-username');
     if (user) user.textContent = NS.State.get().profile.name;
     var userIcon = Util.$('.sm-user-icon svg use');
-    var AVS = ['ic-hacker', 'ic-users', 'ic-bot', 'ic-star', 'ic-phone', 'ic-game'];
+    var AVS = NS.Catalog.AVATARS;
     if (userIcon) userIcon.setAttribute('href', '#' + AVS[(NS.State.get().profile.avatar || 0) % AVS.length]);
+    var lvlEl = Util.$('#sm-level');
+    if (lvlEl) {
+      var s = NS.State.get();
+      var xpNeed = NS.State.xpForLevel(s.currencies.level + 1);
+      var pct = Math.min(100, s.currencies.xp / xpNeed * 100);
+      lvlEl.innerHTML = 'Nivel ' + s.currencies.level +
+        '<br><span style="display:inline-block;width:70px;height:6px;border:1px solid #fff;border-radius:3px;overflow:hidden;vertical-align:middle"><span style="display:block;height:100%;width:' + Math.floor(pct) + '%;background:#7ed957"></span></span>';
+    }
   }
 
   function tickClock() {

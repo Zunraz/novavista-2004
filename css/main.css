@@ -59,6 +59,11 @@ svg.icon-64{width:64px;height:64px;}
     radial-gradient(ellipse 55% 40% at 50% 82%, #ffd27a 0%, #ff9a3a 30%, transparent 60%),
     linear-gradient(#3a1c6a 0%, #7a3a9a 30%, #d85a3a 60%, #f5a03a 82%, #ffe08a 100%);
 }
+#desktop.wp-bosque{
+  background:
+    radial-gradient(ellipse 40% 30% at 50% 70%, #d8e8f8 0%, #8fb6d8 25%, transparent 55%),
+    linear-gradient(180deg,#0a1030 0%,#0e1a3a 55%,#123a1e 100%);
+}
 #desktop.wp-fractal{
   background:
     radial-gradient(circle at 20% 25%, rgba(60,120,255,.35) 0 18%, transparent 60%),
@@ -69,7 +74,7 @@ svg.icon-64{width:64px;height:64px;}
 
 #desktop-icons{position:absolute;top:4px;left:4px;bottom:4px;width:120px;display:flex;flex-direction:column;flex-wrap:wrap;align-content:flex-start;z-index:1;}
 .desktop-icon{
-  width:104px;padding:5px 2px;margin:2px 0;display:flex;flex-direction:column;align-items:center;gap:3px;
+  position:relative;width:104px;padding:5px 2px;margin:2px 0;display:flex;flex-direction:column;align-items:center;gap:3px;
   cursor:default;border:1px solid transparent;border-radius:2px;text-align:center;color:#fff;
   text-shadow:1px 1px 2px rgba(0,0,0,.9),0 0 4px rgba(0,0,0,.6);
 }
@@ -108,7 +113,7 @@ svg.icon-64{width:64px;height:64px;}
 .win-btns button:active{background:linear-gradient(180deg,#8fafe0,#d4e4f7);}
 .win-btns button.wc-close{background:linear-gradient(180deg,#fdb 0%,#f8a 50%,#d66 100%);border-color:#fff;}
 .win-btns button.wc-close:hover{background:linear-gradient(180deg,#ffd0b0,#ff9a7a 60%,#e06050);}
-.win-body{flex:1;overflow:auto;position:relative;background:var(--winbody);}
+.win-body{flex:1;min-height:0;overflow:hidden;position:relative;background:var(--winbody);}
 .window:not(.focused) .win-titlebar{background:linear-gradient(180deg,#7a7f9a 0%,#9aa0b8 45%,#9aa0b8 55%,#b8bcd0 100%);}
 .window:not(.focused){box-shadow:1px 1px 5px rgba(0,0,0,.4);}
 .win-statusbar{
@@ -172,6 +177,7 @@ svg.icon-64{width:64px;height:64px;}
 }
 .sm-user-icon{width:42px;height:42px;background:linear-gradient(180deg,#cfd8e8,#8fa0c0);border-radius:4px;border:1px solid #fff;display:flex;align-items:center;justify-content:center;}
 .sm-header span{font-size:16px;font-weight:bold;text-shadow:0 1px 2px rgba(0,0,0,.5);}
+#sm-level{margin-left:auto;font-size:11px;font-weight:normal;text-align:right;line-height:1.3;}
 .sm-body{display:flex;background:var(--winface);}
 .sm-col{flex:1;padding:6px 2px;background:linear-gradient(180deg,#fff 0%,#f2efe6 40%,#e6e2d4 100%);}
 .sm-col-right{flex:0 0 150px;background:linear-gradient(180deg,#d4e0f0 0%,#c4d4ea 100%);}
@@ -229,8 +235,9 @@ svg.icon-64{width:64px;height:64px;}
 
 #toasts{position:fixed;right:8px;bottom:36px;z-index:900;display:flex;flex-direction:column;gap:6px;width:300px;}
 .toast{
+  position:relative;
   background:linear-gradient(180deg,#fdfef8,#f2f0e4);border:1px solid #7f9db9;border-radius:3px;
-  box-shadow:2px 2px 8px rgba(0,0,0,.4);padding:8px 10px;display:flex;gap:8px;align-items:flex-start;
+  box-shadow:2px 2px 8px rgba(0,0,0,.4);padding:8px 26px 8px 10px;display:flex;gap:8px;align-items:flex-start;
   animation:toastin .25s ease-out;cursor:default;
 }
 .toast.important{border-color:#c03030;background:linear-gradient(180deg,#fff8f0,#f8e8d8);}

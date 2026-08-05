@@ -236,6 +236,8 @@ eq(Cat.upgradeCost(Cat.UPGRADES['b-rate'], 0), 300, 'coste b-rate lvl0');
 eq(Cat.upgradeCost(Cat.UPGRADES['b-rate'], 1), 960, 'coste b-rate lvl1 (300*3,2)');
 ok(Cat.QUESTS.length >= 10, 'hay misiones');
 ok(Object.keys(Cat.IMPLANTS).length >= 5, 'hay implantes');
+ok(Cat.AVATARS.length >= 14, 'catálogo con 16 avatares: ' + Cat.AVATARS.length);
+ok(Cat.WALLPAPERS.some(function (w) { return w.id === 'bosque'; }), 'wallpaper bosque en catálogo');
 
 /* ================= verificación anti-manipulación (último: cuarentena pegajosa) ================= */
 console.log('security — manipulación en memoria');

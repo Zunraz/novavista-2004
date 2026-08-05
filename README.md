@@ -27,9 +27,10 @@ Un **sistema operativo completo de los años 2000** totalmente funcional que esc
 | Mis Archivos | Almacén de datos (con límite de disco), venta de datos e inventario de herramientas |
 | Mapa de Red | **Núcleo roguelite**: asaltos procedurales, implantes, legado y registro |
 | NovaShield | Antivirus/cortafuegos: bloquea amenazas y gestiona la cuarentena |
-| NovaMail | Misiones y notificaciones |
-| Símbolo del sistema | Consola con comandos de época |
-| Panel de control | Temas, fondos, sonido, cuenta y gestión del guardado |
+| NovaMail | Misiones (con badge de reclamables en el escritorio) y notificaciones |
+| Símbolo del sistema | Consola con comandos de época (prueba `explorer`, `manual`, `hack`…) |
+| Manual de NovaVista | **Tutorial del juego en el escritorio**: cómo ganar dinero, asaltos, implantes y legado |
+| Panel de control | Temas, 6 fondos, 16 avatares, sonido, notificaciones, cuenta y gestión del guardado |
 
 ---
 
@@ -52,9 +53,11 @@ Este es un juego de navegador: el código se ejecuta en tu máquina, por lo que 
 ## 🧪 Tests
 
 ```bash
-node test/core.test.js   # 68 tests de lógica pura (economía, guardado, integridad, asaltos)
-node test/dom.test.js    # 32 tests de integración con jsdom (arranca el juego real)
+node test/core.test.js       # 79 tests de lógica pura (economía, guardado, integridad, asaltos)
+node test/dom.test.js        # 44 tests de integración con jsdom (arranca el juego real)
 TARGET="$(pwd)/dist/index.html" node test/dom.test.js   # mismos tests contra el build
+node test/layout.test.js     # 13 tests de maquetación con Chromium headless (desbordes, texto, consola)
+node test/layout.test.js dist# idem contra dist/index.html (capturas en test/shots/)
 ```
 
 ## 🏗️ Build de producción

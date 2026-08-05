@@ -22,11 +22,11 @@
   background:linear-gradient(180deg,#f0efe8,#d8d0c5);cursor:pointer;font-size:12px;
 }
 .tab-btn.on{background:var(--winbody);font-weight:bold;position:relative;top:1px;border-color:#7f9db9;}
-.tab-content{padding:10px;height:calc(100% - 36px);overflow:auto;}
+.tab-content{padding:10px;height:calc(100% - 37px);overflow:auto;}
 
 /* archivos */
-.files-cols{display:flex;gap:12px;align-items:flex-start;height:100%;}
-.files-col{flex:1;min-width:0;overflow:auto;max-height:100%;}
+.files-cols{display:flex;gap:12px;align-items:flex-start;}
+.files-col{flex:1;min-width:0;}
 .inv-row{display:flex;align-items:center;gap:8px;padding:6px 4px;border-bottom:1px solid #e6e2d4;}
 .inv-row:last-child{border-bottom:none;}
 
@@ -153,6 +153,21 @@
 
 /* configuración */
 .wp-pick{margin:0 6px 6px 0;}
-.avatar-pick{border:2px solid transparent;background:#eef0f6;border-radius:6px;padding:6px;cursor:pointer;margin:0 4px 4px 0;}
+.avatar-row{display:flex;flex-wrap:wrap;gap:4px;}
+.avatar-pick{border:2px solid transparent;background:#eef0f6;border-radius:6px;padding:6px;cursor:pointer;}
 .avatar-pick:hover{border-color:#8fb6e0;}
 .avatar-pick.on{border-color:#316ac5;background:#dcebfc;}
+
+/* manual de usuario */
+.manual-wrap{padding:14px;max-width:720px;margin:0 auto;font-family:"Verdana","Tahoma",sans-serif;}
+.manual-title{font-size:22px;font-weight:bold;color:#123d6e;margin-bottom:4px;}
+.manual-sub{color:#666;font-size:12px;margin-bottom:14px;}
+.manual-h2{font-size:15px;font-weight:bold;color:#1c3f6e;margin:16px 0 8px;border-bottom:1px solid #c8d4e8;padding-bottom:3px;}
+.manual-p{font-size:12px;line-height:1.55;color:#333;margin-bottom:8px;}
+.manual-p b{color:#0a5c2a;}
+.manual-tip{background:#f4f9f4;border:1px solid #b8d8b8;border-left:4px solid #3e8f2a;border-radius:3px;padding:8px 10px;font-size:12px;margin:8px 0;color:#1c3f2a;}
+.manual-warn{background:#fff8f0;border:1px solid #e8c8a0;border-left:4px solid #e0a030;border-radius:3px;padding:8px 10px;font-size:12px;margin:8px 0;color:#5a3a10;}
+.manual-kbd{background:#f0efe6;border:1px solid #b8b0a0;border-radius:3px;padding:0 5px;font-family:var(--mono);font-size:11px;}
+.manual-steps{counter-reset:step;list-style:none;padding:0;}
+.manual-steps li{counter-increment:step;position:relative;padding:2px 0 2px 34px;font-size:12px;line-height:1.5;color:#333;margin-bottom:6px;}
+.manual-steps li:before{content:counter(step);position:absolute;left:0;top:2px;width:22px;height:22px;border-radius:11px;background:linear-gradient(180deg,#5cb842,#3e8f2a);color:#fff;font-weight:bold;font-size:12px;display:flex;align-items:center;justify-content:center;}

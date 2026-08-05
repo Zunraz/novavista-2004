@@ -39,7 +39,8 @@
          'DIR      — contenido del disco', 'ECHO     — repite un texto', 'TIME     — hora actual', 'DATE     — fecha actual',
          'NOVA     — resumen de tu estado', 'PING     — comprueba la red', 'RED      — información de red',
          'CONECTAR — abre el mapa de red (asaltos)', 'IPCONFIG — configuración de red', 'WHOAMI   — usuario actual',
-         'FORMAT   — formatear C: (prestige)', 'MASCOTA  — secretito'].forEach(function (h) { line(h); });
+         'EXPLORER — abre el navegador', 'MANUAL   — abre la guía de inicio', 'FORMAT   — formatear C: (prestige)',
+         'HACK     — "hackear" (guiño)', 'MASCOTA  — secretito'].forEach(function (h) { line(h); });
         break;
       case 'ver': line('NovaVista 2004 Edition [Versión 5.1.2600]', 'ok'); break;
       case 'cls': outEl.innerHTML = ''; break;
@@ -97,6 +98,26 @@
         break;
       case 'mascota':
         line('(^._.^)ノ — el gato de NovaVista te saluda. Te desea suerte en la red.', 'ok');
+        break;
+      case 'explorer': case 'navegador':
+        line('Abriendo NovaNet Explorer...', 'ok');
+        NS.WM.open('browser');
+        break;
+      case 'manual': case 'guia':
+        line('Abriendo el Manual de NovaVista...', 'ok');
+        NS.WM.open('manual');
+        break;
+      case 'hack':
+        line('Iniciando protocolo de intrusión...', 'dim');
+        line('> Accediendo al mainframe... [OK]', 'ok');
+        line('> Desactivando seguridad... [OK]', 'ok');
+        line('> Descargando contraseñas... [OK]', 'ok');
+        line('ADVERTENCIA: hackear el propio sistema no te dará dinero de verdad.', 'warn');
+        line('El dinero de verdad se gana con intereses, seguidores y asaltos.', 'dim');
+        break;
+      case 'matrix':
+        line('01001110 01101111 01110110 01100001 01010110 01101001 01110011 01110100 01100001', 'ok');
+        line('La Matrix tiene a NovaVista. Sigue el conejo blanco.', 'dim');
         break;
       case 'limpiar':
         line('No existe ese comando. Pruebe HELP.', 'err');

@@ -51,12 +51,20 @@
     { id: 'nova',    name: 'Azul Nova' },
     { id: 'grid',    name: 'Malla del sistema' },
     { id: 'sunset',  name: 'Atardecer digital' },
-    { id: 'fractal', name: 'Fractal 2004' }
+    { id: 'fractal', name: 'Fractal 2004' },
+    { id: 'bosque',  name: 'Bosque nocturno' }
   ];
   var THEMES = [
     { id: 'luna',   name: 'Luna (azul)' },
     { id: 'olive',  name: 'Oliva (verde)' },
     { id: 'silver', name: 'Plata' }
+  ];
+
+  /* ---------- Avatares de usuario ---------- */
+  var AVATARS = [
+    'ic-hacker', 'ic-users', 'ic-bot', 'ic-star', 'ic-phone', 'ic-game',
+    'ic-ava-cool', 'ic-ava-girl', 'ic-ava-boy', 'ic-ava-dog', 'ic-ava-cat',
+    'ic-ava-alien', 'ic-ava-robot', 'ic-ava-skel', 'ic-ava-punk', 'ic-ava-mono'
   ];
 
   /* ---------- Eventos de malware ---------- */
@@ -71,9 +79,9 @@
 
   /* ---------- Misiones (se reclaman en el correo) ---------- */
   var QUESTS = [
-    { id: 'q-first',   title: 'Primer asalto',     desc: 'Drena un nodo en el mapa de red.',                 check: function (s) { return s.stats.nodesDrained; }, target: 1,  reward: 3,  type: 'coins' },
-    { id: 'q-5nodes',  title: 'Cazador de nodos',  desc: 'Drena 5 nodos en total.',                          check: function (s) { return s.stats.nodesDrained; }, target: 5,  reward: 6,  type: 'coins' },
-    { id: 'q-boss',    title: 'Rey del servidor',  desc: 'Drena el MasterServer de un asalto.',              check: function (s) { return s.stats.bossesDrained; }, target: 1, reward: 10, type: 'coins' },
+    { id: 'q-first',   title: 'Primer asalto',     desc: 'Drena un nodo en el mapa de red.',                 check: function (s) { return s.meta.nodesDrained; }, target: 1,  reward: 3,  type: 'coins' },
+    { id: 'q-5nodes',  title: 'Cazador de nodos',  desc: 'Drena 5 nodos en total.',                          check: function (s) { return s.meta.nodesDrained; }, target: 5,  reward: 6,  type: 'coins' },
+    { id: 'q-boss',    title: 'Rey del servidor',  desc: 'Drena el MasterServer de un asalto.',              check: function (s) { return s.meta.bossesDrained; }, target: 1, reward: 10, type: 'coins' },
     { id: 'q-500',     title: 'Fama incipiente',   desc: 'Alcanza 500 seguidores en MyNova.',                check: function (s) { return s.social.followers; }, target: 500, reward: 3, type: 'coins' },
     { id: 'q-5k',      title: 'Estrella del foro', desc: 'Alcanza 5.000 seguidores.',                        check: function (s) { return s.social.followers; }, target: 5000, reward: 8, type: 'coins' },
     { id: 'q-bank10k', title: 'Cuenta saneada',    desc: 'Ten 10.000 $ en el banco.',                        check: function (s) { return s.bank.balance; }, target: 10000, reward: 4, type: 'coins' },
@@ -92,6 +100,7 @@
   NS.Catalog = {
     UPGRADES: UPGRADES, IMPLANTS: IMPLANTS, TOOLS: TOOLS,
     WALLPAPERS: WALLPAPERS, THEMES: THEMES, MALWARE: MALWARE, QUESTS: QUESTS,
+    AVATARS: AVATARS,
     upgradeCost: upgradeCost, implantCost: implantCost
   };
 })();

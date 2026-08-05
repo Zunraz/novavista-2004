@@ -107,6 +107,7 @@
       if (trayTick % 10 === 0) {
         NS.Taskbar.refreshTray();
         NS.State.verify();
+        if (NS.Mail && NS.Mail.refreshBadge) NS.Mail.refreshBadge();
       }
     } catch (e) {
       // El juego nunca debe romperse por un error de UI

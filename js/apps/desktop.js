@@ -7,6 +7,7 @@
   var Util = NS.Util;
 
   var selected = null;
+  var mailBadgeEl = null;
 
   function applyWallpaper() {
     var s = NS.State.get();
@@ -38,6 +39,10 @@
         NS.WM.open(def.id);
         NS.Audio.click();
       });
+      if (def.id === 'email') {
+        mailBadgeEl = Util.el('span', { class: 'di-badge hidden', text: '0' });
+        ic.appendChild(mailBadgeEl);
+      }
       layer.appendChild(ic);
     });
     // icono de papelera
@@ -83,8 +88,21 @@
     applyTheme();
   }
 
+  /* Badge de correo sin leer en el icono del escritorio */
+  function setMailBadge(n) {
+    n = Math.max(0, Math.floor(n));
+    if (!mailBadgeEl) return;
+    if (n <= 0) {
+      mailBadgeEl.classList.add('hidden');
+      mailBadgeEl.textContent = '0';
+    } else {
+      mailBadgeEl.classList.remove('hidden');
+      mailBadgeEl.textContent = n > 99 ? '99+' : String(n);
+    }
+  }
+
   NS.Desktop = {
     buildIcons: buildIcons, select: select, clearSelection: clearSelection,
-    refresh: refresh, onContext: onDesktopContext
+    refresh: refresh, onContext: onDesktopContext, setMailBadge: setMailBadge
   };
 })();

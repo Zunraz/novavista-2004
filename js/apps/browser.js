@@ -37,7 +37,7 @@
   }
   function adBox(text) {
     var id = 'ad' + Math.floor(Math.random() * 1e6);
-    return '<div class="web-ad" id="' + id + '">📢 ' + Util.esc(text) + ' <span style="color:#c03030">[anuncio]</span></div>';
+    return '<div class="web-ad" id="' + id + '">[¡¡ANUNCIO!!] ' + Util.esc(text) + ' <span style="color:#c03030">(publicidad)</span></div>';
   }
 
   function wireLinks(root) {

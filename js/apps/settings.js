@@ -79,21 +79,22 @@
       content.appendChild(st);
 
       var av = section('Avatar de usuario');
-      for (var i = 0; i < 6; i++) {
-        (function (idx) {
-          var b = Util.el('button', { class: 'avatar-pick' });
-          var svg = Util.el('svg', { class: 'icon icon-32' });
-          svg.innerHTML = '<use href="#' + (['ic-hacker', 'ic-users', 'ic-bot', 'ic-star', 'ic-phone', 'ic-game'])[idx] + '"/>';
-          b.appendChild(svg);
-          if (S.profile.avatar === idx) b.classList.add('on');
-          b.addEventListener('click', function () {
-            S.profile.avatar = idx;
-            NS.Taskbar.buildStartMenu();
-            render(body);
-          });
-          av.appendChild(b);
-        })(i);
-      }
+      var avRow = Util.el('div', { class: 'avatar-row' });
+      NS.Catalog.AVATARS.forEach(function (ic, idx) {
+        var b = Util.el('button', { class: 'avatar-pick' });
+        var svg = Util.el('svg', { class: 'icon icon-32' });
+        svg.innerHTML = '<use href="#' + ic + '"/>';
+        b.appendChild(svg);
+        if (S.profile.avatar === idx) b.classList.add('on');
+        b.title = 'Avatar ' + (idx + 1);
+        b.addEventListener('click', function () {
+          S.profile.avatar = idx;
+          NS.Taskbar.buildStartMenu();
+          render(body);
+        });
+        avRow.appendChild(b);
+      });
+      av.appendChild(avRow);
       content.appendChild(av);
     });
 
@@ -113,6 +114,17 @@
       test.addEventListener('click', function () { NS.Audio.startup(); });
       sc.appendChild(row('', test));
       content.appendChild(sc);
+
+      var nc = section('Notificaciones');
+      var ntog = Util.el('button', {
+        class: 'xp-btn', text: S.settings.notifs === false ? 'Notificaciones: DESACTIVADAS' : 'Notificaciones: ACTIVADAS'
+      });
+      ntog.addEventListener('click', function () {
+        S.settings.notifs = S.settings.notifs === false;
+        render(body);
+      });
+      nc.appendChild(row('Avisos informativos (las alertas importantes siempre se muestran)', ntog));
+      content.appendChild(nc);
     });
 
     /* -------- Cuenta -------- */
