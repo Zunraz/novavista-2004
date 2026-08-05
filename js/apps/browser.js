@@ -374,9 +374,6 @@
     if (auto > 0) {
       s.browser.impressions = (s.browser.impressions || 0) + auto * 0.2; // 5 ticks/s → auto impresiones por segundo
     }
-    if (NS.WM.isOpen('browser') && currentRoute === 'nova://novaclick' && Math.floor(Math.random() * 6) === 0) {
-      // refresco ocasional del contador sin recargar la página completa
-    }
   }
 
   NS.Apps.register({

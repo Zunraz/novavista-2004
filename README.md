@@ -41,7 +41,7 @@ Este es un juego de navegador: el código se ejecuta en tu máquina, por lo que 
 2. **Copia de seguridad firmada**: ante un guardado corrupto o manipulado, se intenta restaurar automáticamente la última copia válida.
 3. **Cuarentena**: si se detecta manipulación (guardado alterado, valores corruptos, saltos de reloj, `Math.random` parcheado, contaminación de prototipos o edición en memoria del estado), el sistema entra en **cuarentena**: deja de guardar progreso y muestra una alerta en NovaShield. Solo se sale restaurando una copia válida o formateando.
 4. **Estado en closure**: las monedas y el progreso viven en un cierre inaccesible; la UI solo recibe copias. Toda mutación pasa por funciones validadas (números finitos, no negativos, límites).
-5. **Verificador en memoria**: un chequeo periódico valida invariantes del estado (dinero no negativo, energía ≤ máximo, disco ≤ máximo, niveles enteros…). Cualquier valor inválido → cuarentena.
+5. **Verificador en memoria**: un chequeo periódico valida invariantes del estado (dinero no negativo, energía ≤ máximo, disco ≤ máximo, niveles enteros…) y un **ledger anti-crecimiento** detecta aumentos de dinero absurdos entre comprobaciones (p. ej. `addCash(1e9)` por consola). Cualquier valor inválido → cuarentena. La API del estado está sellada (no se pueden reemplazar sus funciones).
 6. **Tiempo acotado**: los deltas entre ticks están limitados y el cálculo offline (50 % de eficiencia) tiene un tope de 8 horas, para que adelantar el reloj no sirva de mucho.
 7. **Entrada saneada**: la consola y los campos de texto se renderizan con `textContent` (sin inyección HTML); el navegador simulado solo muestra páginas internas y escapa cualquier entrada del usuario.
 

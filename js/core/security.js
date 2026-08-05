@@ -74,12 +74,13 @@
       if (randomWarning >= 2) quarantine('Se detectó una manipulación del generador aleatorio');
     } else randomWarning = 0;
 
-    // 2) Parcheo de prototipos de objetos básicos (técnica de trampas común)
+    // 2) Contaminación de prototipos (técnica de trampas común):
+    //    si Object.prototype tiene propiedades enumerables propias, un
+    //    for-in sobre un objeto vacío las revela.
     try {
-      var probe = {};
-      if (probe.hasOwnProperty('__proto__') && probe['__proto__'] !== Object.prototype) {
-        quarantine('Se detectó contaminación de prototipos');
-      }
+      var polluted = false;
+      for (var k in {}) { polluted = true; break; }
+      if (polluted) quarantine('Se detectó contaminación de prototipos');
     } catch (e) {}
 
     // 3) now() ya controla el retroceso de reloj

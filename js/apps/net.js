@@ -37,7 +37,7 @@
       trace: 3 + lvl * 2 + Math.floor(rng() * 4),
       data: Math.round(Math.pow(lvl, 1.35) * 15 * (0.8 + rng() * 0.6)),
       cash: Math.round(Math.pow(lvl, 2.05) * 40 * (0.8 + rng() * 0.5)),
-      coins: 0,
+      coins: kind === 'dark' ? 2 + Math.floor(rng() * 4) : 0,
       coinsChance: kind === 'dark' ? 0.65 : kind === 'boss' ? 1 : 0,
       vulns: vulns,
       conn: conn || [],
@@ -197,12 +197,12 @@
     if (!isReachable(run, node)) return log('err', 'Nodo inalcanzable.');
     if (node.fw <= 0) return log('dim', 'Sin firewall que explotar.');
     var usesTool = false;
-    if (node.vulns.indexOf('buffer') === -1) {
-      // sin vulnerabilidad de desbordamiento: usar kit de explotación si hay
-      if (hasTool(run, 'exploit')) { takeTool(run, 'exploit'); usesTool = true; }
-      else return log('err', 'No hay vulnerabilidad de desbordamiento conocida en ' + node.name + '. Escanéalo antes o usa un Kit de explotación.');
+    if (node.vulns.indexOf('buffer') === -1 && !hasTool(run, 'exploit')) {
+      return log('err', 'No hay vulnerabilidad de desbordamiento conocida en ' + node.name + '. Escanéalo antes o usa un Kit de explotación.');
     }
     if (!spendE(1)) return log('err', 'Energía insuficiente.');
+    // la energía se cobra antes de consumir la herramienta: nunca se pierde un kit en vano
+    if (node.vulns.indexOf('buffer') === -1) { takeTool(run, 'exploit'); usesTool = true; }
     node.usedVulns.buffer = true;
     node.fw = Math.max(0, node.fw - 1);
     log('ok', 'EXPLOIT aplicado' + (usesTool ? ' (kit de explotación)' : ' (desbordamiento)') + '. Capa eliminada sin rastro (' + node.fw + ' restantes).');

@@ -14,6 +14,7 @@
   var lastTick = 0;
   var hooks = [];
   var offlineApplied = false;
+  var prevTot = null;         // total cash+banco observado (anti-crecimiento anómalo)
 
   /* ---------------- estado fresco ---------------- */
   function fresh() {
@@ -35,7 +36,7 @@
       data: { mb: 0, maxMB: 2000 },
       upg: {},
       inventory: { tools: {} },
-      av: { level: 1, firewall: 1, malwareStopped: 0, lastScanAt: 0 },
+      av: { level: 0, firewall: 0, malwareStopped: 0, lastScanAt: 0 },
       run: null,
       quests: {},
       events: { nextMalwareAt: 0, nextAdAt: 0 },
@@ -243,19 +244,22 @@
     if (dtMs <= 0) return;
     var dt = dtMs / 1000;
 
-    // Banco
-    var interest = S.bank.balance * bankRate() * dt;
-    if (interest > 0) { S.bank.balance += interest; S.bank.totalInterest += interest; }
+    // En cuarentena los ingresos están suspendidos (el sistema está comprometido)
+    if (!Sec.isQuarantined()) {
+      // Banco
+      var interest = S.bank.balance * bankRate() * dt;
+      if (interest > 0) { S.bank.balance += interest; S.bank.totalInterest += interest; }
 
-    // Red social
-    var adRev = S.social.followers * socialAdRate() * dt;
-    if (adRev > 0) addCash(adRev);
-    var growth = S.social.followers * followerGrowthRate() * dt;
-    if (growth > 0) S.social.followers += growth;
+      // Red social
+      var adRev = S.social.followers * socialAdRate() * dt;
+      if (adRev > 0) addCash(adRev);
+      var growth = S.social.followers * followerGrowthRate() * dt;
+      if (growth > 0) S.social.followers += growth;
 
-    // Botnet
-    var coins = botCoinRate() * dt;
-    if (coins > 0) addCoins(coins);
+      // Botnet
+      var coins = botCoinRate() * dt;
+      if (coins > 0) addCoins(coins);
+    }
 
     // Energía
     S.currencies.energy = Math.min(maxEnergy(), S.currencies.energy + energyRegen() * dt);
@@ -328,6 +332,7 @@
     S.meta.legacy = S.currencies.legacy;
     S.bank.price = 12;
     lastTick = Sec.now();
+    prevTot = null;
     emit('format', { grant: grant, legacy: S.currencies.legacy });
     return { ok: true, grant: grant };
   }
@@ -347,6 +352,7 @@
   }
 
   function loadGame() {
+    prevTot = null;
     var res = NS.Save.load();
     if (res.ok) {
       S = repair(res.state);
@@ -379,6 +385,7 @@
     S = fresh();
     lastTick = Sec.now();
     offlineApplied = false;
+    prevTot = null;
     emit('reset');
   }
 
@@ -417,6 +424,11 @@
       var r = S.run;
       if (bad(r.trace) || r.trace > 100 || bad(r.loot.data) || bad(r.loot.cash)) ok = false;
     }
+    // Ledger anti-crecimiento: entre verificaciones (cada ~2 s) el dinero
+    // no puede crecer de forma absurda (un addCash(1e9) por consola salta aquí).
+    var tot = S.currencies.cash + S.bank.balance;
+    if (prevTot !== null && tot - prevTot > 1e8) ok = false;
+    prevTot = tot;
     if (!ok) Sec.quarantine('Estado manipulado en memoria (valores inválidos)');
     return ok;
   }
@@ -424,7 +436,7 @@
   /* ---------------- estado inicial ---------------- */
   S = fresh();
 
-  NS.State = {
+  NS.State = Sec.sealApi({
     fresh: fresh, get: get, snapshot: snapshot, on: on, verify: verify,
     tick: tick, offline: offline, loadGame: loadGame, newGame: newGame, saveNow: saveNow,
     addCash: addCash, spendCash: spendCash, addCoins: addCoins, spendCoins: spendCoins,
@@ -436,5 +448,5 @@
     bankRate: bankRate, socialAdRate: socialAdRate, followerGrowthRate: followerGrowthRate,
     botCoinRate: botCoinRate, energyRegen: energyRegen, maxEnergy: maxEnergy,
     dataPrice: dataPrice, xpForLevel: xpForLevel, incomeMult: incomeMult
-  };
+  });
 })();

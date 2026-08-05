@@ -214,6 +214,9 @@ var sane = run.nodes.every(function (n) {
 ok(sane, 'campos de botín y conexiones válidos');
 var boss = run.nodes.filter(function (n) { return n.kind === 'boss'; })[0];
 ok(boss.coins >= 8 && boss.coins <= 18, 'MasterServer da 8-18 NovaCoins, got ' + boss.coins);
+var darks = run.nodes.filter(function (n) { return n.kind === 'dark'; });
+ok(darks.length === 0 || darks.every(function (n) { return n.coins >= 2 && n.coinsChance === 0.65; }), 'nodos oscuros pagan NovaCoins 2-5');
+ok(boss.coinsChance === 1, 'el MasterServer siempre paga NovaCoins');
 
 // simular drenado en cadena hasta el boss
 var runX = Net.genRun(777);
@@ -240,10 +243,19 @@ Sec.clearQuarantine(); // el test anterior de cuarentena la dejó activa (por di
 State.newGame();
 State.addCash(100);
 ok(State.verify(), 'estado normal pasa verificación');
-State.get().currencies.cash = -999;
-ok(!State.verify(), 'cash negativo detectado');
-ok(Sec.isQuarantined(), 'cuarentena activada por manipulación');
+State.addCash(2e8); // cheat vía la API sancionada (crecimiento instantáneo absurdo)
+ok(!State.verify(), 'crecimiento anómalo detectado');
+ok(Sec.isQuarantined(), 'cuarentena por crecimiento anómalo');
 ok(!State.saveNow(), 'no se guarda en cuarentena');
+Sec.clearQuarantine();
+State.get().currencies.cash = -999; // edición directa en memoria
+ok(!State.verify(), 'cash negativo detectado');
+ok(Sec.isQuarantined(), 'cuarentena por manipulación directa');
+Sec.clearQuarantine();
+State.newGame();
+State.tick(1000);
+State.tick(1000);
+ok(State.verify(), 'los ticks normales no disparan falsos positivos');
 
 /* ================= resumen ================= */
 console.log('\n' + passed + ' pasaron, ' + failed + ' fallaron');
