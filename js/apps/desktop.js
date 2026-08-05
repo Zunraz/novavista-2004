@@ -74,6 +74,7 @@
       { label: 'Actualizar', icon: 'ic-gear', action: function () {
         Util.$('#desktop-icons').innerHTML = '';
         buildIcons();
+        if (NS.Mail && NS.Mail.refreshBadge) NS.Mail.refreshBadge();
         NS.UI.toast('Escritorio', 'Escritorio actualizado.', '', 'ic-info');
       } },
       { label: 'Propiedades', icon: 'ic-settings', action: function () { NS.WM.open('settings'); } },

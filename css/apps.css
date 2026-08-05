@@ -159,7 +159,7 @@
 .avatar-pick.on{border-color:#316ac5;background:#dcebfc;}
 
 /* manual de usuario */
-.manual-wrap{padding:14px;max-width:720px;margin:0 auto;font-family:"Verdana","Tahoma",sans-serif;}
+.manual-wrap{padding:14px;max-width:720px;margin:0 auto;height:100%;overflow:auto;font-family:"Verdana","Tahoma",sans-serif;}
 .manual-title{font-size:22px;font-weight:bold;color:#123d6e;margin-bottom:4px;}
 .manual-sub{color:#666;font-size:12px;margin-bottom:14px;}
 .manual-h2{font-size:15px;font-weight:bold;color:#1c3f6e;margin:16px 0 8px;border-bottom:1px solid #c8d4e8;padding-bottom:3px;}

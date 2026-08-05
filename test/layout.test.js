@@ -128,6 +128,14 @@ function ok(cond, name, extra) {
   await page.waitForTimeout(300);
   await page.screenshot({ path: path.join(shotsDir, 'settings.png') });
 
+  // el manual debe poder hacer scroll (no recortarse abajo)
+  var manualScroll = await page.evaluate(function () {
+    var m = document.querySelector('.manual-wrap');
+    if (!m) return { bad: true, why: 'sin .manual-wrap' };
+    return { bad: m.scrollHeight <= m.clientHeight + 1, why: m.scrollHeight + ' / ' + m.clientHeight };
+  });
+  ok(!manualScroll.bad, 'el manual hace scroll sin recortarse' + (manualScroll.bad ? ' — ' + manualScroll.why : ''));
+
   ok(consoleErrors.length === 0, 'sin errores de consola', consoleErrors.slice(0, 5));
 
   await browser.close();

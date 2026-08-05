@@ -346,6 +346,9 @@
     o.data.mb = Util.clamp(o.data.mb, 0, o.data.maxMB);
     o.av.level = o.upg['av-level'] || 0;
     o.av.firewall = o.upg['av-fw'] || 0;
+    // Backfill defensivo de contadores de asaltos (saves antiguos/dañados)
+    if (!isFinite(o.meta.nodesDrained) || o.meta.nodesDrained < 0) o.meta.nodesDrained = (o.stats && o.stats.hacks) || 0;
+    if (!isFinite(o.meta.bossesDrained) || o.meta.bossesDrained < 0) o.meta.bossesDrained = 0;
     if (!o.events.nextMalwareAt) o.events.nextMalwareAt = 0;
     if (!o.browser) o.browser = { impressions: 0, auto: 0, clicks: 0 };
     return o;
