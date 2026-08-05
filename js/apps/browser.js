@@ -170,9 +170,9 @@
       '<button class="xp-btn click-big" onclick="NovaOS.Browser.clickImp()">¡HAZ CLIC!</button>' +
       '<div class="cfg-sub">Cada clic = 1 impresión · 0,02 $ por impresión (CPM mejorable)</div>' +
       '<div class="web-dl-item"><div style="flex:1"><div class="web-rtitle">Autoclic de marquesina</div><div class="web-rd">+1 impresión/s (nivel ' + autoLvl + ')</div></div>' +
-      '<button class="xp-btn small" onclick="NovaOS.Browser.buyAuto(' + autoCost + ')">' + Util.fmtMoney(autoCost) + '</button></div>' +
+      '<button class="xp-btn small" onclick="NovaOS.Browser.buyAuto()">' + Util.fmtMoney(autoCost) + '</button></div>' +
       '<div class="web-dl-item"><div style="flex:1"><div class="web-rtitle">Mejor CPM</div><div class="web-rd">x2 valor por impresión (nivel ' + cpmLvl + ')</div></div>' +
-      '<button class="xp-btn small" onclick="NovaOS.Browser.buyCpm(' + cpmCost + ')">' + Util.fmtMoney(cpmCost) + '</button></div>' +
+      '<button class="xp-btn small" onclick="NovaOS.Browser.buyCpm()">' + Util.fmtMoney(cpmCost) + '</button></div>' +
       '<div class="web-dl-item"><div style="flex:1"><div class="web-rtitle">Cobrar publicidad</div><div class="web-rd">Convierte impresiones en efectivo</div></div>' +
       '<button class="xp-btn primary small" onclick="NovaOS.Browser.cashImp()">Cobrar ' + Util.fmtMoney(value) + '</button></div>' +
       '</div>';
@@ -216,7 +216,8 @@
 
   function routeToHtml(route) {
     if (route.indexOf('nova://buscar') === 0) {
-      var q = decodeURIComponent(route.split('q=')[1] || '');
+      var q = '';
+      try { q = decodeURIComponent(route.split('q=')[1] || ''); } catch (e) { q = ''; }
       return pgSearch(q);
     }
     switch (route) {
@@ -291,19 +292,21 @@
     NS.Audio.tick();
     if (NS.WM.isOpen('browser')) NS.WM.rerender('browser');
   }
-  function buyAuto(cost) {
+  function buyAuto() {
     var s = NS.State.get();
-    if (s.currencies.cash < cost) { NS.UI.toast('NovaClick', 'Sin dinero.', 'important', 'ic-error'); return; }
-    s.currencies.cash -= cost;
-    s.browser.autoLvl = (s.browser.autoLvl || 0) + 1;
+    var lvl = s.browser.autoLvl || 0;
+    var cost = Math.floor(150 * Math.pow(2.2, lvl)); // el coste se re-deriva: no se confía en el caller
+    if (!NS.State.spendCash(cost)) { NS.UI.toast('NovaClick', 'Sin dinero.', 'important', 'ic-error'); return; }
+    s.browser.autoLvl = lvl + 1;
     NS.Audio.cash();
     if (NS.WM.isOpen('browser')) NS.WM.rerender('browser');
   }
-  function buyCpm(cost) {
+  function buyCpm() {
     var s = NS.State.get();
-    if (s.currencies.cash < cost) { NS.UI.toast('NovaClick', 'Sin dinero.', 'important', 'ic-error'); return; }
-    s.currencies.cash -= cost;
-    s.browser.cpmLvl = (s.browser.cpmLvl || 0) + 1;
+    var lvl = s.browser.cpmLvl || 0;
+    var cost = Math.floor(400 * Math.pow(3, lvl));
+    if (!NS.State.spendCash(cost)) { NS.UI.toast('NovaClick', 'Sin dinero.', 'important', 'ic-error'); return; }
+    s.browser.cpmLvl = lvl + 1;
     NS.Audio.cash();
     if (NS.WM.isOpen('browser')) NS.WM.rerender('browser');
   }
@@ -330,8 +333,12 @@
       b.addEventListener('click', fn);
       toolbar.appendChild(b);
     }
-    navBtn('←', function () { if (histIdx > 0) { histIdx--; renderPage(history[histIdx]); } }, 'Atrás');
-    navBtn('→', function () { if (histIdx < history.length - 1) { histIdx++; renderPage(history[histIdx]); } }, 'Adelante');
+    navBtn('←', function () {
+      if (histIdx > 0) { histIdx--; currentRoute = history[histIdx]; renderPage(currentRoute); }
+    }, 'Atrás');
+    navBtn('→', function () {
+      if (histIdx < history.length - 1) { histIdx++; currentRoute = history[histIdx]; renderPage(currentRoute); }
+    }, 'Adelante');
     navBtn('↻', function () { renderPage(currentRoute); }, 'Actualizar');
     navBtn('⌂', function () { navigate('nova://inicio'); }, 'Inicio');
 

@@ -424,10 +424,18 @@
       var r = S.run;
       if (bad(r.trace) || r.trace > 100 || bad(r.loot.data) || bad(r.loot.cash)) ok = false;
     }
-    // Ledger anti-crecimiento: entre verificaciones (cada ~2 s) el dinero
-    // no puede crecer de forma absurda (un addCash(1e9) por consola salta aquí).
+    // Ledger anti-crecimiento PROPORCIONAL: el umbral escala con lo que el propio
+    // juego puede generar de forma legítima (intereses + publicidad + venta de
+    // todo el disco + NovaClick + préstamos + venta de NovaCoins).
+    var dtS = 2.5;
+    var cont = (S.bank.balance * bankRate() + S.social.followers * socialAdRate()) * dtS * 5;
+    var lumpy = S.data.maxMB * dataPrice() * 1.5;
+    var click = (S.browser.impressions || 0) * 0.04 * Math.pow(2, S.browser.cpmLvl || 0);
+    var loans = S.bank.loanDebt * 0.25;
+    var coinSell = S.currencies.novaCoins * S.bank.price;
+    var expected = cont + lumpy + click + loans + coinSell + 30000;
     var tot = S.currencies.cash + S.bank.balance;
-    if (prevTot !== null && tot - prevTot > 1e8) ok = false;
+    if (prevTot !== null && tot - prevTot > expected) ok = false;
     prevTot = tot;
     if (!ok) Sec.quarantine('Estado manipulado en memoria (valores inválidos)');
     return ok;

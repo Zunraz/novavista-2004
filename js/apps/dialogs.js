@@ -71,6 +71,8 @@
         });
         btn.addEventListener('click', function () {
           overlay.remove();
+          var idx = modalStack.indexOf(overlay);
+          if (idx !== -1) modalStack.splice(idx, 1);
           var val = opts.input ? inp.value : b.value;
           resolve(val);
         });
@@ -117,9 +119,10 @@
       btn.addEventListener('click', function () { closeCtx(); it.action && it.action(); });
       menu.appendChild(btn);
     });
+    document.body.appendChild(menu);
+    // posicionar DESPUÉS de insertar: offsetHeight solo es fiable con el menú en el DOM
     menu.style.left = Math.min(x, window.innerWidth - 190) + 'px';
     menu.style.top = Math.min(y, window.innerHeight - menu.offsetHeight - 10) + 'px';
-    document.body.appendChild(menu);
     setTimeout(function () {
       document.addEventListener('mousedown', closeCtx);
       document.addEventListener('keydown', closeCtx);

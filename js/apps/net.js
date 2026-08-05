@@ -463,8 +463,9 @@
     while (queue.length) {
       var cur = queue.shift();
       var n = nodeById(run, cur[0]);
+      if (!n) continue; // conn apunta a un nodo inexistente (guard contra estados dañados)
       (depths[cur[1]] = depths[cur[1]] || []).push(n);
-      n.conn.forEach(function (cid) {
+      (n.conn || []).forEach(function (cid) {
         if (visited[cid] === undefined) { visited[cid] = cur[1] + 1; queue.push([cid, cur[1] + 1]); }
       });
     }

@@ -256,6 +256,16 @@ State.newGame();
 State.tick(1000);
 State.tick(1000);
 ok(State.verify(), 'los ticks normales no disparan falsos positivos');
+Sec.clearQuarantine();
+State.newGame();
+ok(State.verify(), 'línea base del ledger establecida');
+var s6 = State.get();
+s6.bank.balance = 1e9; // partida muy avanzada (salto instantáneo)
+ok(!State.verify(), 'salto instantáneo a 1e9 detectado por el ledger');
+ok(Sec.isQuarantined(), 'cuarentena por salto de balance');
+Sec.clearQuarantine();
+State.tick(5000); // intereses legítimos de esa partida avanzada
+ok(State.verify(), 'intereses a gran escala no dan falso positivo');
 
 /* ================= resumen ================= */
 console.log('\n' + passed + ' pasaron, ' + failed + ' fallaron');

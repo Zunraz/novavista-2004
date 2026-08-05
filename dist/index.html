@@ -1,4 +1,4 @@
-<!-- NovaVista 2004 Edition · Build de producción 2026-08-05T14:24:57.251Z · autocontenido, sin red -->
+<!-- NovaVista 2004 Edition · Build de producción 2026-08-05T14:36:22.515Z · autocontenido, sin red -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -564,7 +564,7 @@ var UPGRADES={
 's-ad':{name:'Agencia de anuncios',desc:'Los seguidores generan el doble de ingresos.',cat:'social',base:1800,mult:3.6,max:15,icon:'ic-chart'},
 's-vrf':{name:'Chapa verificada',desc:'+15 % de crecimiento de seguidores por segundo.',cat:'social',base:9000,mult:4.2,max:10,icon:'ic-star'},
 'b-count':{name:'Bot zombie',desc:'Añade un bot a tu botnet.',cat:'bots',base:2200,mult:2.1,max:120,icon:'ic-bot'},
-'b-rig':{name:'Granja de minería',desc:'Cada bot mina el doble de NovaCoins.',cat:'bots',base:14000,mult:4.4,max:12,icon:'ic-gear'},
+'b-rig':{name:'Granja de minería',desc:'Cada bot mina x2,5 más NovaCoins.',cat:'bots',base:14000,mult:2.5,max:12,icon:'ic-gear'},
 'd-price':{name:'Acuerdo de datos',desc:'Vendes los datos al doble de precio.',cat:'datos',base:1200,mult:3.4,max:15,icon:'ic-files'},
 'd-cap':{name:'Disco duro mayor',desc:'+500 MB de almacenamiento de datos.',cat:'datos',base:900,mult:2.6,max:60,icon:'ic-computer'},
 'e-max':{name:'Memoria RAM extra',desc:'+1 de energía máxima.',cat:'rig',base:3500,mult:3.1,max:20,icon:'ic-hacker'},
@@ -1158,8 +1158,16 @@ if(bad(r.trace)||r.trace>100||bad(r.loot.data)||bad(r.loot.cash))ok=false;
 }
 
 
+
+var dtS=2.5;
+var cont=(S.bank.balance*bankRate()+S.social.followers*socialAdRate())*dtS*5;
+var lumpy=S.data.maxMB*dataPrice()*1.5;
+var click=(S.browser.impressions||0)*0.04*Math.pow(2,S.browser.cpmLvl||0);
+var loans=S.bank.loanDebt*0.25;
+var coinSell=S.currencies.novaCoins*S.bank.price;
+var expected=cont+lumpy+click+loans+coinSell+30000;
 var tot=S.currencies.cash+S.bank.balance;
-if(prevTot!==null&&tot-prevTot>1e8)ok=false;
+if(prevTot!==null&&tot-prevTot>expected)ok=false;
 prevTot=tot;
 if(!ok)Sec.quarantine('Estado manipulado en memoria (valores inválidos)');
 return ok;
@@ -1666,6 +1674,8 @@ text:b.label
 });
 btn.addEventListener('click',function(){
 overlay.remove();
+var idx=modalStack.indexOf(overlay);
+if(idx!==-1)modalStack.splice(idx,1);
 var val=opts.input?inp.value:b.value;
 resolve(val);
 });
@@ -1708,9 +1718,10 @@ btn.appendChild(document.createTextNode(' '+it.label));
 btn.addEventListener('click',function(){closeCtx();it.action&&it.action();});
 menu.appendChild(btn);
 });
+document.body.appendChild(menu);
+
 menu.style.left=Math.min(x,window.innerWidth-190)+'px';
 menu.style.top=Math.min(y,window.innerHeight-menu.offsetHeight-10)+'px';
-document.body.appendChild(menu);
 setTimeout(function(){
 document.addEventListener('mousedown',closeCtx);
 document.addEventListener('keydown',closeCtx);
@@ -2916,9 +2927,9 @@ var h='<div class="web-click">'+
 '<button class="xp-btn click-big" onclick="NovaOS.Browser.clickImp()">¡HAZ CLIC!</button>'+
 '<div class="cfg-sub">Cada clic = 1 impresión · 0,02 $ por impresión (CPM mejorable)</div>'+
 '<div class="web-dl-item"><div style="flex:1"><div class="web-rtitle">Autoclic de marquesina</div><div class="web-rd">+1 impresión/s (nivel '+autoLvl+')</div></div>'+
-'<button class="xp-btn small" onclick="NovaOS.Browser.buyAuto('+autoCost+')">'+Util.fmtMoney(autoCost)+'</button></div>'+
+'<button class="xp-btn small" onclick="NovaOS.Browser.buyAuto()">'+Util.fmtMoney(autoCost)+'</button></div>'+
 '<div class="web-dl-item"><div style="flex:1"><div class="web-rtitle">Mejor CPM</div><div class="web-rd">x2 valor por impresión (nivel '+cpmLvl+')</div></div>'+
-'<button class="xp-btn small" onclick="NovaOS.Browser.buyCpm('+cpmCost+')">'+Util.fmtMoney(cpmCost)+'</button></div>'+
+'<button class="xp-btn small" onclick="NovaOS.Browser.buyCpm()">'+Util.fmtMoney(cpmCost)+'</button></div>'+
 '<div class="web-dl-item"><div style="flex:1"><div class="web-rtitle">Cobrar publicidad</div><div class="web-rd">Convierte impresiones en efectivo</div></div>'+
 '<button class="xp-btn primary small" onclick="NovaOS.Browser.cashImp()">Cobrar '+Util.fmtMoney(value)+'</button></div>'+
 '</div>';
@@ -2958,7 +2969,8 @@ link('nova://inicio','Volver al inicio')+'</div>');
 }
 function routeToHtml(route){
 if(route.indexOf('nova://buscar')===0){
-var q=decodeURIComponent(route.split('q=')[1]||'');
+var q='';
+try{q=decodeURIComponent(route.split('q=')[1]||'');}catch(e){q='';}
 return pgSearch(q);
 }
 switch(route){
@@ -3028,19 +3040,21 @@ s.stats.clicks++;
 NS.Audio.tick();
 if(NS.WM.isOpen('browser'))NS.WM.rerender('browser');
 }
-function buyAuto(cost){
+function buyAuto(){
 var s=NS.State.get();
-if(s.currencies.cash<cost){NS.UI.toast('NovaClick','Sin dinero.','important','ic-error');return;}
-s.currencies.cash-=cost;
-s.browser.autoLvl=(s.browser.autoLvl||0)+1;
+var lvl=s.browser.autoLvl||0;
+var cost=Math.floor(150*Math.pow(2.2,lvl));
+if(!NS.State.spendCash(cost)){NS.UI.toast('NovaClick','Sin dinero.','important','ic-error');return;}
+s.browser.autoLvl=lvl+1;
 NS.Audio.cash();
 if(NS.WM.isOpen('browser'))NS.WM.rerender('browser');
 }
-function buyCpm(cost){
+function buyCpm(){
 var s=NS.State.get();
-if(s.currencies.cash<cost){NS.UI.toast('NovaClick','Sin dinero.','important','ic-error');return;}
-s.currencies.cash-=cost;
-s.browser.cpmLvl=(s.browser.cpmLvl||0)+1;
+var lvl=s.browser.cpmLvl||0;
+var cost=Math.floor(400*Math.pow(3,lvl));
+if(!NS.State.spendCash(cost)){NS.UI.toast('NovaClick','Sin dinero.','important','ic-error');return;}
+s.browser.cpmLvl=lvl+1;
 NS.Audio.cash();
 if(NS.WM.isOpen('browser'))NS.WM.rerender('browser');
 }
@@ -3064,8 +3078,12 @@ var b=Util.el('button',{class:'xp-btn small',text:label,title:title||''});
 b.addEventListener('click',fn);
 toolbar.appendChild(b);
 }
-navBtn('←',function(){if(histIdx>0){histIdx--;renderPage(history[histIdx]);}},'Atrás');
-navBtn('→',function(){if(histIdx<history.length-1){histIdx++;renderPage(history[histIdx]);}},'Adelante');
+navBtn('←',function(){
+if(histIdx>0){histIdx--;currentRoute=history[histIdx];renderPage(currentRoute);}
+},'Atrás');
+navBtn('→',function(){
+if(histIdx<history.length-1){histIdx++;currentRoute=history[histIdx];renderPage(currentRoute);}
+},'Adelante');
 navBtn('↻',function(){renderPage(currentRoute);},'Actualizar');
 navBtn('⌂',function(){navigate('nova://inicio');},'Inicio');
 addrEl=Util.el('input',{class:'xp-input web-addr',type:'text',value:currentRoute,spellcheck:'false'});
@@ -3690,8 +3708,9 @@ visited[run.ispId]=0;
 while(queue.length){
 var cur=queue.shift();
 var n=nodeById(run,cur[0]);
+if(!n)continue;
 (depths[cur[1]]=depths[cur[1]]||[]).push(n);
-n.conn.forEach(function(cid){
+(n.conn||[]).forEach(function(cid){
 if(visited[cid]===undefined){visited[cid]=cur[1]+1;queue.push([cid,cur[1]+1]);}
 });
 }
