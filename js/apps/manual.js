@@ -62,6 +62,12 @@
     html += p('<b>¿Herramientas?</b> En Descargas del navegador con dinero, o como botín al drenar nodos.');
     html += p('<b>¿Guardado?</b> Se guarda solo cada 15 s y al cerrar. Exporta un código firmado en Panel de control → Sistema.');
 
+    html += h2('7 · Juegos y tiempo libre');
+    html += p('<b>NovaPinball</b> (escritorio): flippers con ← → o A D, lanza con ESPACIO. Cada 50 puntos = 1 $ al acabar la partida.');
+    html += p('<b>NovaPool 8-Ball</b> (escritorio): apunta con el ratón (la distancia es la fuerza) y gana 25 $ por partida contra la CPU.');
+    html += p('<b>NovaMessenger</b> (escritorio): chatea con tus contactos. Algunos dan consejos... y de vez en cuando, algún dólar.');
+    html += p('<b>Secretos:</b> prueba el <span class="manual-kbd">Código Konami</span> (arriba, arriba, abajo, abajo, izquierda, derecha, izquierda, derecha, B, A) o el comando <span class="manual-kbd">gato</span> en la terminal. Ctrl+Mayús+Esc abre el Administrador de tareas.');
+
     body.innerHTML = html;
   }
 

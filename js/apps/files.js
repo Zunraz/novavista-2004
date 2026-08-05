@@ -37,13 +37,13 @@
     box.appendChild(Util.el('div', { class: 'panel-title', text: 'Almacenamiento de datos' }));
     box.appendChild(Util.el('div', { class: 'files-disk' }));
     var bar = Util.el('div', { class: 'xp-progress' });
-    var fill = Util.el('div', {});
+    var fill = Util.el('div', { id: 'files-diskfill' });
     fill.style.width = Math.min(100, S.data.mb / S.data.maxMB * 100) + '%';
     bar.appendChild(fill);
     box.appendChild(bar);
-    box.appendChild(Util.el('div', { class: 'cfg-info', text: Util.fmtBytes(S.data.mb * 1024 * 1024) + ' usados de ' + Util.fmtBytes(S.data.maxMB * 1024 * 1024) }));
+    box.appendChild(Util.el('div', { class: 'cfg-info', id: 'files-used', text: Util.fmtBytes(S.data.mb * 1024 * 1024) + ' usados de ' + Util.fmtBytes(S.data.maxMB * 1024 * 1024) }));
     box.appendChild(Util.el('div', { class: 'cfg-info', html: 'Vendes datos a <b>' + Util.fmtMoney(NS.State.dataPrice()) + '/MB</b>.' }));
-    var sell = Util.el('button', { class: 'xp-btn primary', text: 'Vender todos los datos (' + Util.fmtMoney(S.data.mb * NS.State.dataPrice()) + ')' });
+    var sell = Util.el('button', { class: 'xp-btn primary', id: 'files-sell', text: 'Vender todos los datos (' + Util.fmtMoney(S.data.mb * NS.State.dataPrice()) + ')' });
     sell.disabled = S.data.mb <= 0;
     sell.addEventListener('click', function () {
       if (S.data.mb <= 0) return;
@@ -117,7 +117,16 @@
     desktop: true, w: 560, h: 440, minW: 460, minH: 360,
     render: render,
     tick: function () {
-      // actualiza solo la barra y el botón de venta si la ventana está abierta
+      var S = NS.State.get();
+      var fill = Util.$('#files-diskfill');
+      if (fill) fill.style.width = Math.min(100, S.data.mb / S.data.maxMB * 100) + '%';
+      var used = Util.$('#files-used');
+      if (used) used.textContent = Util.fmtBytes(S.data.mb * 1024 * 1024) + ' usados de ' + Util.fmtBytes(S.data.maxMB * 1024 * 1024);
+      var sell = Util.$('#files-sell');
+      if (sell) {
+        sell.textContent = 'Vender todos los datos (' + Util.fmtMoney(S.data.mb * NS.State.dataPrice()) + ')';
+        sell.disabled = S.data.mb <= 0;
+      }
     }
   });
 })();

@@ -45,6 +45,15 @@ function ok(cond, name, extra) {
   }
   async function metrics() {
     return page.evaluate(function () {
+      function inScrollable(el) {
+        var p = el.parentElement;
+        while (p) {
+          var s = getComputedStyle(p);
+          if ((s.overflowX === 'auto' || s.overflowX === 'scroll') && p.scrollWidth > p.clientWidth + 1) return true;
+          p = p.parentElement;
+        }
+        return false;
+      }
       var out = { hOverflow: [], zeroText: [], winOverflow: [] };
       var vw = window.innerWidth;
       var all = document.querySelectorAll('*');
@@ -52,7 +61,7 @@ function ok(cond, name, extra) {
         var el = all[i];
         var r = el.getBoundingClientRect();
         if (r.width === 0 && r.height === 0) continue;
-        if (r.right > vw + 2 && el.closest('.ctx-menu') === null) {
+        if (r.right > vw + 2 && el.closest('.ctx-menu') === null && !inScrollable(el)) {
           out.hOverflow.push(el.className && el.className.toString ? (el.className.toString().slice(0, 40)) : el.tagName);
         }
         // texto con caja de tamaño 0 (no renderiza)
@@ -135,6 +144,18 @@ function ok(cond, name, extra) {
     return { bad: m.scrollHeight <= m.clientHeight + 1, why: m.scrollHeight + ' / ' + m.clientHeight };
   });
   ok(!manualScroll.bad, 'el manual hace scroll sin recortarse' + (manualScroll.bad ? ' — ' + manualScroll.why : ''));
+
+  // los juegos dibujan su canvas
+  var canvases = await page.evaluate(function () {
+    var out = {};
+    var pin = document.querySelector('#win-pinball canvas');
+    var pool = document.querySelector('#win-pool canvas');
+    if (pin) out.pinball = { w: pin.width, h: pin.height };
+    if (pool) out.pool = { w: pool.width, h: pool.height };
+    return out;
+  });
+  ok(canvases.pinball && canvases.pinball.w === 360 && canvases.pinball.h === 560, 'pinball con canvas de 360x560');
+  ok(canvases.pool && canvases.pool.w === 640 && canvases.pool.h === 360, 'pool con canvas de 640x360');
 
   ok(consoleErrors.length === 0, 'sin errores de consola', consoleErrors.slice(0, 5));
 

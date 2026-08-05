@@ -133,6 +133,14 @@
 .net-map{flex:1;overflow:auto;padding:10px;background:#0c1020;}
 .net-cols{display:flex;gap:14px;align-items:flex-start;min-width:min-content;padding-bottom:10px;}
 .net-col{display:flex;flex-direction:column;gap:8px;min-width:130px;}
+.net-col-head{color:#6a8ab5;font-size:11px;font-weight:bold;text-transform:uppercase;letter-spacing:1px;text-align:center;padding-bottom:4px;border-bottom:1px solid #22304a;}
+.net-legend{display:flex;gap:14px;flex-wrap:wrap;padding:8px 4px 2px;color:#8fa8c8;font-size:11px;border-top:1px solid #22304a;}
+.net-legend .lg{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-2px;margin-right:4px;}
+.lg-reach{background:#3f8fd6;box-shadow:0 0 4px #3f8fd6;}
+.lg-lock{background:#16203a;border:1px solid #4a7ab5;border-style:dashed;}
+.lg-done{background:#3e8f2a;}
+.lg-hidden{background:#0e1628;border:1px dashed #2a3a5a;}
+.lg-boss{background:#c03030;}
 .net-node{
   border:1px solid #2a3a5a;border-radius:6px;padding:7px 9px;background:linear-gradient(180deg,#16203a,#0e1628);
   color:#9ec5f5;cursor:pointer;text-align:center;font-size:11px;
@@ -158,8 +166,7 @@
 .avatar-pick:hover{border-color:#8fb6e0;}
 .avatar-pick.on{border-color:#316ac5;background:#dcebfc;}
 
-/* manual de usuario */
-.manual-wrap{padding:14px;max-width:720px;margin:0 auto;height:100%;overflow:auto;font-family:"Verdana","Tahoma",sans-serif;}
+/* manual de usuario */.manual-wrap{padding:14px;max-width:720px;margin:0 auto;height:100%;overflow:auto;font-family:"Verdana","Tahoma",sans-serif;}
 .manual-title{font-size:22px;font-weight:bold;color:#123d6e;margin-bottom:4px;}
 .manual-sub{color:#666;font-size:12px;margin-bottom:14px;}
 .manual-h2{font-size:15px;font-weight:bold;color:#1c3f6e;margin:16px 0 8px;border-bottom:1px solid #c8d4e8;padding-bottom:3px;}
@@ -171,3 +178,36 @@
 .manual-steps{counter-reset:step;list-style:none;padding:0;}
 .manual-steps li{counter-increment:step;position:relative;padding:2px 0 2px 34px;font-size:12px;line-height:1.5;color:#333;margin-bottom:6px;}
 .manual-steps li:before{content:counter(step);position:absolute;left:0;top:2px;width:22px;height:22px;border-radius:11px;background:linear-gradient(180deg,#5cb842,#3e8f2a);color:#fff;font-weight:bold;font-size:12px;display:flex;align-items:center;justify-content:center;}
+
+/* ---------------- NovaMessenger ---------------- */
+.msn-root{display:flex;height:100%;background:#f4efe6;}
+.msn-left{flex:0 0 190px;border-right:2px solid #3a8fd6;background:linear-gradient(180deg,#e8f0fa,#d4e4f4);display:flex;flex-direction:column;}
+.msn-brand{background:linear-gradient(90deg,#3a8fd6,#6ab5e8);color:#fff;font-weight:bold;padding:8px 10px;font-size:14px;}
+.msn-list{flex:1;overflow:auto;padding:6px;}
+.msn-contact{display:flex;align-items:center;gap:8px;padding:6px 8px;cursor:pointer;border-radius:4px;}
+.msn-contact:hover{background:#cfe4f8;}
+.msn-contact.sel{background:#a8d0f0;}
+.msn-cname{font-weight:bold;font-size:12px;color:#123d6e;}
+.msn-cstatus{font-size:10px;}
+.msn-slogan{font-size:10px;color:#6a8ab5;padding:8px;text-align:center;}
+.msn-right{flex:1;display:flex;flex-direction:column;min-width:0;}
+.msn-chathead{background:linear-gradient(180deg,#d8e4f4,#c4d8f0);padding:6px 10px;font-weight:bold;font-size:12px;color:#123d6e;border-bottom:2px solid #3a8fd6;}
+.msn-chatlog{flex:1;overflow:auto;padding:10px;font-size:12px;line-height:1.5;background:#fff;}
+.msn-msg{margin-bottom:4px;}
+.msn-msg.me{color:#0a5c9a;}
+.msn-msg.them{color:#7a2c5a;}
+.msn-msg.dim{color:#999;font-style:italic;}
+.msn-typing{color:#8a93a8;font-style:italic;font-size:11px;margin-bottom:4px;}
+.msn-inputrow{display:flex;gap:6px;padding:8px;border-top:1px solid #c8d4e8;background:#f4efe6;}
+.msn-inputrow .xp-input{flex:1;}
+.msn-empty{flex:1;display:flex;align-items:center;justify-content:center;color:#8a93a8;font-size:13px;text-align:center;padding:20px;}
+
+/* ---------------- NovaPinball ---------------- */
+.pin-root{overflow:hidden;}
+.pin-overlay{position:absolute;inset:0;background:rgba(10,20,60,.82);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;z-index:5;text-align:center;}
+.pin-over-title{color:#ffe08a;font-size:22px;font-weight:bold;font-family:var(--mono);}
+.pin-over-score{color:#fff;font-size:18px;margin-bottom:6px;}
+.pin-root canvas{display:block;}
+
+/* ---------------- NovaPool ---------------- */
+#pool-status{font-weight:bold;color:#123d6e;}

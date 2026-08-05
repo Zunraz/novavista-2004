@@ -28,8 +28,12 @@ Un **sistema operativo completo de los años 2000** totalmente funcional que esc
 | Mapa de Red | **Núcleo roguelite**: asaltos procedurales, implantes, legado y registro |
 | NovaShield | Antivirus/cortafuegos: bloquea amenazas y gestiona la cuarentena |
 | NovaMail | Misiones (con badge de reclamables en el escritorio) y notificaciones |
-| Símbolo del sistema | Consola con comandos de época (prueba `explorer`, `manual`, `hack`…) |
+| Símbolo del sistema | Consola con comandos de época (prueba `explorer`, `manual`, `hack`, `gato`…) |
 | Manual de NovaVista | **Tutorial del juego en el escritorio**: cómo ganar dinero, asaltos, implantes y legado |
+| NovaMessenger | Mensajero instantáneo estilo MSN: contactos con estado, "escribiendo..." y regalos ocasionales |
+| NovaPinball | Pinball 2D con física real: 50 puntos = 1 $ canjeable al acabar la partida |
+| NovaPool 8-Ball | Billar contra la CPU: gana 25 $ por partida |
+| Administrador de tareas | Abre con Ctrl+Mayús+Esc: cierra ventanas colgadas y muestra CPU/RAM simuladas |
 | Panel de control | Temas, 6 fondos, 16 avatares, sonido, notificaciones, cuenta y gestión del guardado |
 
 ---
@@ -53,10 +57,10 @@ Este es un juego de navegador: el código se ejecuta en tu máquina, por lo que 
 ## 🧪 Tests
 
 ```bash
-node test/core.test.js       # 79 tests de lógica pura (economía, guardado, integridad, asaltos)
-node test/dom.test.js        # 44 tests de integración con jsdom (arranca el juego real)
+node test/core.test.js       # 100 tests de lógica pura (economía, banco, física, integridad, asaltos)
+node test/dom.test.js        # 51 tests de integración con jsdom (arranca el juego real)
 TARGET="$(pwd)/dist/index.html" node test/dom.test.js   # mismos tests contra el build
-node test/layout.test.js     # 13 tests de maquetación con Chromium headless (desbordes, texto, consola)
+node test/layout.test.js     # 16 tests de maquetación con Chromium headless (desbordes, texto, consola, canvas)
 node test/layout.test.js dist# idem contra dist/index.html (capturas en test/shots/)
 ```
 

@@ -61,8 +61,8 @@
 
     var stats = Util.el('div', { class: 'panel' });
     stats.appendChild(Util.el('div', { class: 'panel-title', text: 'Tus cifras' }));
-    stats.appendChild(Util.el('div', { class: 'social-big', text: Util.fmtInt(S.social.followers) + ' seguidores' }));
-    stats.appendChild(Util.el('div', { class: 'cfg-info', html:
+    stats.appendChild(Util.el('div', { class: 'social-big', id: 'social-followers', text: Util.fmtInt(S.social.followers) + ' seguidores' }));
+    stats.appendChild(Util.el('div', { class: 'cfg-info', id: 'social-info', html:
       'Ingresos por publicidad: <b>' + Util.fmtMoney(S.social.followers * NS.State.socialAdRate()) + '/s</b><br>' +
       'Crecimiento orgánico: <b>' + Util.fmtNum(S.social.followers * NS.State.followerGrowthRate()) + ' seg/s</b><br>' +
       'Publicaciones: <b>' + S.social.totalPosts + '</b> · Mejor viralidad: <b>' + (S.social.viralBest || 0).toFixed(2).replace('.', ',') + '×</b>'
@@ -123,6 +123,16 @@
   NS.Apps.register({
     id: 'social', title: 'MyNova', icon: 'ic-social',
     desktop: true, w: 580, h: 480, minW: 480, minH: 400,
-    render: render
+    render: render,
+    tick: function () {
+      var S = NS.State.get();
+      var f = Util.$('#social-followers');
+      if (f) f.textContent = Util.fmtInt(S.social.followers) + ' seguidores';
+      var info = Util.$('#social-info');
+      if (info) info.innerHTML =
+        'Ingresos por publicidad: <b>' + Util.fmtMoney(S.social.followers * NS.State.socialAdRate()) + '/s</b><br>' +
+        'Crecimiento orgánico: <b>' + Util.fmtNum(S.social.followers * NS.State.followerGrowthRate()) + ' seg/s</b><br>' +
+        'Publicaciones: <b>' + S.social.totalPosts + '</b> · Mejor viralidad: <b>' + (S.social.viralBest || 0).toFixed(2).replace('.', ',') + '×</b>';
+    }
   });
 })();

@@ -14,6 +14,59 @@
     if (started) return;
     started = true;
 
+    // Compatibilidad de iconos: en motores antiguos <use> necesita xlink:href.
+    // Duplicamos href → xlink:href en todos los <use> (estáticos y dinámicos).
+    try {
+      var xlinkNS = 'http://www.w3.org/1999/xlink';
+      var fixUse = function (root) {
+        var uses = root.querySelectorAll ? root.querySelectorAll('use') : [];
+        for (var i = 0; i < uses.length; i++) {
+          var u = uses[i];
+          var h = u.getAttribute('href');
+          if (h && !u.getAttributeNS(xlinkNS, 'href')) u.setAttributeNS(xlinkNS, 'xlink:href', h);
+        }
+      };
+      fixUse(document);
+      new MutationObserver(function (muts) {
+        for (var m = 0; m < muts.length; m++) {
+          for (var k = 0; k < muts[m].addedNodes.length; k++) {
+            var n = muts[m].addedNodes[k];
+            if (n && n.nodeType === 1) fixUse(n);
+          }
+        }
+      }).observe(document.body, { childList: true, subtree: true });
+    } catch (e) {}
+
+    // Atajos globales + easter eggs
+    var konami = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+    var konamiIdx = 0;
+    var konamiUsed = false;
+    document.addEventListener('keydown', function (e) {
+      var key = e.key;
+      // Administrador de tareas (Ctrl+Alt+Supr lo captura el SO en Windows; Ctrl+Mayús+Esc también)
+      if ((e.ctrlKey && e.altKey && key === 'Delete') || (e.ctrlKey && e.shiftKey && key === 'Escape')) {
+        e.preventDefault();
+        if (NS.TaskMgr && NS.TaskMgr.open) NS.TaskMgr.open();
+        return;
+      }
+      if (key === konami[konamiIdx]) {
+        konamiIdx++;
+        if (konamiIdx === konami.length) {
+          konamiIdx = 0;
+          if (!konamiUsed) {
+            konamiUsed = true;
+            NS.State.addCash(50);
+            NS.UI.toast('Código Konami', '¡Truco activado! +' + Util.fmtMoney(50) + ' (una vez por sesión).', 'good', 'ic-egg');
+            NS.Audio.startup();
+          } else {
+            NS.UI.toast('Código Konami', 'Ya usaste el truco esta sesión.', 'dim', 'ic-egg');
+          }
+        }
+      } else if (key.indexOf('Arrow') === 0 || key === 'b' || key === 'a') {
+        konamiIdx = key === konami[0] ? 1 : 0;
+      }
+    });
+
     NS.Taskbar.init();
     NS.Event.init();
 
@@ -29,9 +82,13 @@
     NS.Taskbar.buildStartMenu();
     NS.Taskbar.refreshTray();
 
-    // Reloj de la bandeja
+    // Reloj de la bandeja + dinero en vivo
     NS.Taskbar.tickClock();
-    setInterval(function () { NS.Taskbar.tickClock(); }, 1000);
+    NS.Taskbar.updateMoney();
+    setInterval(function () {
+      NS.Taskbar.tickClock();
+      NS.Taskbar.updateMoney();
+    }, 1000);
 
     // Avisos de carga
     if (res.restored) {

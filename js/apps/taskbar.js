@@ -19,6 +19,19 @@
       NS.Desktop.clearSelection();
     });
 
+    // easter egg: hacer clic en tu nombre 5 veces
+    var nameClicks = 0;
+    Util.$('#sm-username').addEventListener('click', function (e) {
+      e.stopPropagation();
+      nameClicks++;
+      if (nameClicks === 5) {
+        nameClicks = 0;
+        NS.UI.toast('NovaVista', '¿Por qué haces clic en tu propio nombre? Bueno... aquí tienes ' + Util.fmtMoney(1) + '.', 'good', 'ic-egg');
+        NS.State.addCash(1);
+        NS.Audio.popup();
+      }
+    });
+
     // botones del menú inicio
     Util.$$('#start-menu [data-action]').forEach(function (b) {
       b.addEventListener('click', function () {
@@ -108,6 +121,13 @@
     el.innerHTML = Util.pad2(d.getHours()) + ':' + Util.pad2(d.getMinutes()) + '<br>' + Util.pad2(d.getDate()) + '/' + Util.pad2(d.getMonth() + 1) + '/' + d.getFullYear();
   }
 
+  function updateMoney() {
+    var el = Util.$('#tray-money');
+    if (!el) return;
+    var s = NS.State.get();
+    el.innerHTML = Util.fmtMoney(s.currencies.cash) + '<br>' + s.currencies.novaCoins.toFixed(2).replace('.', ',') + ' NC';
+  }
+
   function refreshTray() {
     var s = NS.State.get();
     var av = Util.$('#tray-av');
@@ -123,5 +143,5 @@
     }
   }
 
-  NS.Taskbar = { init: init, refresh: refresh, buildStartMenu: buildStartMenu, tickClock: tickClock, refreshTray: refreshTray };
+  NS.Taskbar = { init: init, refresh: refresh, buildStartMenu: buildStartMenu, tickClock: tickClock, refreshTray: refreshTray, updateMoney: updateMoney };
 })();

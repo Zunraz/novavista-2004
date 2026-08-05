@@ -57,11 +57,11 @@ function ok(cond, name, extra) {
   var N = win.NovaOS;
   ok(!!N, 'NovaOS cargado');
   ok(!!N.State && !!N.WM && !!N.Browser && !!N.Net, 'módulos principales expuestos');
-  ok(N.Apps.list().length >= 10, 'apps registradas: ' + N.Apps.list().length);
+  ok(N.Apps.list().length >= 14, 'apps registradas: ' + N.Apps.list().length);
 
   // aplicaciones registradas esperadas
   var ids = N.Apps.list().map(function (a) { return a.id; });
-  ['browser', 'bank', 'social', 'files', 'terminal', 'email', 'av', 'net', 'settings', 'manual'].forEach(function (id) {
+  ['browser', 'bank', 'social', 'files', 'terminal', 'email', 'av', 'net', 'settings', 'manual', 'msn', 'pinball', 'pool', 'taskmgr'].forEach(function (id) {
     ok(ids.indexOf(id) !== -1, 'app registrada: ' + id);
   });
 
@@ -161,6 +161,8 @@ function ok(cond, name, extra) {
 
   // reloj de la bandeja
   ok(doc.getElementById('tray-clock').textContent.length >= 5, 'reloj en la bandeja');
+  N.Taskbar.updateMoney();
+  ok(doc.getElementById('tray-money').textContent.indexOf('$') !== -1, 'contador de dinero en la bandeja: ' + doc.getElementById('tray-money').textContent);
 
   // menú inicio
   click(doc.getElementById('btn-start'));
@@ -226,6 +228,21 @@ function ok(cond, name, extra) {
   await wait(100);
   ok(N.WM.isOpen('browser'), 'comando "explorer" abre el navegador');
   N.WM.close('browser');
+
+  // --- easter egg: código Konami da 50 $ (una vez) ---
+  var cashBefore = N.State.get().currencies.cash;
+  var konamiKeys = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+  konamiKeys.forEach(function (k) {
+    doc.dispatchEvent(new win.KeyboardEvent('keydown', { key: k, bubbles: true }));
+  });
+  await wait(50);
+  ok(N.State.get().currencies.cash === cashBefore + 50, 'código Konami da +50 $');
+  // segunda vez: sin recompensa
+  konamiKeys.forEach(function (k) {
+    doc.dispatchEvent(new win.KeyboardEvent('keydown', { key: k, bubbles: true }));
+  });
+  await wait(50);
+  ok(N.State.get().currencies.cash === cashBefore + 50, 'Konami solo premia una vez por sesión');
 
   console.log('\n' + passed + ' pasaron, ' + failed + ' fallaron');
   process.exit(failed ? 1 : 0);

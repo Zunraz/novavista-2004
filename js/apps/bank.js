@@ -53,11 +53,49 @@
     makeTab('cuenta', 'Cuenta', function () {
       var S = NS.State.get();
       var p = panel('Saldo e intereses');
-      p.appendChild(Util.el('div', { class: 'bank-balance', text: Util.fmtMoney(S.bank.balance) }));
-      p.appendChild(Util.el('div', { class: 'cfg-info', html:
+      var bal = Util.el('div', { class: 'bank-balance', id: 'bank-balance', text: Util.fmtMoney(S.bank.balance) });
+      p.appendChild(bal);
+      var info = Util.el('div', { class: 'cfg-info', id: 'bank-info', html:
         'Interés actual: <b>' + Util.fmtPct(NS.State.bankRate()) + '/s</b> → <b>' + Util.fmtMoney(S.bank.balance * NS.State.bankRate()) + '/s</b><br>' +
         'Interés total acumulado: <b>' + Util.fmtMoney(S.bank.totalInterest) + '</b>'
-      }));
+      });
+      p.appendChild(info);
+      p.appendChild(Util.el('div', { class: 'cfg-sub', text: 'Efectivo disponible: ' + Util.fmtMoney(S.currencies.cash) }));
+
+      // depósito / retiro
+      var ops = Util.el('div', { class: 'trade-row' });
+      var inp = Util.el('input', { class: 'xp-input', id: 'bank-amount', type: 'number', min: '1', value: '100', style: { width: '90px' } });
+      var dep = Util.el('button', { class: 'xp-btn small', text: 'Depositar' });
+      dep.addEventListener('click', function () {
+        var n = parseFloat(inp.value) || 0;
+        var r = NS.State.deposit(n);
+        if (!r.ok) NS.UI.toast('Banco', 'No tienes ese efectivo.', 'important', 'ic-error');
+        else NS.Audio.cash();
+        NS.WM.rerender('bank');
+      });
+      var depAll = Util.el('button', { class: 'xp-btn small', text: 'Depositar todo' });
+      depAll.addEventListener('click', function () {
+        var r = NS.State.deposit(S.currencies.cash);
+        if (r.ok) { NS.Audio.cash(); NS.UI.toast('Banco', 'Depositados ' + Util.fmtMoney(r.amount) + ' a tu cuenta.', 'good', 'ic-bank'); }
+        NS.WM.rerender('bank');
+      });
+      var wit = Util.el('button', { class: 'xp-btn small', text: 'Retirar' });
+      wit.addEventListener('click', function () {
+        var n = parseFloat(inp.value) || 0;
+        var r = NS.State.withdraw(n);
+        if (!r.ok) NS.UI.toast('Banco', 'El saldo es insuficiente.', 'important', 'ic-error');
+        else NS.Audio.cash();
+        NS.WM.rerender('bank');
+      });
+      var witAll = Util.el('button', { class: 'xp-btn small', text: 'Retirar todo' });
+      witAll.addEventListener('click', function () {
+        var r = NS.State.withdraw(S.bank.balance);
+        if (r.ok) { NS.Audio.cash(); NS.UI.toast('Banco', 'Retirados ' + Util.fmtMoney(r.amount) + ' a tu efectivo.', 'good', 'ic-bank'); }
+        NS.WM.rerender('bank');
+      });
+      ops.appendChild(inp); ops.appendChild(dep); ops.appendChild(depAll); ops.appendChild(wit); ops.appendChild(witAll);
+      p.appendChild(ops);
+      p.appendChild(Util.el('div', { class: 'cfg-sub', text: 'El interés se calcula sobre el saldo en la cuenta. Deja dinero aquí para que trabaje por ti.' }));
       content.appendChild(p);
       var p2 = panel('Mejoras de interés');
       p2.appendChild(upgBtn('b-rate', 'Mejora de intereses'));
@@ -70,7 +108,7 @@
     makeTab('mineria', 'Minería', function () {
       var S = NS.State.get();
       var p = panel('Botnet de NovaCoins');
-      p.appendChild(Util.el('div', { class: 'bank-balance', text: S.bots.count + ' bots' }));
+      p.appendChild(Util.el('div', { class: 'bank-balance', id: 'bank-bots', text: S.bots.count + ' bots' }));
       p.appendChild(Util.el('div', { class: 'cfg-info', html:
         'Producción: <b>' + NS.State.botCoinRate().toFixed(3).replace('.', ',') + ' NovaCoins/s</b> ' +
         '(≈ ' + (NS.State.botCoinRate() * 60).toFixed(1).replace('.', ',') + ' /min)<br>' +
@@ -90,7 +128,7 @@
     makeTab('mercado', 'Mercado', function () {
       var S = NS.State.get();
       var p = panel('Mercado de NovaCoins');
-      p.appendChild(Util.el('div', { class: 'bank-balance', text: '1 NC = ' + Util.fmtMoney(S.bank.price) }));
+      p.appendChild(Util.el('div', { class: 'bank-balance', id: 'bank-price', text: '1 NC = ' + Util.fmtMoney(S.bank.price) }));
       p.appendChild(Util.el('div', { class: 'cfg-info', text: 'Compra barato, vende caro. El precio fluctúa con el tiempo.' }));
       // mini gráfico
       var chart = Util.el('div', { class: 'spark' });
@@ -191,12 +229,23 @@
 
   NS.Apps.register({
     id: 'bank', title: 'Primer Banco Nova', icon: 'ic-bank',
-    desktop: true, w: 520, h: 460, minW: 440, minH: 380,
+    desktop: true, w: 520, h: 500, minW: 440, minH: 400,
     render: render,
     tick: function () {
       var S = NS.State.get();
       priceHist.push(S.bank.price);
       if (priceHist.length > 60) priceHist.shift();
+      // actualización en vivo del saldo, el interés y los bots
+      var bal = Util.$('#bank-balance');
+      if (bal) bal.textContent = Util.fmtMoney(S.bank.balance);
+      var info = Util.$('#bank-info');
+      if (info) info.innerHTML =
+        'Interés actual: <b>' + Util.fmtPct(NS.State.bankRate()) + '/s</b> → <b>' + Util.fmtMoney(S.bank.balance * NS.State.bankRate()) + '/s</b><br>' +
+        'Interés total acumulado: <b>' + Util.fmtMoney(S.bank.totalInterest) + '</b>';
+      var bots = Util.$('#bank-bots');
+      if (bots) bots.textContent = S.bots.count + ' bots';
+      var price = Util.$('#bank-price');
+      if (price) price.textContent = '1 NC = ' + Util.fmtMoney(S.bank.price);
     }
   });
 })();

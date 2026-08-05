@@ -26,6 +26,7 @@ load('js/core/catalog.js');
 load('js/core/save.js');
 load('js/core/state.js');
 load('js/core/wm.js');
+load('js/core/physics.js');
 load('js/apps/net.js');
 
 var U = global.NovaOS.Util;
@@ -107,7 +108,57 @@ eq(s.broker.dataSold, 200, 'dataSold registra');
 State.addDataMB(999999);
 eq(s.data.mb, s.data.maxMB, 'disco llena hasta el máximo');
 
+console.log('state — banco: depósito y retiro');
+State.newGame();
+s = State.get();
+s.currencies.cash = 1000;
+var d = State.deposit(300);
+ok(d.ok && d.amount === 300, 'depósito de 300');
+eq(s.currencies.cash, 700, 'cash baja tras depositar');
+eq(s.bank.balance, 350, 'saldo del banco sube (50 inicial + 300)');
+var w = State.withdraw(100);
+ok(w.ok && w.amount === 100, 'retiro de 100');
+eq(s.bank.balance, 250, 'saldo baja tras retirar');
+eq(s.currencies.cash, 800, 'cash sube tras retirar');
+var d2 = State.deposit(999999);
+ok(d2.ok && d2.amount === 800, 'depositar más de lo que hay deposita todo lo disponible');
+var w2 = State.withdraw(9999999);
+ok(w2.ok && w2.amount === 1050, 'retirar más del saldo se recorta al saldo disponible');
+var d3 = State.deposit(-5);
+ok(!d3.ok, 'depósito negativo rechazado');
+
+console.log('state — upgrades aplicados en vivo (sincronización derivada)');
+State.newGame();
+s = State.get(); // refrescar la referencia tras newGame
+State.addCash(100000);
+State.buyUpgrade('d-cap');
+State.buyUpgrade('b-count');
+State.buyUpgrade('b-count');
+ok(State.dataMaxMB() > 2000, 'capacidad derivada sube con d-cap');
+State.tick(100);
+eq(State.get().data.maxMB, State.dataMaxMB(), 'maxMB sincronizado tras tick');
+eq(State.get().bots.count, 2, 'bots.count sincronizado tras comprar 2 bots');
+ok(State.botCoinRate() > 0, 'la botnet ya produce NovaCoins');
+ok(State.get().games && typeof State.get().games.pinball === 'number', 'estado de juegos presente');
+
+console.log('physics — colisiones y rebotes');
+var P = global.NovaOS.Physics;
+var A = { x: 0, y: 0, vx: 100, vy: 0, r: 10, m: 100 };
+var B = { x: 15, y: 0, vx: 0, vy: 0, r: 10, m: 100 };
+ok(P.circleCollide(A, B), 'dos bolas colisionan');
+ok(A.vx < 100 && B.vx > 0, 'la energía se transfiere en la colisión');
+var W = { x: 4, y: 5, vx: -50, vy: 0, r: 5 };
+ok(P.wallBounce(W, 0, 0, 100, 100), 'rebote contra pared');
+ok(W.vx > 0, 'la velocidad se invierte tras el rebote');
+ok(P.pocketed({ x: 10, y: 10 }, 10, 10, 17), 'bola dentro del bolsillo');
+ok(!P.pocketed({ x: 90, y: 90 }, 10, 10, 17), 'bola fuera del bolsillo');
+var F = { x: 50, y: 55, vx: 0, vy: 0, r: 8 };
+var norm = P.segmentCollide(F, { x: 30, y: 60 }, { x: 70, y: 60 }, 8);
+ok(norm && Math.abs(norm.ny) > 0.9, 'colisión con segmento (flipper) devuelve normal');
+
 console.log('state — tick');
+s = State.get();
+State.deposit(500);
 var c0 = s.currencies.cash;
 var t0 = s.bank.balance;
 State.tick(1000);

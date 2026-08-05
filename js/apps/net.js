@@ -470,8 +470,11 @@
       });
     }
     var colWrap = Util.el('div', { class: 'net-cols' });
+    var DEPTH_NAMES = ['Tu ISP', 'Red local', 'Zona media', 'Zona alta', 'Subsuelo', 'Objetivo final'];
     Object.keys(depths).sort(function (a, b) { return a - b; }).forEach(function (d) {
       var col = Util.el('div', { class: 'net-col' });
+      var header = Util.el('div', { class: 'net-col-head', text: DEPTH_NAMES[Math.min(d, DEPTH_NAMES.length - 1)] });
+      col.appendChild(header);
       depths[d].forEach(function (node) {
         var reach = isReachable(run, node);
         var visible = node.explored || run.mapRevealed;
@@ -484,6 +487,10 @@
         box.appendChild(Util.el('div', { class: 'net-node-name', text: (visible ? node.name : '???') }));
         box.appendChild(Util.el('div', { class: 'net-node-sub', text: visible ? ('nivel ' + node.lvl + ' · FW ' + node.fw) : '' }));
         if (node.drained) box.appendChild(Util.el('div', { class: 'net-node-sub ok', text: '✓ drenado' }));
+        else if (visible && !reach) {
+          var lock = Util.el('div', { class: 'net-node-sub', text: 'bloqueado' });
+          box.appendChild(lock);
+        }
         box.addEventListener('click', function () {
           selectedId = node.id;
           if (visible) {
@@ -496,6 +503,15 @@
       colWrap.appendChild(col);
     });
     mapEl.appendChild(colWrap);
+
+    // leyenda
+    var legend = Util.el('div', { class: 'net-legend' });
+    legend.appendChild(Util.el('span', { html: '<span class="lg lg-reach"></span> alcanzable' }));
+    legend.appendChild(Util.el('span', { html: '<span class="lg lg-lock"></span> bloqueado' }));
+    legend.appendChild(Util.el('span', { html: '<span class="lg lg-done"></span> drenado' }));
+    legend.appendChild(Util.el('span', { html: '<span class="lg lg-hidden"></span> sin escanear' }));
+    legend.appendChild(Util.el('span', { html: '<span class="lg lg-boss"></span> MasterServer' }));
+    mapEl.appendChild(legend);
     renderTop();
   }
 

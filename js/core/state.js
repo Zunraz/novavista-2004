@@ -41,6 +41,7 @@
       quests: {},
       events: { nextMalwareAt: 0, nextAdAt: 0 },
       browser: { impressions: 0, auto: 0, clicks: 0 },
+      games: { pinball: 0, pinballCash: 0, pool: 0, poolWins: 0 },
       stats: { clicks: 0, posts: 0, hacks: 0, traces: 0, offlineSessions: 0 }
     };
   }
@@ -69,6 +70,8 @@
   function energyRegen() { return 0.125 * Math.pow(1.5, upg('e-regen')); }
   function maxEnergy() { return 12 + upg('e-max') + upg('i-energy'); }
   function dataPrice() { return 10 * Math.pow(2, upg('d-price')) * incomeMult(); }
+  function dataMaxMB() { return 2000 + 500 * upg('d-cap'); }
+  function botCount() { return upg('b-count'); }
   function xpForLevel(l) { return Math.floor(40 * Math.pow(l, 1.5)); }
   function legacyForCoins(c) { return Math.floor(10 * Math.sqrt(Math.max(0, c))); }
 
@@ -200,6 +203,26 @@
     return { ok: true };
   }
 
+  /* ---------------- depósito / retiro del banco ---------------- */
+  function deposit(n) {
+    n = Sec.guardNum(n, 'deposit');
+    if (n <= 0) return { ok: false, why: 'cantidad' };
+    if (n > S.currencies.cash) n = S.currencies.cash;
+    if (n <= 0) return { ok: false, why: 'dinero' };
+    spendCash(n);
+    S.bank.balance += n;
+    return { ok: true, amount: n };
+  }
+  function withdraw(n) {
+    n = Sec.guardNum(n, 'withdraw');
+    if (n <= 0) return { ok: false, why: 'cantidad' };
+    if (n > S.bank.balance) n = S.bank.balance;
+    if (n <= 0) return { ok: false, why: 'saldo' };
+    S.bank.balance -= n;
+    addCash(n);
+    return { ok: true, amount: n };
+  }
+
   /* ---------------- intercambio NovaCoin ---------------- */
   function stepCoinPrice(dtMs) {
     // paseo aleatorio suave, siempre dentro de [6, 60]
@@ -243,6 +266,11 @@
     dtMs = Sec.validateDelta(dtMs);
     if (dtMs <= 0) return;
     var dt = dtMs / 1000;
+
+    // Sincronización de campos derivados (los upgrades se aplican en vivo)
+    S.data.maxMB = dataMaxMB();
+    S.bots.count = botCount();
+    S.currencies.maxEnergy = maxEnergy();
 
     // En cuarentena los ingresos están suspendidos (el sistema está comprometido)
     if (!Sec.isQuarantined()) {
@@ -346,11 +374,13 @@
     o.data.mb = Util.clamp(o.data.mb, 0, o.data.maxMB);
     o.av.level = o.upg['av-level'] || 0;
     o.av.firewall = o.upg['av-fw'] || 0;
+    o.bots.count = o.upg['b-count'] || 0;
     // Backfill defensivo de contadores de asaltos (saves antiguos/dañados)
     if (!isFinite(o.meta.nodesDrained) || o.meta.nodesDrained < 0) o.meta.nodesDrained = (o.stats && o.stats.hacks) || 0;
     if (!isFinite(o.meta.bossesDrained) || o.meta.bossesDrained < 0) o.meta.bossesDrained = 0;
     if (!o.events.nextMalwareAt) o.events.nextMalwareAt = 0;
     if (!o.browser) o.browser = { impressions: 0, auto: 0, clicks: 0 };
+    if (!o.games) o.games = { pinball: 0, pinballCash: 0, pool: 0, poolWins: 0 };
     return o;
   }
 
@@ -455,9 +485,11 @@
     addFollowers: addFollowers, addDataMB: addDataMB, sellDataMB: sellDataMB,
     buyUpgrade: buyUpgrade, buyImplant: buyImplant, buyTool: buyTool, useTool: useTool,
     loanTake: loanTake, loanRepay: loanRepay,
+    deposit: deposit, withdraw: withdraw,
     buyCoins: buyCoins, sellCoins: sellCoins, makePost: makePost, format: format,
     bankRate: bankRate, socialAdRate: socialAdRate, followerGrowthRate: followerGrowthRate,
     botCoinRate: botCoinRate, energyRegen: energyRegen, maxEnergy: maxEnergy,
-    dataPrice: dataPrice, xpForLevel: xpForLevel, incomeMult: incomeMult
+    dataPrice: dataPrice, dataMaxMB: dataMaxMB, botCount: botCount,
+    xpForLevel: xpForLevel, incomeMult: incomeMult
   });
 })();

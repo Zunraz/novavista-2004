@@ -119,6 +119,26 @@
         line('01001110 01101111 01110110 01100001 01010110 01101001 01110011 01110100 01100001', 'ok');
         line('La Matrix tiene a NovaVista. Sigue el conejo blanco.', 'dim');
         break;
+      case 'gato':
+        line('  /\\_/\\', 'ok');
+        line(' ( o.o )   ¡miau!', 'ok');
+        line('  > ^ <', 'ok');
+        line('El gato de NovaVista está a cargo de la seguridad. Confía en él.', 'dim');
+        break;
+      case 'telnet':
+        line('Conectando a 64.233.184.255...', 'dim');
+        line('NO SE PUEDE CONECTAR AL HOST EN EL PUERTO 23: conexión rechazada.', 'err');
+        line('(En 2004 esto era normal. El telnet murió por algo.)', 'dim');
+        break;
+      case 'beep':
+        NS.Audio.bootBeep();
+        line('BEEP.', 'ok');
+        break;
+      case 'skynet':
+        line('SKYNET: INICIALIZANDO...', 'warn');
+        line('SKYNET: NO HAY SKYNET. Solo NovaVista. Respira.', 'dim');
+        line('SKYNET: (guión de un easter egg) FIN.', 'dim');
+        break;
       case 'limpiar':
         line('No existe ese comando. Pruebe HELP.', 'err');
         break;

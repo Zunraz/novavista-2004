@@ -292,6 +292,48 @@
     <circle cx="12.5" cy="16" r="1.2" fill="#1a1f2e"/><circle cx="19.5" cy="16" r="1.2" fill="#1a1f2e"/>
     <path d="M14 21c1.3 1 2.7 1 4 0" stroke="#9a6a3a" stroke-width="1.2" fill="none"/>
   </symbol>
+  <symbol id="ic-msn" viewBox="0 0 32 32">
+    <rect x="2" y="7" width="28" height="18" rx="6" fill="#3a8fd6" stroke="#1c4f86" stroke-width="1.5"/>
+    <circle cx="11" cy="14" r="3.6" fill="#e8b98a" stroke="#1c4f86" stroke-width="1.2"/>
+    <path d="M6 22c0-3.6 2-5.6 5-5.6s5 2 5 5.6" fill="#e8b98a" stroke="#1c4f86" stroke-width="1.2"/>
+    <circle cx="23" cy="15" r="2.8" fill="#7ed957" stroke="#1c4f86" stroke-width="1.2"/>
+    <path d="M20 22c0-2.8 1.2-4.2 3-4.2s3 1.4 3 4.2" fill="#7ed957" stroke="#1c4f86" stroke-width="1.2"/>
+    <path d="M4 25c4-2 8-2 12 0" stroke="#1c4f86" stroke-width="1" fill="none" opacity="0.6"/>
+  </symbol>
+  <symbol id="ic-pinball" viewBox="0 0 32 32">
+    <rect x="8" y="2" width="16" height="28" rx="6" fill="#5a2c8a" stroke="#2a0c4a" stroke-width="1.5"/>
+    <path d="M8 18h16" stroke="#2a0c4a" stroke-width="1.2"/>
+    <circle cx="13" cy="7" r="2.4" fill="#ffd27a" stroke="#9c7a1c" stroke-width="1"/>
+    <circle cx="19" cy="7" r="2.4" fill="#ff6b6b" stroke="#7a1c1c" stroke-width="1"/>
+    <circle cx="16" cy="12" r="2.2" fill="#7ed957" stroke="#2c5e2c" stroke-width="1"/>
+    <circle cx="16" cy="22" r="2.6" fill="#f8f8f8" stroke="#888" stroke-width="1"/>
+    <rect x="10" y="26" width="5" height="3" rx="1" fill="#7c8590" stroke="#4a4f58" stroke-width="0.8"/>
+    <rect x="17" y="26" width="5" height="3" rx="1" fill="#7c8590" stroke="#4a4f58" stroke-width="0.8"/>
+  </symbol>
+  <symbol id="ic-pool" viewBox="0 0 32 32">
+    <rect x="3" y="7" width="26" height="18" rx="3" fill="#2c7a3e" stroke="#123a1e" stroke-width="1.6"/>
+    <rect x="6" y="9.5" width="20" height="13" rx="2" fill="#3fa354" stroke="#123a1e" stroke-width="0.8"/>
+    <circle cx="9" cy="12" r="1.7" fill="#fff" stroke="#888" stroke-width="0.7"/>
+    <circle cx="15" cy="18" r="1.9" fill="#fff" stroke="#888" stroke-width="0.7"/>
+    <circle cx="21" cy="13" r="1.8" fill="#c03030" stroke="#7a1c1c" stroke-width="0.7"/>
+    <circle cx="12" cy="15" r="1.6" fill="#f2c14e" stroke="#9c7a1c" stroke-width="0.7"/>
+    <circle cx="26" cy="22" r="1.5" fill="#3a3f4d" stroke="#1a1f2e" stroke-width="0.7"/>
+    <path d="M6 26l-2 2M26 26l2 2" stroke="#c8945a" stroke-width="2.4" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="ic-taskmgr" viewBox="0 0 32 32">
+    <rect x="4" y="2" width="24" height="20" rx="2" fill="#cfd4dc" stroke="#4a4f58" stroke-width="1.4"/>
+    <rect x="7" y="5" width="18" height="14" rx="1" fill="#0a0a12"/>
+    <path d="M7 11h18" stroke="#2a3a5a" stroke-width="1"/>
+    <rect x="8" y="6" width="3" height="2" fill="#3a8fd6"/><rect x="12" y="6" width="3" height="2" fill="#3a8fd6"/><rect x="16" y="6" width="3" height="2" fill="#3a8fd6"/>
+    <rect x="4" y="24" width="24" height="6" rx="1.5" fill="#7c8590" stroke="#4a4f58" stroke-width="1.2"/>
+    <circle cx="11" cy="27" r="1.6" fill="#7ed957"/><circle cx="16" cy="27" r="1.6" fill="#f2c14e"/><circle cx="21" cy="27" r="1.6" fill="#ff6b6b"/>
+  </symbol>
+  <symbol id="ic-egg" viewBox="0 0 32 32">
+    <ellipse cx="16" cy="17" rx="9" ry="11" fill="#f2e8c8" stroke="#8a7a4a" stroke-width="1.4"/>
+    <path d="M16 6c-2-3-5-3-6-1 2 1 3 2 4 3 1-1 2-2 2-2z" fill="#f2e8c8" stroke="#8a7a4a" stroke-width="0.8"/>
+    <path d="M13 15l-3 2M19 15l3 2" stroke="#8a7a4a" stroke-width="1.4" stroke-linecap="round"/>
+    <circle cx="13" cy="18" r="1" fill="#8a7a4a"/><circle cx="19" cy="18" r="1" fill="#8a7a4a"/>
+  </symbol>
 </svg>
 
 <!-- ============ OVERLAYS ============ -->
@@ -322,6 +364,7 @@
     <button class="tray-item" id="tray-av" title="NovaShield"><svg class="icon"><use href="#ic-shield"/></svg></button>
     <button class="tray-item" id="tray-wifi" title="Conectado a RED-NOVA 54 Mbps"><svg class="icon"><use href="#ic-wifi"/></svg></button>
     <button class="tray-item" id="tray-vol" title="Volumen"><svg class="icon"><use href="#ic-volume"/></svg></button>
+    <div id="tray-money" title="Tu efectivo y NovaCoins"></div>
     <div id="tray-clock" title="Fecha y hora"></div>
   </div>
 </div>
@@ -349,6 +392,7 @@
 <script src="js/core/state.js"></script>
 <script src="js/core/wm.js"></script>
 <script src="js/core/events.js"></script>
+<script src="js/core/physics.js"></script>
 <script src="js/apps/boot.js"></script>
 <script src="js/apps/dialogs.js"></script>
 <script src="js/apps/desktop.js"></script>
@@ -363,6 +407,10 @@
 <script src="js/apps/av.js"></script>
 <script src="js/apps/net.js"></script>
 <script src="js/apps/manual.js"></script>
+<script src="js/apps/msn.js"></script>
+<script src="js/apps/pinball.js"></script>
+<script src="js/apps/pool.js"></script>
+<script src="js/apps/taskmgr.js"></script>
 <script src="js/main.js"></script>
 </body>
 </html>
