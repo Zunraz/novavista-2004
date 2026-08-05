@@ -151,16 +151,19 @@
     return true;
   }
 
-  /* -------- disparo del jugador -------- */
+  /* -------- disparo del jugador (arrastrar para apuntar) -------- */
+  var dragActive = false;
+  var dragPower = 0;
+
   function shootTo(mx, my) {
     if (phase !== 'aim' || cue.pocketed || result) return;
     var dx = mx - cue.x, dy = my - cue.y;
     var d = Math.sqrt(dx * dx + dy * dy);
     if (d < 8) return;
     var nx = dx / d, ny = dy / d;
-    var power = Util.clamp(d / 240, 0.15, 1);
-    cue.vx = nx * (350 + power * 520);
-    cue.vy = ny * (350 + power * 520);
+    var power = Util.clamp(d / 280, 0.1, 1);
+    cue.vx = nx * (400 + power * 900);
+    cue.vy = ny * (400 + power * 900);
     phase = 'move';
     lastHitAt = performance.now();
     NS.Audio.hack();
@@ -226,10 +229,11 @@
   function step(dt) {
     if (phase !== 'move') return;
     NS.Physics.stepBalls(balls, dt);
+    var fr = Math.pow(0.985, dt * 60); // rozamiento estable a cualquier FPS
     for (var i = 0; i < balls.length; i++) {
       var b = balls[i];
       if (b.pocketed) continue;
-      b.vx *= 0.985; b.vy *= 0.985;
+      b.vx *= fr; b.vy *= fr;
       if (Math.abs(b.vx) < 0.03) b.vx = 0;
       if (Math.abs(b.vy) < 0.03) b.vy = 0;
       NS.Physics.wallBounce(b, T.x0, T.y0, T.x1, T.y1);
@@ -300,7 +304,7 @@
         ctx.fillText(String(b.num), b.x, b.y + 0.5);
       }
     });
-    // línea de puntería
+    // línea de puntería y barra de potencia
     if (phase === 'aim' && !cue.pocketed) {
       var dx = aim.x - cue.x, dy = aim.y - cue.y;
       var d = Math.sqrt(dx * dx + dy * dy) || 1;
@@ -313,6 +317,19 @@
       ctx.lineTo(cue.x + nx * 260, cue.y + ny * 260);
       ctx.stroke();
       ctx.setLineDash([]);
+      // potencia (distancia del arrastre)
+      if (dragActive) {
+        var power = Util.clamp(d / 280, 0.1, 1);
+        ctx.fillStyle = '#0a0a12';
+        ctx.fillRect(8, H - 22, 120, 10);
+        ctx.fillStyle = power > 0.75 ? '#ff6b6b' : power > 0.4 ? '#f2c14e' : '#7ed957';
+        ctx.fillRect(9, H - 21, 118 * power, 8);
+        ctx.strokeStyle = '#fff';
+        ctx.strokeRect(8, H - 22, 120, 10);
+        ctx.fillStyle = '#fff';
+        ctx.font = '10px Tahoma';
+        ctx.fillText('POTENCIA ' + Math.round(power * 100) + ' %', 8, H - 28);
+      }
     }
     // HUD de grupos
     ctx.fillStyle = '#fff';
@@ -351,6 +368,11 @@
   }
   function onDown(e) {
     if (phase !== 'aim') return;
+    dragActive = true;
+  }
+  function onUp(e) {
+    if (!dragActive) return;
+    dragActive = false;
     var r = cv.getBoundingClientRect();
     shootTo(e.clientX - r.left, e.clientY - r.top);
   }
@@ -363,6 +385,7 @@
     ctx = cv.getContext('2d');
     cv.addEventListener('mousemove', onMove);
     cv.addEventListener('mousedown', onDown);
+    cv.addEventListener('mouseup', onUp);
     wrap.appendChild(cv);
 
     var side = Util.el('div', { style: { flex: '1', minWidth: '170px' } });

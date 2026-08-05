@@ -68,7 +68,7 @@
       '</div>';
     h += '<div class="web-quick">';
     FAVS.slice(0, 5).forEach(function (f) {
-      h += '<div class="web-quick-item" data-route="' + f[0] + '"><svg class="icon icon-32"><use href="#' + f[1] + '"/></svg><span>' + Util.esc(f[2]) + '</span></div>';
+      h += '<div class="web-quick-item" data-route="' + f[0] + '">' + Util.svgHtml(f[1], 'icon icon-32') + '<span>' + Util.esc(f[2]) + '</span></div>';
     });
     h += '</div>';
     h += adBox('¡NovaAntivirus 2005 YA DISPONIBLE! Protégete por solo 29,99 $');
@@ -144,7 +144,7 @@
       var def = NS.Catalog.TOOLS[tid];
       var owned = S.inventory.tools[tid] || 0;
       h += '<div class="web-dl-item">' +
-        '<svg class="icon icon-24"><use href="#' + def.icon + '"/></svg>' +
+        Util.svgHtml(def.icon, 'icon icon-24') +
         '<div style="flex:1"><div class="web-rtitle">' + Util.esc(def.name) + '</div>' +
         '<div class="web-rd">' + Util.esc(def.desc) + ' (tienes: ' + owned + ')</div></div>' +
         '<button class="xp-btn small" data-tool="' + tid + '">Comprar — ' + Util.fmtMoney(def.price) + '</button></div>';
@@ -162,13 +162,13 @@
     var autoCost = Math.floor(150 * Math.pow(2.2, autoLvl));
     var cpmCost = Math.floor(400 * Math.pow(3, cpmLvl));
     var imp = b.impressions || 0;
-    var value = imp * 0.02 * Math.pow(2, cpmLvl);
+    var value = imp * 0.015 * Math.pow(2, cpmLvl);
     var h = '<div class="web-click">' +
       '<div class="web-logo" style="font-size:26px">Nova<span style="color:#c33">Click</span></div>' +
       '<div class="web-click-count">' + Util.fmtInt(imp) + ' impresiones</div>' +
       '<div class="web-click-value">Valor: ' + Util.fmtMoney(value) + '</div>' +
       '<button class="xp-btn click-big" onclick="NovaOS.Browser.clickImp()">¡HAZ CLIC!</button>' +
-      '<div class="cfg-sub">Cada clic = 1 impresión · 0,02 $ por impresión (CPM mejorable)</div>' +
+      '<div class="cfg-sub">Cada clic = 1 impresión · 0,015 $ por impresión (CPM mejorable)</div>' +
       '<div class="web-dl-item"><div style="flex:1"><div class="web-rtitle">Autoclic de marquesina</div><div class="web-rd">+1 impresión/s (nivel ' + autoLvl + ')</div></div>' +
       '<button class="xp-btn small" onclick="NovaOS.Browser.buyAuto()">' + Util.fmtMoney(autoCost) + '</button></div>' +
       '<div class="web-dl-item"><div style="flex:1"><div class="web-rtitle">Mejor CPM</div><div class="web-rd">x2 valor por impresión (nivel ' + cpmLvl + ')</div></div>' +
@@ -314,7 +314,7 @@
     var s = NS.State.get();
     var imp = s.browser.impressions || 0;
     if (imp <= 0) return;
-    var val = imp * 0.02 * Math.pow(2, s.browser.cpmLvl || 0);
+    var val = imp * 0.015 * Math.pow(2, s.browser.cpmLvl || 0);
     NS.State.addCash(val);
     s.browser.impressions = 0;
     NS.Audio.cash();
@@ -354,9 +354,7 @@
     var favs = Util.el('div', { class: 'web-favs' });
     FAVS.forEach(function (f) {
       var b = Util.el('button', { class: 'web-fav', title: f[2] });
-      var svg = Util.el('svg', { class: 'icon' });
-      svg.innerHTML = '<use href="#' + f[1] + '"/>';
-      b.appendChild(svg);
+      b.appendChild(Util.svgIcon(f[1]));
       b.appendChild(document.createTextNode(f[2]));
       b.addEventListener('click', function () { navigate(f[0]); });
       favs.appendChild(b);

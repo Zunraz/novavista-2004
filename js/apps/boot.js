@@ -91,7 +91,8 @@
       NS.Util.$('#boot-screen').removeEventListener('click', onSkip);
       setTimeout(function () {
         setBootVis(false);
-        NS.Main.afterBoot();
+        if (NS.Login && NS.Login.show) NS.Login.show();
+        else if (NS.Main && NS.Main.enterDesktop) NS.Main.enterDesktop();
       }, 300);
     }
 

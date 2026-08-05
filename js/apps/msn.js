@@ -135,9 +135,7 @@
     var list = Util.el('div', { class: 'msn-list' });
     CONTACTS.forEach(function (c) {
       var row = Util.el('div', { class: 'msn-contact' + (selected === c ? ' sel' : '') });
-      var svg = Util.el('svg', { class: 'icon icon-24' });
-      svg.innerHTML = '<use href="#' + c.avatar + '"/>';
-      row.appendChild(svg);
+      row.appendChild(Util.svgIcon(c.avatar, 'icon icon-24'));
       var info = Util.el('div', { style: { flex: '1' } });
       info.appendChild(Util.el('div', { class: 'msn-cname', text: c.name }));
       info.appendChild(Util.el('div', { class: 'msn-cstatus', text: statusLabel(c.status) }));

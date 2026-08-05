@@ -39,6 +39,7 @@
         menu.classList.add('hidden');
         if (a === 'shutdown') NS.Boot.doShutdown();
         else if (a === 'restart') NS.Boot.doRestart();
+        else if (a === 'logout') { if (NS.Login) NS.Login.logout(); }
       });
     });
 
@@ -46,9 +47,7 @@
     var ql = Util.$('#quicklaunch');
     [['browser', 'ic-browser', 'NovaNet Explorer'], ['bank', 'ic-bank', 'Primer Banco Nova'], ['net', 'ic-net', 'Mapa de red']].forEach(function (a) {
       var b = Util.el('button', { title: a[2] });
-      var svg = Util.el('svg', { class: 'icon' });
-      svg.innerHTML = '<use href="#' + a[1] + '"/>';
-      b.appendChild(svg);
+      b.appendChild(Util.svgIcon(a[1]));
       b.addEventListener('click', function () { NS.WM.open(a[0]); });
       ql.appendChild(b);
     });
@@ -71,9 +70,7 @@
     wrap.innerHTML = '';
     NS.WM.openList().forEach(function (o) {
       var btn = Util.el('button', { class: 'tb-btn' + (o.win.minimized ? '' : ' active') });
-      var svg = Util.el('svg', { class: 'icon' });
-      svg.innerHTML = '<use href="#' + o.def.icon + '"/>';
-      btn.appendChild(svg);
+      btn.appendChild(Util.svgIcon(o.def.icon));
       btn.appendChild(Util.el('span', { class: 'tb-title', text: o.def.title }));
       btn.addEventListener('click', function () {
         if (o.win.minimized) { NS.WM.focus(o.id); }
@@ -88,9 +85,7 @@
     col.innerHTML = '';
     NS.Apps.list().forEach(function (def) {
       var b = Util.el('button', { class: 'sm-item' });
-      var svg = Util.el('svg', { class: 'icon' });
-      svg.innerHTML = '<use href="#' + def.icon + '"/>';
-      b.appendChild(svg);
+      b.appendChild(Util.svgIcon(def.icon));
       b.appendChild(document.createTextNode(def.title));
       b.addEventListener('click', function () {
         Util.$('#start-menu').classList.add('hidden');
@@ -101,9 +96,12 @@
     });
     var user = Util.$('#sm-username');
     if (user) user.textContent = NS.State.get().profile.name;
-    var userIcon = Util.$('.sm-user-icon svg use');
+    var uic = Util.$('.sm-user-icon');
     var AVS = NS.Catalog.AVATARS;
-    if (userIcon) userIcon.setAttribute('href', '#' + AVS[(NS.State.get().profile.avatar || 0) % AVS.length]);
+    if (uic) {
+      uic.innerHTML = '';
+      uic.appendChild(Util.svgIcon(AVS[(NS.State.get().profile.avatar || 0) % AVS.length], 'icon icon-48'));
+    }
     var lvlEl = Util.$('#sm-level');
     if (lvlEl) {
       var s = NS.State.get();
@@ -132,13 +130,12 @@
     var s = NS.State.get();
     var av = Util.$('#tray-av');
     av.classList.toggle('suspect', NS.Sec.isQuarantined());
+    av.innerHTML = '';
     if (NS.Sec.isQuarantined()) {
-      var svg = Util.$('svg', av);
-      svg.innerHTML = '<use href="#ic-shield-bad"/>';
+      av.appendChild(Util.svgIcon('ic-shield-bad'));
       av.title = '¡Integridad comprometida! Abre NovaShield para restaurar.';
     } else {
-      var svg2 = Util.$('svg', av);
-      svg2.innerHTML = '<use href="#ic-shield"/>';
+      av.appendChild(Util.svgIcon('ic-shield'));
       av.title = 'NovaShield — Protección nivel ' + (s.av.level + s.av.firewall);
     }
   }

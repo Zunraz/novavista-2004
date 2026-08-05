@@ -73,9 +73,7 @@
       any = true;
       var def = NS.Catalog.TOOLS[tid];
       var r = Util.el('div', { class: 'inv-row' });
-      var svg = Util.el('svg', { class: 'icon' });
-      svg.innerHTML = '<use href="#' + def.icon + '"/>';
-      r.appendChild(svg);
+      r.appendChild(Util.svgIcon(def.icon));
       var info = Util.el('div', { style: { flex: '1' } });
       info.appendChild(Util.el('div', { text: def.name + ' ×' + qty }));
       info.appendChild(Util.el('div', { class: 'cfg-sub', text: def.desc }));
@@ -94,9 +92,7 @@
     ];
     docs.forEach(function (d) {
       var r = Util.el('div', { class: 'inv-row clickable' });
-      var svg = Util.el('svg', { class: 'icon' });
-      svg.innerHTML = '<use href="#' + d[0] + '"/>';
-      r.appendChild(svg);
+      r.appendChild(Util.svgIcon(d[0]));
       var info = Util.el('div', { style: { flex: '1' } });
       info.appendChild(Util.el('div', { text: d[1] }));
       info.appendChild(Util.el('div', { class: 'cfg-sub', text: d[2] }));

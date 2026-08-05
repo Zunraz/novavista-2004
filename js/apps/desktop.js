@@ -27,9 +27,7 @@
     var apps = NS.Apps.desktop();
     apps.forEach(function (def) {
       var ic = Util.el('div', { class: 'desktop-icon', title: def.title });
-      var svg = Util.el('svg', { class: 'icon icon-32' });
-      svg.innerHTML = '<use href="#' + def.icon + '"/>';
-      ic.appendChild(svg);
+      ic.appendChild(Util.svgIcon(def.icon, 'icon icon-32'));
       ic.appendChild(Util.el('div', { class: 'di-name', text: def.title }));
       ic.addEventListener('mousedown', function (e) {
         e.stopPropagation();
@@ -47,9 +45,7 @@
     });
     // icono de papelera
     var trash = Util.el('div', { class: 'desktop-icon', title: 'Papelera de reciclaje' });
-    var svg2 = Util.el('svg', { class: 'icon icon-32' });
-    svg2.innerHTML = '<use href="#ic-trash"/>';
-    trash.appendChild(svg2);
+    trash.appendChild(Util.svgIcon('ic-trash', 'icon icon-32'));
     trash.appendChild(Util.el('div', { class: 'di-name', text: 'Papelera' }));
     trash.addEventListener('dblclick', function () {
       Util.UI.alert('Papelera de reciclaje', 'La papelera está vacía. (Casi todo lo borrado se vende o se pierde en este sistema).', 'ic-trash');

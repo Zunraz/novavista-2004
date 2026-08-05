@@ -15,9 +15,15 @@
   var tickCount = 0;
   var randomWarning = 0;
 
+  /* La cuarentena es por perfil (cada cuenta tiene su propia clave) */
+  function qKey() {
+    var pid = (NS.Save && NS.Save.currentProfileId) ? NS.Save.currentProfileId() : null;
+    return pid ? QUARANTINE_KEY + '.' + pid : QUARANTINE_KEY;
+  }
+
   function readQuarantineFlag() {
     try {
-      var raw = window.localStorage.getItem(QUARANTINE_KEY);
+      var raw = window.localStorage.getItem(qKey());
       if (raw) {
         var o = JSON.parse(raw);
         if (o && o.on) { quarantined = true; quarantinedAt = o.at || Date.now(); }
@@ -45,7 +51,7 @@
     quarantinedAt = Date.now();
     flag(reason);
     try {
-      window.localStorage.setItem(QUARANTINE_KEY, JSON.stringify({ on: true, at: quarantinedAt, why: reason }));
+      window.localStorage.setItem(qKey(), JSON.stringify({ on: true, at: quarantinedAt, why: reason }));
     } catch (e) {}
     NS.Event && NS.Event.fire && NS.Event.fire('quarantine', reason);
   }
@@ -54,7 +60,7 @@
   function clearQuarantine() {
     quarantined = false;
     quarantinedAt = 0;
-    try { window.localStorage.removeItem(QUARANTINE_KEY); } catch (e) {}
+    try { window.localStorage.removeItem(qKey()); } catch (e) {}
   }
 
   function isQuarantined() { return quarantined; }

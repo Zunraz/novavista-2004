@@ -12,6 +12,11 @@
   var SAVE_KEY = 'novavista.save.v2';
   var BACKUP_KEY = 'novavista.backup.v2';
   var SALT_KEY = 'novavista.salt.v2';
+  var PROFILES_KEY = 'novavista.profiles.v1';
+  var LAST_PROFILE_KEY = 'novavista.lastprofile.v1';
+
+  var currentProfile = null; // {id, name, avatar}
+  var profiles = null;
 
   var store = null;
   try {
@@ -23,6 +28,102 @@
   } catch (e) { store = null; }
 
   function hasStore() { return !!store; }
+
+  function saveKeyFor(id) { return 'novavista.save.v2.' + id; }
+  function backupKeyFor(id) { return 'novavista.backup.v2.' + id; }
+
+  /* ---------- perfiles (cuentas de usuario locales) ---------- */
+  function loadProfiles() {
+    if (profiles) return profiles;
+    profiles = [];
+    if (!store) return profiles;
+    try {
+      var raw = store.getItem(PROFILES_KEY);
+      if (raw) {
+        var arr = JSON.parse(raw);
+        if (Array.isArray(arr)) profiles = arr.filter(function (p) { return p && p.id; });
+      }
+    } catch (e) {}
+    return profiles;
+  }
+  function persistProfiles() {
+    if (!store) return;
+    try { store.setItem(PROFILES_KEY, JSON.stringify(profiles)); } catch (e) {}
+  }
+  function migrateLegacy() {
+    // Partidas anteriores (una sola cuenta) → perfil "default"
+    loadProfiles();
+    if (profiles.length || !store) return;
+    var legacy = null;
+    try { legacy = store.getItem(SAVE_KEY); } catch (e) {}
+    if (!legacy) return;
+    var name = 'Usuario';
+    try {
+      var box = JSON.parse(legacy);
+      var st = JSON.parse(box.d);
+      if (st && st.profile && st.profile.name) name = st.profile.name;
+    } catch (e) {}
+    var p = { id: 'default', name: name, avatar: 0, createdAt: Date.now(), lastSeen: Date.now(), level: 1 };
+    profiles.push(p);
+    // mover el guardado a la clave del perfil
+    try {
+      store.setItem(saveKeyFor(p.id), legacy);
+      store.removeItem(SAVE_KEY);
+    } catch (e) {}
+    persistProfiles();
+  }
+  function listProfiles() {
+    migrateLegacy();
+    loadProfiles();
+    return profiles.map(function (p) { return { id: p.id, name: p.name, avatar: p.avatar, level: p.level || 1, lastSeen: p.lastSeen || 0 }; });
+  }
+  function createProfile(name, avatar) {
+    migrateLegacy();
+    loadProfiles();
+    var p = {
+      id: 'p' + Util.cyrb53(String(Date.now()) + Math.random(), 3).toString(36),
+      name: String(name || 'Usuario').trim().slice(0, 20) || 'Usuario',
+      avatar: avatar || 0,
+      createdAt: Date.now(), lastSeen: Date.now(), level: 1
+    };
+    profiles.push(p);
+    persistProfiles();
+    return p;
+  }
+  function deleteProfile(id) {
+    loadProfiles();
+    profiles = profiles.filter(function (p) { return p.id !== id; });
+    persistProfiles();
+    try {
+      store.removeItem(saveKeyFor(id));
+      store.removeItem(backupKeyFor(id));
+    } catch (e) {}
+    if (currentProfile && currentProfile.id === id) currentProfile = null;
+  }
+  function setProfile(id) {
+    loadProfiles();
+    currentProfile = null;
+    for (var i = 0; i < profiles.length; i++) {
+      if (profiles[i].id === id) currentProfile = profiles[i];
+    }
+    if (currentProfile && store) {
+      try { store.setItem(LAST_PROFILE_KEY, id); } catch (e) {}
+    }
+    return !!currentProfile;
+  }
+  function currentProfileId() { return currentProfile ? currentProfile.id : null; }
+  function lastProfileId() {
+    if (!store) return null;
+    try { return store.getItem(LAST_PROFILE_KEY); } catch (e) { return null; }
+  }
+  function touchProfile(state) {
+    if (!currentProfile) return;
+    currentProfile.name = state.profile.name;
+    currentProfile.avatar = state.profile.avatar;
+    currentProfile.level = state.currencies.level;
+    currentProfile.lastSeen = Date.now();
+    persistProfiles();
+  }
 
   function getSalt() {
     if (!store) return 'sin-storage';
@@ -75,10 +176,13 @@
     try {
       var payload = JSON.stringify(state);
       var full = JSON.stringify({ d: payload, h: sign(payload) });
+      var key = currentProfile ? saveKeyFor(currentProfile.id) : SAVE_KEY;
+      var bk = currentProfile ? backupKeyFor(currentProfile.id) : BACKUP_KEY;
       // Copia de seguridad del guardado bueno anterior
-      var prev = store.getItem(SAVE_KEY);
-      if (prev) store.setItem(BACKUP_KEY, prev);
-      store.setItem(SAVE_KEY, full);
+      var prev = store.getItem(key);
+      if (prev) store.setItem(bk, prev);
+      store.setItem(key, full);
+      touchProfile(state);
       return true;
     } catch (e) { return false; }
   }
@@ -86,8 +190,9 @@
   /* Devuelve { ok, state, tampered, error } */
   function load() {
     if (!hasStore()) return { ok: false, error: 'Sin almacenamiento disponible.' };
+    var key = currentProfile ? saveKeyFor(currentProfile.id) : SAVE_KEY;
     var raw = null;
-    try { raw = store.getItem(SAVE_KEY); } catch (e) {}
+    try { raw = store.getItem(key); } catch (e) {}
     if (!raw) return { ok: false, error: 'Sin partida guardada.' };
     try {
       var box = JSON.parse(raw);
@@ -110,7 +215,8 @@
   function loadBackup() {
     if (!hasStore()) return null;
     try {
-      var raw = store.getItem(BACKUP_KEY);
+      var key = currentProfile ? backupKeyFor(currentProfile.id) : BACKUP_KEY;
+      var raw = store.getItem(key);
       if (!raw) return null;
       var box = JSON.parse(raw);
       if (!box || !verify(box.d, box.h)) return null;
@@ -121,7 +227,15 @@
 
   function wipe() {
     if (!hasStore()) return;
-    try { store.removeItem(SAVE_KEY); store.removeItem(BACKUP_KEY); } catch (e) {}
+    try {
+      if (currentProfile) {
+        store.removeItem(saveKeyFor(currentProfile.id));
+        store.removeItem(backupKeyFor(currentProfile.id));
+      } else {
+        store.removeItem(SAVE_KEY);
+        store.removeItem(BACKUP_KEY);
+      }
+    } catch (e) {}
   }
 
   /* Exportar a texto (base64, seguro para copiar) */
@@ -161,6 +275,13 @@
     wipe: wipe,
     exportSave: exportSave,
     importSave: importSave,
-    sign: sign
+    sign: sign,
+    listProfiles: listProfiles,
+    createProfile: createProfile,
+    deleteProfile: deleteProfile,
+    setProfile: setProfile,
+    currentProfileId: currentProfileId,
+    lastProfileId: lastProfileId,
+    migrateLegacy: migrateLegacy
   };
 })();

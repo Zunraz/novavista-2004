@@ -28,6 +28,7 @@ load('js/core/state.js');
 load('js/core/wm.js');
 load('js/core/physics.js');
 load('js/apps/net.js');
+load('js/apps/ranking.js');
 
 var U = global.NovaOS.Util;
 var Sec = global.NovaOS.Sec;
@@ -289,6 +290,60 @@ ok(Cat.QUESTS.length >= 10, 'hay misiones');
 ok(Object.keys(Cat.IMPLANTS).length >= 5, 'hay implantes');
 ok(Cat.AVATARS.length >= 14, 'catálogo con 16 avatares: ' + Cat.AVATARS.length);
 ok(Cat.WALLPAPERS.some(function (w) { return w.id === 'bosque'; }), 'wallpaper bosque en catálogo');
+
+/* ================= save: cuentas de usuario (perfiles) ================= */
+console.log('save — cuentas de usuario (perfiles)');
+Sec.clearQuarantine(); // por si quedó activa de secciones anteriores
+var legacyRaw = mem['novavista.save.v2'];
+if (legacyRaw) {
+  var profs0 = Save.listProfiles(); // dispara la migración
+  ok(profs0.some(function (p) { return p.id === 'default'; }), 'partida antigua migrada a perfil "default"');
+} else {
+  ok(true, 'sin partida antigua que migrar');
+}
+var p1 = Save.createProfile('HackerPro', 3);
+ok(!!p1.id && p1.name === 'HackerPro', 'perfil HackerPro creado');
+ok(Save.setProfile(p1.id), 'cambiar a HackerPro');
+State.newGame();
+State.addCash(5000);
+ok(State.saveNow(), 'guardado en el perfil A');
+var resA = Save.load();
+ok(resA.ok && resA.state.currencies.cash === 5050, 'partida A guardada en su perfil');
+var p2 = Save.createProfile('Novato', 1);
+ok(Save.setProfile(p2.id), 'cambiar a Novato');
+var resB = Save.load();
+ok(!resB.ok, 'el perfil B empieza sin partida');
+State.newGame();
+State.addCash(10);
+ok(State.saveNow(), 'guardado en el perfil B');
+ok(Save.load().ok && Save.load().state.currencies.cash === 60, 'perfil B con su propia partida');
+Save.setProfile(p1.id);
+var resA2 = Save.load();
+ok(resA2.ok && resA2.state.currencies.cash === 5050, 'los perfiles no se pisan entre sí');
+ok(Save.listProfiles().length >= 2, 'hay 2+ cuentas listadas');
+Save.deleteProfile(p2.id);
+ok(!Save.listProfiles().some(function (p) { return p.id === p2.id; }), 'perfil borrado');
+Save.setProfile(p1.id);
+
+/* ================= ranking (poder y elo) ================= */
+console.log('ranking — poder y elo hacker');
+load('js/apps/ranking.js');
+var R = global.NovaOS.Ranking;
+var stRank = State.get();
+ok(isFinite(R.powerOf(stRank)) && R.powerOf(stRank) >= 0, 'poder calculable');
+ok(R.eloOf(stRank) >= 400, 'elo base mínimo 400');
+var e0 = R.eloOf(stRank);
+stRank.meta.bossesDrained = 5;
+ok(R.eloOf(stRank) > e0, 'los MasterServers drenados suben el elo');
+
+/* ================= net: modificadores y objetivo ================= */
+console.log('net — modificadores y objetivo del asalto');
+var runM = Net.genRun(4242);
+ok(runM.modifiers.length >= 2, 'asalto con modificadores (' + runM.modifiers.length + ')');
+ok(runM.modifiers.some(function (m) { return m.kind === 'bad'; }) && runM.modifiers.some(function (m) { return m.kind === 'good'; }), 'un modificador bueno y uno malo (justo)');
+ok(runM.objective && runM.objective.desc && runM.objective.bonus >= 3, 'objetivo secundario con bonus');
+ok(runM.stats && typeof runM.stats.drains === 'number' && typeof runM.stats.bruteforce === 'number', 'estadísticas del asalto');
+ok(runM.combo === 0 && typeof runM.comboBest === 'number', 'racha inicializada');
 
 /* ================= verificación anti-manipulación (último: cuarentena pegajosa) ================= */
 console.log('security — manipulación en memoria');

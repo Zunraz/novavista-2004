@@ -42,6 +42,7 @@
       events: { nextMalwareAt: 0, nextAdAt: 0 },
       browser: { impressions: 0, auto: 0, clicks: 0 },
       games: { pinball: 0, pinballCash: 0, pool: 0, poolWins: 0 },
+      docs: [],
       stats: { clicks: 0, posts: 0, hacks: 0, traces: 0, offlineSessions: 0 }
     };
   }
@@ -61,15 +62,17 @@
     return m;
   }
   function bankRate() {
-    var r = 0.0004 * Math.pow(2.5, upg('b-rate')) * Math.pow(2, upg('b-cd')) + 0.0002 * upg('b-off');
+    // Curva LINEAL (sin disparo exponencial): cada nivel añade un +fijo.
+    var r = 0.0003 + 0.0004 * upg('b-rate') + 0.0002 * upg('b-off');
+    r *= 1 + 0.35 * upg('b-cd');
     return r * incomeMult();
   }
-  function socialAdRate() { return 0.004 * Math.pow(2, upg('s-ad')) * incomeMult(); }
-  function followerGrowthRate() { return 0.0015 * upg('s-vrf') * incomeMult(); }
-  function botCoinRate() { return S.bots.count * 0.002 * Math.pow(2, upg('b-rig')) * incomeMult(); }
+  function socialAdRate() { return 0.003 * (1 + 0.5 * upg('s-ad')) * incomeMult(); }
+  function followerGrowthRate() { return 0.0012 * upg('s-vrf') * incomeMult(); }
+  function botCoinRate() { return S.bots.count * 0.0015 * (1 + 0.4 * upg('b-rig')) * incomeMult(); }
   function energyRegen() { return 0.125 * Math.pow(1.5, upg('e-regen')); }
   function maxEnergy() { return 12 + upg('e-max') + upg('i-energy'); }
-  function dataPrice() { return 10 * Math.pow(2, upg('d-price')) * incomeMult(); }
+  function dataPrice() { return 8 * (1 + 0.5 * upg('d-price')) * incomeMult(); }
   function dataMaxMB() { return 2000 + 500 * upg('d-cap'); }
   function botCount() { return upg('b-count'); }
   function xpForLevel(l) { return Math.floor(40 * Math.pow(l, 1.5)); }
@@ -249,9 +252,9 @@
 
   /* ---------------- publicaciones sociales ---------------- */
   function makePost() {
-    var base = 8 * Math.pow(2, upg('s-post'));
+    var base = 6 * (1 + 0.4 * upg('s-post'));
     var viral = 0.5 + Math.random() * 1.2;               // multiplicador de viralidad
-    var burst = Math.floor(base * viral * (2 + upg('s-vrf') * 0.3));
+    var burst = Math.floor(base * viral * (1 + upg('s-vrf') * 0.12));
     addFollowers(burst);
     S.social.totalPosts++;
     S.social.lastPostAt = Sec.now();
@@ -381,6 +384,7 @@
     if (!o.events.nextMalwareAt) o.events.nextMalwareAt = 0;
     if (!o.browser) o.browser = { impressions: 0, auto: 0, clicks: 0 };
     if (!o.games) o.games = { pinball: 0, pinballCash: 0, pool: 0, poolWins: 0 };
+    if (!o.docs) o.docs = [];
     return o;
   }
 

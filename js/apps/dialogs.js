@@ -21,8 +21,7 @@
     } catch (e) {}
     var t = Util.el('div', { class: 'toast ' + (cls || '') });
     var ic = icon || 'ic-info';
-    t.appendChild(Util.el('svg', { class: 'icon t-icon' }));
-    Util.$('svg', t).innerHTML = '<use href="#' + ic + '"/>';
+    t.appendChild(Util.svgIcon(ic, 'icon t-icon'));
     var box = Util.el('div', { style: { flex: '1' } });
     box.appendChild(Util.el('div', { class: 't-title', text: title }));
     var b = Util.el('div', { class: 't-body', html: body });
@@ -41,6 +40,7 @@
   function dialog(opts) {
     return new Promise(function (resolve) {
       var overlay = Util.el('div', {
+        class: 'modal-overlay',
         style: {
           position: 'fixed', inset: '0', background: 'rgba(0,0,0,.35)',
           zIndex: 950, display: 'flex', alignItems: 'center', justifyContent: 'center'
@@ -52,9 +52,7 @@
       });
       var tb = Util.el('div', { class: 'win-titlebar' });
       var title = Util.el('div', { class: 'wt-title' });
-      var ico = Util.el('svg', { class: 'icon' });
-      ico.innerHTML = '<use href="#' + (opts.icon || 'ic-info') + '"/>';
-      title.appendChild(ico);
+      title.appendChild(Util.svgIcon(opts.icon || 'ic-info'));
       title.appendChild(Util.el('span', { text: opts.title || 'NovaVista' }));
       tb.appendChild(title);
       box.appendChild(tb);
@@ -116,9 +114,7 @@
       // impedir que el cierre por mousedown global destruya el menú antes del click
       btn.addEventListener('mousedown', function (e) { e.stopPropagation(); });
       if (it.icon) {
-        var svg = Util.el('svg', { class: 'icon' });
-        svg.innerHTML = '<use href="#' + it.icon + '"/>';
-        btn.appendChild(svg);
+        btn.appendChild(Util.svgIcon(it.icon));
       }
       btn.appendChild(document.createTextNode(' ' + it.label));
       btn.addEventListener('click', function () { closeCtx(); it.action && it.action(); });

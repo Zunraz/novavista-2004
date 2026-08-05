@@ -82,9 +82,7 @@
       var avRow = Util.el('div', { class: 'avatar-row' });
       NS.Catalog.AVATARS.forEach(function (ic, idx) {
         var b = Util.el('button', { class: 'avatar-pick' });
-        var svg = Util.el('svg', { class: 'icon icon-32' });
-        svg.innerHTML = '<use href="#' + ic + '"/>';
-        b.appendChild(svg);
+        b.appendChild(Util.svgIcon(ic, 'icon icon-32'));
         if (S.profile.avatar === idx) b.classList.add('on');
         b.title = 'Avatar ' + (idx + 1);
         b.addEventListener('click', function () {

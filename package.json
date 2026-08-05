@@ -1,0 +1,17 @@
+{
+  "name": "novavista-2004",
+  "version": "3.0.0",
+  "description": "NovaVista 2004 — juego incremental roguelite ambientado en un sistema operativo completo de los años 2000 (sin dependencias de runtime; solo devDeps de testeo).",
+  "private": true,
+  "scripts": {
+    "test": "node test/core.test.js && node test/dom.test.js",
+    "test:dom": "node test/dom.test.js",
+    "test:layout": "node test/layout.test.js",
+    "build": "node build/build.js",
+    "start": "npx http-server -c-1 . -p 8080"
+  },
+  "devDependencies": {
+    "jsdom": "^25.0.1",
+    "playwright-core": "1.62.1"
+  }
+}

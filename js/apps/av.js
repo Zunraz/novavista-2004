@@ -136,9 +136,7 @@
     if (!log.length) log.push({ txt: 'NovaShield iniciado. Protección activa.', cls: 'ok', at: Date.now() });
     log.forEach(function (l) {
       var r = Util.el('div', { class: 'mail-row' });
-      var ic = Util.el('svg', { class: 'icon' });
-      ic.innerHTML = '<use href="#' + (l.cls === 'warn' ? 'ic-warning' : 'ic-shield') + '"/>';
-      r.appendChild(ic);
+      r.appendChild(Util.svgIcon(l.cls === 'warn' ? 'ic-warning' : 'ic-shield'));
       var info = Util.el('div', { style: { flex: '1' } });
       info.appendChild(Util.el('div', { class: 'cfg-sub', html: Util.esc(l.txt) + ' <span style="color:#999">(' + Util.fmtClock(l.at) + ')</span>' }));
       r.appendChild(info);

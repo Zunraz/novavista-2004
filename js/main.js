@@ -7,6 +7,7 @@
   var Util = NS.Util;
 
   var started = false;
+  var desktopStarted = false;
   var prev = 0;
   var trayTick = 0;
 
@@ -15,7 +16,7 @@
     started = true;
 
     // Compatibilidad de iconos: en motores antiguos <use> necesita xlink:href.
-    // Duplicamos href → xlink:href en todos los <use> (estáticos y dinámicos).
+    // (Los iconos ya se incrustan literalmente, esto es una red de seguridad.)
     try {
       var xlinkNS = 'http://www.w3.org/1999/xlink';
       var fixUse = function (root) {
@@ -43,7 +44,6 @@
     var konamiUsed = false;
     document.addEventListener('keydown', function (e) {
       var key = e.key;
-      // Administrador de tareas (Ctrl+Alt+Supr lo captura el SO en Windows; Ctrl+Mayús+Esc también)
       if ((e.ctrlKey && e.altKey && key === 'Delete') || (e.ctrlKey && e.shiftKey && key === 'Escape')) {
         e.preventDefault();
         if (NS.TaskMgr && NS.TaskMgr.open) NS.TaskMgr.open();
@@ -70,13 +70,23 @@
     NS.Taskbar.init();
     NS.Event.init();
 
-    // Cargar partida (puede restaurar copia o marcar cuarentena)
+    // El escritorio se construye detrás de la pantalla de inicio de sesión
+    NS.Desktop.buildIcons();
+
+    // Secuencia de arranque
+    NS.Boot.run();
+  }
+
+  /* Se ejecuta al iniciar sesión con una cuenta */
+  function enterDesktop() {
+    if (desktopStarted) return;
+    desktopStarted = true;
+
     var res = NS.State.loadGame();
     var S = NS.State.get();
     S.meta.bootCount++;
 
-    // Aplicar ajustes
-    NS.Desktop.buildIcons();
+    // Aplicar ajustes del perfil
     NS.Desktop.refresh();
     NS.Audio.setEnabled(S.settings.sound);
     NS.Taskbar.buildStartMenu();
@@ -98,31 +108,15 @@
       NS.UI.toast('¡CUARENTENA!', 'Se detectó un guardado manipulado y no había copia válida. El sistema se reinició en modo seguro: no se guardará progreso hasta restaurar en NovaShield.', 'important', 'ic-error');
     }
 
-    // Secuencia de arranque
-    NS.Boot.run();
-  }
-
-  function afterBoot() {
-    var S = NS.State.get();
-
-    // Sonido de inicio
-    if (S.settings.sound) NS.Boot.startSound();
-
-    // Primer arranque: registro de usuario
+    // Bienvenida en el primer arranque de la cuenta
     if (S.meta.bootCount <= 1) {
       NS.UI.dialog({
         title: 'Bienvenido a NovaVista 2004',
         icon: 'ic-hacker',
         message: 'Este sistema operativo simulado esconde un <b>juego incremental con rasgos roguelite</b>.<br><br>' +
           'Gana dinero con el banco y MyNova, roba datos en los asaltos de red, mina NovaCoins y acumula <b>legado</b> formateando el sistema.<br><br>' +
-          '¿Cómo te llamas, hacker?',
-        input: true, inputValue: 'Hacker'
-      }).then(function (name) {
-        var v = String(name || 'Hacker').trim().slice(0, 20) || 'Hacker';
-        S.profile.name = v;
-        NS.Taskbar.buildStartMenu();
-        NS.UI.toast('Bienvenido, ' + Util.esc(v), 'Tu misión: construir un imperio digital desde un PC de 2004. ¡No te dejes rastrear!', 'good', 'ic-hacker');
-        NS.Audio.ok();
+          'Abre el <b>Manual de NovaVista</b> del escritorio para empezar con buen pie. ¡Bienvenido, ' + Util.esc(S.profile.name) + '!',
+        buttons: [{ label: '¡A jugar!', value: true, primary: true }]
       });
     }
 
@@ -172,7 +166,7 @@
     }
   }
 
-  NS.Main = { init: init, afterBoot: afterBoot };
+  NS.Main = { init: init, enterDesktop: enterDesktop, afterBoot: enterDesktop };
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {

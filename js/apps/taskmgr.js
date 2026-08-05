@@ -31,9 +31,7 @@
     } else {
       open.forEach(function (o) {
         var r = Util.el('div', { class: 'mail-row' });
-        var svg = Util.el('svg', { class: 'icon' });
-        svg.innerHTML = '<use href="#' + o.def.icon + '"/>';
-        r.appendChild(svg);
+        r.appendChild(Util.svgIcon(o.def.icon));
         var info = Util.el('div', { style: { flex: '1' } });
         info.appendChild(Util.el('div', { class: 'mail-subj', text: o.def.title }));
         info.appendChild(Util.el('div', { class: 'cfg-sub', text: 'Memoria: ' + (18 + Math.floor(Math.random() * 30)) + ' MB · CPU: ' + (1 + Math.floor(Math.random() * 8)) + ' %' }));

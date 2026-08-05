@@ -57,11 +57,11 @@ function ok(cond, name, extra) {
   var N = win.NovaOS;
   ok(!!N, 'NovaOS cargado');
   ok(!!N.State && !!N.WM && !!N.Browser && !!N.Net, 'módulos principales expuestos');
-  ok(N.Apps.list().length >= 14, 'apps registradas: ' + N.Apps.list().length);
+  ok(N.Apps.list().length >= 17, 'apps registradas: ' + N.Apps.list().length);
 
   // aplicaciones registradas esperadas
   var ids = N.Apps.list().map(function (a) { return a.id; });
-  ['browser', 'bank', 'social', 'files', 'terminal', 'email', 'av', 'net', 'settings', 'manual', 'msn', 'pinball', 'pool', 'taskmgr'].forEach(function (id) {
+  ['browser', 'bank', 'social', 'files', 'terminal', 'email', 'av', 'net', 'settings', 'manual', 'msn', 'pinball', 'pool', 'taskmgr', 'ranking', 'notepad', 'calc'].forEach(function (id) {
     ok(ids.indexOf(id) !== -1, 'app registrada: ' + id);
   });
 
@@ -70,13 +70,29 @@ function ok(cond, name, extra) {
   await wait(800);
   ok(doc.getElementById('boot-screen').classList.contains('hidden'), 'boot completado (pantalla oculta)');
 
+  // pantalla de inicio de sesión (cuentas de usuario)
+  var login = doc.getElementById('login-screen');
+  ok(!login.classList.contains('hidden'), 'pantalla de inicio de sesión visible');
+  click(doc.getElementById('login-new'));
+  await wait(100);
+  var nameInp = login.querySelector('input');
+  ok(!!nameInp, 'formulario de cuenta nueva');
+  if (nameInp) {
+    nameInp.value = 'HackerTest';
+    var createBtn = Array.prototype.slice.call(login.querySelectorAll('.xp-btn')).filter(function (b) { return b.textContent.indexOf('Crear cuenta y entrar') !== -1; })[0];
+    if (createBtn) click(createBtn);
+  }
+  await wait(300);
+  ok(login.classList.contains('hidden'), 'sesión iniciada (login oculto)');
+  ok(N.Save.listProfiles().some(function (p) { return p.name === 'HackerTest'; }), 'cuenta HackerTest creada');
+
   // escritorio con iconos
   var icons = doc.querySelectorAll('.desktop-icon');
   ok(icons.length >= 10, 'iconos del escritorio: ' + icons.length);
   ok(!!doc.querySelector('.di-badge'), 'icono de correo con badge en el escritorio');
 
   // cerrar diálogo de bienvenida si está abierto
-  var okBtn = doc.querySelector('.dialog-btns .xp-btn');
+  var okBtn = doc.querySelector('.modal-overlay .xp-btn');
   if (okBtn) click(okBtn);
   await wait(200);
 
@@ -156,7 +172,9 @@ function ok(cond, name, extra) {
   // guardado
   var saved = N.State.saveNow();
   ok(saved, 'guardado correcto');
-  var raw = win.localStorage.getItem('novavista.save.v2');
+  // el guardado firmado se escribe en la clave del perfil activo
+  var pid = N.Save.currentProfileId();
+  var raw = win.localStorage.getItem('novavista.save.v2.' + pid);
   ok(!!raw && raw.length > 100, 'guardado escrito en localStorage');
 
   // reloj de la bandeja
@@ -197,6 +215,9 @@ function ok(cond, name, extra) {
     if (id && !doc.getElementById(id)) missing.push(id);
   });
   ok(missing.length === 0, 'todas las referencias de icono resuelven (' + uses.length + ' usos)' + (missing.length ? ' faltan: ' + missing.join(',') : ''));
+  ok(uses.length === 0, 'iconos incrustados literalmente (sin <use>): ' + uses.length);
+  var deskSvg = doc.querySelectorAll('.desktop-icon svg');
+  ok(deskSvg.length >= 16, 'iconos del escritorio incrustados: ' + deskSvg.length);
 
   // manual de usuario abierto y con contenido
   ok(N.WM.isOpen('manual'), 'ventana del manual abierta');

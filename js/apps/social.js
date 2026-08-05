@@ -48,9 +48,7 @@
     var head = Util.el('div', { class: 'myspace-head', text: S.profile.name + ' est@n en MyNova' });
     prof.appendChild(head);
     var inner = Util.el('div', { class: 'myspace-inner' });
-    var av = Util.el('svg', { class: 'icon icon-64' });
-    av.innerHTML = '<use href="#' + AVATARS[S.profile.avatar % AVATARS.length] + '"/>';
-    inner.appendChild(av);
+    inner.appendChild(Util.svgIcon(AVATARS[S.profile.avatar % AVATARS.length], 'icon icon-64'));
     var info = Util.el('div', { style: { flex: '1' } });
     info.appendChild(Util.el('div', { class: 'myspace-name', text: S.profile.name }));
     info.appendChild(Util.el('div', { class: 'cfg-sub', text: 'Última conexión: ahora mismo' }));
@@ -105,9 +103,7 @@
     ];
     posts.forEach(function (p) {
       var r = Util.el('div', { class: 'mail-row' });
-      var ic = Util.el('svg', { class: 'icon' });
-      ic.innerHTML = '<use href="#' + p[0] + '"/>';
-      r.appendChild(ic);
+      r.appendChild(Util.svgIcon(p[0]));
       var info = Util.el('div', { style: { flex: '1' } });
       info.appendChild(Util.el('div', { class: 'mail-subj', text: p[1] }));
       info.appendChild(Util.el('div', { class: 'cfg-sub', text: p[2] }));

@@ -32,10 +32,23 @@ function ok(cond, name, extra) {
   await page.goto('file://' + target.replace(/\\/g, '/'));
   await page.waitForTimeout(900);
 
-  // saltar boot + diálogo de bienvenida
+  // saltar boot + iniciar sesión (crear cuenta)
   await page.click('#boot-screen').catch(function () {});
   await page.waitForTimeout(700);
-  var okBtn = await page.$('.dialog-btns .xp-btn');
+  var loginVis = await page.evaluate(function () {
+    return !document.getElementById('login-screen').classList.contains('hidden');
+  });
+  ok(loginVis, 'pantalla de inicio de sesión visible tras el boot');
+  await page.click('#login-new').catch(function () {});
+  await page.waitForTimeout(150);
+  await page.fill('#login-box input', 'LayoutTest');
+  await page.click('#login-box .xp-btn.primary');
+  await page.waitForTimeout(600);
+  var loginGone = await page.evaluate(function () {
+    return document.getElementById('login-screen').classList.contains('hidden');
+  });
+  ok(loginGone, 'sesión iniciada');
+  var okBtn = await page.$('.modal-overlay .xp-btn');
   if (okBtn) { await okBtn.click(); await page.waitForTimeout(200); }
 
   // ---- helpers ----

@@ -120,11 +120,31 @@
     return null;
   }
 
+  /* ---------- iconos: incrustación literal del SVG (sin <use>) ----------
+     Algunos navegadores/webviews no renderizan <use>. Copiamos el contenido
+     del <symbol> dentro de cada <svg> para que los iconos funcionen siempre. */
+  function symInfo(name) {
+    var sym = document.getElementById(name);
+    if (!sym) return { vb: '0 0 32 32', html: '' };
+    return { vb: sym.getAttribute('viewBox') || '0 0 32 32', html: sym.innerHTML };
+  }
+  function svgHtml(name, cls) {
+    var s = symInfo(name);
+    return '<svg class="' + (cls || 'icon') + '" viewBox="' + s.vb + '" xmlns="http://www.w3.org/2000/svg">' + s.html + '</svg>';
+  }
+  function svgIcon(name, cls) {
+    var s = symInfo(name);
+    var svg = el('svg', { class: cls || 'icon', viewBox: s.vb });
+    svg.innerHTML = s.html;
+    return svg;
+  }
+
   NS.Util = {
     $: $, $$: $$, el: el, esc: esc,
     fmtNum: fmtNum, fmtMoney: fmtMoney, fmtInt: fmtInt, fmtBytes: fmtBytes,
     fmtPct: fmtPct, fmtClock: fmtClock, fmtDate: fmtDate, fmtDuration: fmtDuration, pad2: pad2,
     mulberry32: mulberry32, cyrb53: cyrb53, hashStr: hashStr, randId: randId,
-    clamp: clamp, lerp: lerp, deepCopy: deepCopy, num: num
+    clamp: clamp, lerp: lerp, deepCopy: deepCopy, num: num,
+    symInfo: symInfo, svgHtml: svgHtml, svgIcon: svgIcon
   };
 })();

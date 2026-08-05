@@ -50,9 +50,7 @@
       var done = prog >= q.target;
       var claimed = !!st.claimed;
       var r = Util.el('div', { class: 'mail-row' + (done && !claimed ? ' mail-done' : '') });
-      var ic = Util.el('svg', { class: 'icon' });
-      ic.innerHTML = '<use href="#' + (done ? 'ic-star' : 'ic-mail') + '"/>';
-      r.appendChild(ic);
+      r.appendChild(Util.svgIcon(done ? 'ic-star' : 'ic-mail'));
       var info = Util.el('div', { style: { flex: '1' } });
       info.appendChild(Util.el('div', { class: 'mail-subj', text: q.title + (claimed ? ' ✓' : '') }));
       info.appendChild(Util.el('div', { class: 'cfg-sub', text: q.desc }));
@@ -88,9 +86,7 @@
     } else {
       notifs.forEach(function (n) {
         var r = Util.el('div', { class: 'mail-row' });
-        var ic = Util.el('svg', { class: 'icon' });
-        ic.innerHTML = '<use href="#' + n.icon + '"/>';
-        r.appendChild(ic);
+        r.appendChild(Util.svgIcon(n.icon));
         var info = Util.el('div', { style: { flex: '1' } });
         info.appendChild(Util.el('div', { class: 'mail-subj', text: n.title + ' — ' + Util.fmtClock(n.at) }));
         info.appendChild(Util.el('div', { class: 'cfg-sub', html: n.body }));

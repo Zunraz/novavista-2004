@@ -44,8 +44,7 @@
     var dom = Util.el('div', { class: 'window', id: 'win-' + def.id });
     var tb = Util.el('div', { class: 'win-titlebar' });
     var title = Util.el('div', { class: 'wt-title' });
-    var ico = Util.el('svg', { class: 'icon' });
-    ico.innerHTML = '<use href="#' + def.icon + '"/>';
+    var ico = Util.svgIcon(def.icon);
     title.appendChild(ico);
     title.appendChild(Util.el('span', { text: def.title }));
     var btns = Util.el('div', { class: 'win-btns' });

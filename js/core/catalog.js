@@ -8,15 +8,15 @@
 
   /* ---------- Mejoras comprables con dólares ---------- */
   var UPGRADES = {
-    'b-rate':   { name: 'Mejora de intereses',        desc: 'El banco paga intereses x2,5 más altos.',        cat: 'banco',  base: 300,   mult: 3.2, max: 25, icon: 'ic-chart' },
-    'b-cd':     { name: 'Certificado de depósito',    desc: 'Interés adicional x2 sobre el saldo.',           cat: 'banco',  base: 3200,  mult: 4.0, max: 15, icon: 'ic-bank' },
-    'b-off':    { name: 'Cuenta offshore',            desc: '+0,02 %/s de interés fijo extra.',               cat: 'banco',  base: 24000, mult: 5.2, max: 10, icon: 'ic-lock' },
-    's-post':   { name: 'Cámara digital de 3 MP',     desc: 'Cada publicación genera el doble de seguidores.', cat: 'social', base: 250,   mult: 3.0, max: 20, icon: 'ic-social' },
-    's-ad':     { name: 'Agencia de anuncios',        desc: 'Los seguidores generan el doble de ingresos.',    cat: 'social', base: 1800,  mult: 3.6, max: 15, icon: 'ic-chart' },
-    's-vrf':    { name: 'Chapa verificada',           desc: '+15 % de crecimiento de seguidores por segundo.',cat: 'social', base: 9000,  mult: 4.2, max: 10, icon: 'ic-star' },
+    'b-rate':   { name: 'Mejora de intereses',        desc: 'Cada nivel añade +0,04 %/s de interés sobre el saldo.', cat: 'banco',  base: 300,   mult: 3.2, max: 25, icon: 'ic-chart' },
+    'b-cd':     { name: 'Certificado de depósito',    desc: 'Cada nivel multiplica el interés por 1,35.',        cat: 'banco',  base: 3200,  mult: 4.0, max: 15, icon: 'ic-bank' },
+    'b-off':    { name: 'Cuenta offshore',            desc: '+0,02 %/s de interés fijo por nivel.',              cat: 'banco',  base: 24000, mult: 5.2, max: 10, icon: 'ic-lock' },
+    's-post':   { name: 'Cámara digital de 3 MP',     desc: 'Cada nivel da +40 % de seguidores por publicación.', cat: 'social', base: 250,   mult: 3.0, max: 20, icon: 'ic-social' },
+    's-ad':     { name: 'Agencia de anuncios',        desc: 'Cada nivel da +50 % de ingresos por seguidor.',     cat: 'social', base: 1800,  mult: 3.6, max: 15, icon: 'ic-chart' },
+    's-vrf':    { name: 'Chapa verificada',           desc: 'Cada nivel añade +0,12 %/s de crecimiento.',        cat: 'social', base: 9000,  mult: 4.2, max: 10, icon: 'ic-star' },
     'b-count':  { name: 'Bot zombie',                 desc: 'Añade un bot a tu botnet.',                      cat: 'bots',   base: 2200,  mult: 2.1, max: 120, icon: 'ic-bot' },
-    'b-rig':    { name: 'Granja de minería',          desc: 'Cada bot mina el doble de NovaCoins.',           cat: 'bots',   base: 14000, mult: 2.5, max: 12, icon: 'ic-gear' },
-    'd-price':  { name: 'Acuerdo de datos',           desc: 'Vendes los datos al doble de precio.',           cat: 'datos',  base: 1200,  mult: 3.4, max: 15, icon: 'ic-files' },
+    'b-rig':    { name: 'Granja de minería',          desc: 'Cada nivel da +40 % de producción por bot.',     cat: 'bots',   base: 14000, mult: 2.5, max: 12, icon: 'ic-gear' },
+    'd-price':  { name: 'Acuerdo de datos',           desc: 'Cada nivel da +50 % al precio de venta.',        cat: 'datos',  base: 1200,  mult: 3.4, max: 15, icon: 'ic-files' },
     'd-cap':    { name: 'Disco duro mayor',           desc: '+500 MB de almacenamiento de datos.',            cat: 'datos',  base: 900,   mult: 2.6, max: 60, icon: 'ic-computer' },
     'e-max':    { name: 'Memoria RAM extra',          desc: '+1 de energía máxima.',                          cat: 'rig',    base: 3500,  mult: 3.1, max: 20, icon: 'ic-hacker' },
     'e-regen':  { name: 'Disipador térmico',          desc: 'La energía se regenera x1,5 más rápido.',        cat: 'rig',    base: 6000,  mult: 3.6, max: 12, icon: 'ic-settings' },

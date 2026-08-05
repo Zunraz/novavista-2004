@@ -98,11 +98,66 @@
     // conexión extra opcional d2 -> boss para variedad
     if (rng() < 0.3) d2[Math.floor(rng() * d2.length)].conn.push(boss.id);
 
+    /* -------- modificadores del asalto (variedad sin injusticia) -------- */
+    var MODIFIERS = [
+      { id: 'vigilada',  kind: 'bad',  name: 'Red vigilada',     desc: '+25 % de rastro por acción' },
+      { id: 'hora-punta',kind: 'bad',  name: 'Hora punta',       desc: '+1 de energía por acción' },
+      { id: 'silenciosa',kind: 'good', name: 'Red silenciosa',   desc: '-20 % de rastro por acción' },
+      { id: 'agujeros',  kind: 'good', name: 'Red con agujeros', desc: 'Los nodos tienen más vulnerabilidades' },
+      { id: 'criptico',  kind: 'good', name: 'Nodos cripticos',  desc: '+50 % de NovaCoins' },
+      { id: 'aquelarre', kind: 'good', name: 'Noche de aquelarre', desc: 'Menos firewall en las capas iniciales' }
+    ];
+    var bads = MODIFIERS.filter(function (m) { return m.kind === 'bad'; });
+    var goods = MODIFIERS.filter(function (m) { return m.kind === 'good'; });
+    var modifiers = [
+      bads[Math.floor(rng() * bads.length)],
+      goods[Math.floor(rng() * goods.length)]
+    ];
+    if (rng() < 0.35) modifiers.push(goods[Math.floor(rng() * goods.length)]);
+    var modIds = modifiers.map(function (m) { return m.id; });
+
+    // aplicar efectos de modificadores a los nodos
+    if (modIds.indexOf('agujeros') !== -1) {
+      var vpool = ['buffer', 'openport', 'weakpass', 'backdoor'];
+      nodes.forEach(function (n) {
+        if (n.kind === 'isp' || n.kind === 'boss') return;
+        if (rng() < 0.7 && n.vulns.length < 2) {
+          var v = vpool[Math.floor(rng() * vpool.length)];
+          if (n.vulns.indexOf(v) === -1) n.vulns.push(v);
+        }
+      });
+    }
+    if (modIds.indexOf('aquelarre') !== -1) {
+      nodes.forEach(function (n) {
+        if (n.lvl <= 4 && n.fw > 1) n.fw = Math.max(1, n.fw - 1);
+        if (n.lvl <= 4) n.fwMax = n.fw;
+      });
+    }
+    if (modIds.indexOf('criptico') !== -1) {
+      nodes.forEach(function (n) {
+        if (n.kind === 'dark' || n.kind === 'boss') n.coins = Math.round(n.coins * 1.5);
+      });
+    }
+
+    /* -------- objetivo secundario (bonus de NovaCoins) -------- */
+    var OBJECTIVES = [
+      { id: 'o-no-bruteforce', desc: 'Termina sin usar BRUTEFORCE',           bonus: 4, check: function (r) { return r.stats.bruteforce === 0; } },
+      { id: 'o-low-trace',     desc: 'Cobra con el rastro por debajo de 40',  bonus: 3, check: function (r) { return r.trace < 40; } },
+      { id: 'o-4-drains',      desc: 'Drena al menos 4 nodos',                bonus: 3, check: function (r) { return r.stats.drains >= 4; } },
+      { id: 'o-2-tools',       desc: 'Usa 2 herramientas distintas',          bonus: 4, check: function (r) { return Object.keys(r.stats.tools).length >= 2; } },
+      { id: 'o-no-crack',      desc: 'Termina sin usar CRACK',                bonus: 5, check: function (r) { return r.stats.crack === 0; } },
+      { id: 'o-calm',          desc: 'Nunca superes 60 de rastro',            bonus: 4, check: function (r) { return r.stats.maxTrace <= 60; } }
+    ];
+    var objective = OBJECTIVES[Math.floor(rng() * OBJECTIVES.length)];
+
     return {
       seed: seed, nodes: nodes, ispId: isp.id, bossId: boss.id,
       trace: 0, loot: { data: 0, cash: 0 }, tools: {},
       status: 'active', startedAt: Date.now(), mapRevealed: false,
-      summary: null
+      summary: null,
+      modifiers: modifiers, modIds: modIds, objective: objective,
+      combo: 0, comboBest: 0,
+      stats: { drains: 0, crack: 0, bruteforce: 0, tools: {}, maxTrace: 0 }
     };
   }
 
@@ -133,20 +188,45 @@
   function traceRisk(run, node) {
     var S = NS.State.get();
     var stealth = 1 - 0.04 * (S.upg['i-stealth'] || 0);
-    return Math.max(1, node.trace * stealth * (0.85 + Math.random() * 0.3));
+    var risk = node.trace * stealth * (0.85 + Math.random() * 0.3);
+    return Math.max(1, risk * runTraceMult(run));
   }
   function addTrace(run, node) {
     run.trace += traceRisk(run, node);
+    if (run.trace > run.stats.maxTrace) run.stats.maxTrace = Math.floor(run.trace);
+    if (run.trace >= 70 && run.trace < 100 && !run.traceWarned) {
+      run.traceWarned = true;
+      log('warn', '¡CUIDADO! Rastro alto (' + Math.floor(run.trace) + '/100). Usa SIGILO o un PROXY.');
+      NS.Audio.trace();
+    }
     if (run.trace >= 100) {
       run.trace = 100;
-      traced(run);
+      // Escapatoria: no es muerte instantánea. Con sigilo, casi siempre te salvas.
+      var S = NS.State.get();
+      var escapeChance = Util.clamp(0.6 + 0.04 * (S.upg['i-stealth'] || 0), 0, 0.92);
+      if (Math.random() < escapeChance) {
+        run.trace = 40;
+        log('ok', '¡Te escabulliste del rastreo a duras penas! Rastro reiniciado a 40.');
+        NS.Audio.trace();
+        refresh();
+      } else {
+        traced(run);
+      }
       return true;
     }
     return false;
   }
-  function spendE(n) {
-    if (!NS.State.spendEnergy(n)) return false;
+  function spendE(run, n) {
+    // "Hora punta" encarece las acciones en +1
+    var cost = n + (run && run.modIds && run.modIds.indexOf('hora-punta') !== -1 ? 1 : 0);
+    if (!NS.State.spendEnergy(cost)) return false;
     return true;
+  }
+  function runTraceMult(run) {
+    var m = 1;
+    if (run.modIds.indexOf('vigilada') !== -1) m *= 1.25;
+    if (run.modIds.indexOf('silenciosa') !== -1) m *= 0.8;
+    return m;
   }
   function lootMult() {
     var S = NS.State.get();
@@ -160,7 +240,7 @@
   /* ================= acciones ================= */
   function actScan(run, node) {
     if (!isReachable(run, node)) return log('err', 'No puedes alcanzar «' + node.name + '» todavía. Drena antes un nodo conectado.');
-    if (!spendE(1)) return log('err', 'Energía insuficiente.');
+    if (!spendE(run, 1)) return log('err', 'Energía insuficiente.');
     node.explored = true;
     var vulnTxt = node.vulns.length ? node.vulns.map(vulnName).join(', ') : 'ninguna conocida';
     log('ok', 'ESCANEO de ' + node.name + ' (nivel ' + node.lvl + ')');
@@ -174,7 +254,8 @@
   function actCrack(run, node) {
     if (!isReachable(run, node)) return log('err', 'Nodo inalcanzable.');
     if (node.fw <= 0) return log('dim', 'El firewall de ' + node.name + ' ya está caído. Usa UPLOAD.');
-    if (!spendE(1)) return log('err', 'Energía insuficiente.');
+    if (!spendE(run, 1)) return log('err', 'Energía insuficiente.');
+    run.stats.crack++;
     var S = NS.State.get();
     var chance = 0.55 + 0.12 * (S.upg['i-cpu'] || 0);
     if (node.usedVulns.openport) chance += 0.25;
@@ -200,9 +281,9 @@
     if (node.vulns.indexOf('buffer') === -1 && !hasTool(run, 'exploit')) {
       return log('err', 'No hay vulnerabilidad de desbordamiento conocida en ' + node.name + '. Escanéalo antes o usa un Kit de explotación.');
     }
-    if (!spendE(1)) return log('err', 'Energía insuficiente.');
+    if (!spendE(run, 1)) return log('err', 'Energía insuficiente.');
     // la energía se cobra antes de consumir la herramienta: nunca se pierde un kit en vano
-    if (node.vulns.indexOf('buffer') === -1) { takeTool(run, 'exploit'); usesTool = true; }
+    if (node.vulns.indexOf('buffer') === -1) { takeTool(run, 'exploit'); usesTool = true; run.stats.tools.exploit = 1; }
     node.usedVulns.buffer = true;
     node.fw = Math.max(0, node.fw - 1);
     log('ok', 'EXPLOIT aplicado' + (usesTool ? ' (kit de explotación)' : ' (desbordamiento)') + '. Capa eliminada sin rastro (' + node.fw + ' restantes).');
@@ -213,7 +294,8 @@
   function actBruteforce(run, node) {
     if (!isReachable(run, node)) return log('err', 'Nodo inalcanzable.');
     if (node.fw <= 0) return log('dim', 'El firewall ya está caído.');
-    if (!spendE(2)) return log('err', 'Energía insuficiente (cuesta 2).');
+    if (!spendE(run, 2)) return log('err', 'Energía insuficiente (cuesta 2).');
+    run.stats.bruteforce++;
     node.fw--;
     log('warn', 'BRUTEFORCE: capa rota a la fuerza (' + node.fw + ' restantes). El rastro aumenta mucho.');
     addTrace(run, node);
@@ -226,7 +308,13 @@
     if (!isReachable(run, node)) return log('err', 'Nodo inalcanzable.');
     if (node.drained) return log('dim', 'Ya drenaste ' + node.name + '.');
     if (node.fw > 0) return log('err', 'El firewall de ' + node.name + ' sigue activo (' + node.fw + ' capas).');
-    if (!spendE(2)) return log('err', 'Energía insuficiente (cuesta 2).');
+    if (!spendE(run, 2)) return log('err', 'Energía insuficiente (cuesta 2).');
+
+    // Racha: drenar con poco rastro encadena bonus (+10 % hasta +50 %)
+    if (run.trace < 50) { run.combo++; } else { run.combo = 0; }
+    if (run.combo > run.comboBest) run.comboBest = run.combo;
+    var comboMult = 1 + 0.1 * Util.clamp(run.combo - 1, 0, 5);
+    if (run.combo >= 2) log('ok', '¡RACHA ×' + run.combo + '! +' + Math.round((comboMult - 1) * 100) + ' % de botín.');
 
     var payloadUsed = false;
     if (hasTool(run, 'payload')) {
@@ -234,12 +322,13 @@
       payloadUsed = true;
       log('ok', 'Payload cifrado inyectado: +40 % de datos.');
     }
-    var mult = lootMult() * (payloadUsed ? 1.4 : 1);
+    var mult = lootMult() * (payloadUsed ? 1.4 : 1) * comboMult;
     var d = Math.round(node.data * mult);
     var c = Math.round(node.cash * mult);
     run.loot.data += d;
     run.loot.cash += c;
     node.drained = true;
+    run.stats.drains++;
     NS.State.get().stats.hacks++;
     NS.State.get().meta.nodesDrained++;
     NS.State.addXP(6 + node.lvl * 2);
@@ -276,7 +365,7 @@
     refresh();
   }
   function actStealth(run) {
-    if (!spendE(1)) return log('err', 'Energía insuficiente.');
+    if (!spendE(run, 1)) return log('err', 'Energía insuficiente.');
     run.trace = Math.floor(run.trace * 0.7);
     log('ok', 'SIGILO activado. Rastro reducido al 70 % (' + Math.floor(run.trace) + ').');
     NS.State.addXP(1);
@@ -285,6 +374,7 @@
   }
   function actProxy(run) {
     if (!takeTool(run, 'proxy')) return log('err', 'No tienes servidores proxy.');
+    run.stats.tools.proxy = 1;
     run.trace = Math.floor(run.trace * 0.5);
     log('ok', 'PROXY quemado. Rastro reducido a la mitad (' + Math.floor(run.trace) + ').');
     NS.Audio.tick();
@@ -292,6 +382,7 @@
   }
   function actWorm(run) {
     if (!takeTool(run, 'worm')) return log('err', 'No tienes gusanos.');
+    run.stats.tools.worm = 1;
     NS.State.addEnergy(8);
     log('ok', 'GUSANO desplegado: +8 de energía (' + NS.State.get().currencies.energy + '/max).');
     NS.Audio.ok();
@@ -299,6 +390,7 @@
   }
   function actIcmp(run) {
     if (!takeTool(run, 'icmp')) return log('err', 'No tienes túneles ICMP.');
+    run.stats.tools.icmp = 1;
     run.mapRevealed = true;
     run.nodes.forEach(function (n) { n.explored = true; });
     log('ok', 'TÚNEL ICMP: se ha revelado todo el mapa de red.');
@@ -310,6 +402,7 @@
     var extra = ['buffer', 'openport', 'weakpass', 'backdoor'].filter(function (v) { return node.vulns.indexOf(v) === -1; });
     if (!extra.length) { log('dim', 'El nodo no tiene más vulnerabilidades que revelar.'); return; }
     if (!takeTool(run, 'decrypt')) return log('err', 'No tienes descifradores.');
+    run.stats.tools.decrypt = 1;
     var v = extra[Math.floor(Math.random() * extra.length)];
     node.vulns.push(v);
     log('ok', 'DESCIFRADOR: vulnerabilidad revelada — ' + vulnName(v));
@@ -350,15 +443,42 @@
     }
 
     var loot = commitLoot(run);
+
+    // objetivo secundario: bonus de NovaCoins
+    var objBonus = 0;
+    var objMet = false;
+    if (run.objective && run.objective.check(run)) {
+      objMet = true;
+      objBonus = run.objective.bonus;
+      NS.State.addCoins(objBonus);
+    }
+
     bonusXP = drained * 4;
     NS.State.addXP(bonusXP);
     S.meta.runsDone++;
     S.stats.traces = S.stats.traces || 0;
 
     var title = victoryRun ? 'ASALTO COMPLETADO' : 'ASALTO FINALIZADO';
-    NS.UI.toast(title, 'Cobraste ' + Util.fmtMoney(loot.cash) + ' y ' + Util.fmtBytes(loot.data * 1024 * 1024) + ' de datos (' + drained + ' nodos drenados, +' + bonusXP + ' XP).', 'good', 'ic-coin');
+    NS.UI.toast(title, 'Cobraste ' + Util.fmtMoney(loot.cash) + ' y ' + Util.fmtBytes(loot.data * 1024 * 1024) + ' de datos (' + drained + ' nodos drenados, +' + bonusXP + ' XP)' + (objMet ? ' · ¡Objetivo cumplido! +' + objBonus + ' NC' : '') + '.', 'good', 'ic-coin');
     NS.Audio.cash();
-    NS.Mail.notify(title, 'Resumen: <b>' + drained + '</b> nodos drenados · <b>' + Util.fmtMoney(loot.cash) + '</b> cobrados · <b>' + Util.fmtBytes(loot.data * 1024 * 1024) + '</b> de datos en el almacén' + (victoryRun ? ' · ¡MasterServer destruido!' : '') + '.', 'ic-net');
+    NS.Mail.notify(title, 'Resumen: <b>' + drained + '</b> nodos drenados · <b>' + Util.fmtMoney(loot.cash) + '</b> cobrados · <b>' + Util.fmtBytes(loot.data * 1024 * 1024) + '</b> de datos' + (victoryRun ? ' · ¡MasterServer destruido!' : '') + (objMet ? ' · Objetivo: <b>CUMPLIDO</b> (+' + objBonus + ' NC)' : '') + '.', 'ic-net');
+
+    // resumen del asalto (solo si merece la pena mostrarlo)
+    if (drained > 0) {
+      var modsTxt = run.modifiers.map(function (m) { return m.name; }).join(', ');
+      NS.UI.dialog({
+        title: title, icon: victoryRun ? 'ic-coin' : 'ic-net',
+        message:
+          '<b>Nodos drenados:</b> ' + drained + '<br>' +
+          '<b>Dinero cobrado:</b> ' + Util.fmtMoney(loot.cash) + '<br>' +
+          '<b>Datos al almacén:</b> ' + Util.fmtBytes(loot.data * 1024 * 1024) + '<br>' +
+          '<b>Mejor racha:</b> ×' + run.comboBest + ' (+' + Math.min(50, run.comboBest > 1 ? (run.comboBest - 1) * 10 : 0) + ' % máx)<br>' +
+          '<b>XP ganada:</b> +' + (bonusXP + 6 + 0) + '<br>' +
+          '<b>Objetivo del asalto:</b> ' + (run.objective ? Util.esc(run.objective.desc) : '—') + ' → <b>' + (objMet ? 'CUMPLIDO (+' + objBonus + ' NC)' : 'no cumplido') + '</b><br>' +
+          '<b>Modificadores:</b> ' + Util.esc(modsTxt),
+        buttons: [{ label: '¡A por el siguiente!', value: true, primary: true }]
+      });
+    }
     refresh();
   }
   function traced(run) {
@@ -399,8 +519,9 @@
     S.run = run;
     log('ok', '=== NUEVO ASALTO ===');
     log('dim', 'Conexión establecida con el Proveedor ISP.');
-    log('dim', 'Objetivo: drenar el MASTER SERVER. Drena nodos para abrir el camino.');
-    log('dim', 'Consejo: SCAN antes de atacar. Usa SIGILO si el rastro sube.');
+    log('ok', 'Modificadores: ' + run.modifiers.map(function (m) { return m.name + ' (' + m.desc + ')'; }).join(' · '));
+    log('dim', 'Objetivo del asalto: ' + run.objective.desc + ' → +' + run.objective.bonus + ' NovaCoins.');
+    log('dim', 'Meta principal: drenar el MASTER SERVER. Drena nodos para abrir el camino.');
     NS.Audio.hack();
     renderMap();
     renderTop();
@@ -434,10 +555,26 @@
     if (run) {
       html += '<div class="net-stat"><span class="net-lbl">Rastro</span><div class="xp-progress" style="width:110px"><div style="width:' + Math.floor(run.trace) + '%;' + (run.trace > 70 ? 'background:#c03030' : '') + '"></div></div><span>' + Math.floor(run.trace) + '/100</span></div>';
       html += '<div class="net-stat"><span class="net-lbl">Botín</span><span>' + Util.fmtBytes(run.loot.data * 1024 * 1024) + ' · ' + Util.fmtMoney(run.loot.cash) + '</span></div>';
+      if (run.combo >= 2) {
+        html += '<div class="net-stat net-combo"><span class="net-lbl">RACHA</span><span>×' + run.combo + ' (+' + Math.min(50, (run.combo - 1) * 10) + ' %)</span></div>';
+      }
     } else {
       html += '<div class="net-stat"><span class="net-lbl">Sin asalto activo</span></div>';
     }
     top.innerHTML = html;
+    // segunda fila: modificadores + objetivo
+    var extra = Util.$('#net-extra');
+    if (!extra) {
+      extra = Util.el('div', { class: 'net-extra', id: 'net-extra' });
+      top.parentNode.insertBefore(extra, top.nextSibling);
+    }
+    extra.innerHTML = '';
+    if (run) {
+      run.modifiers.forEach(function (m) {
+        extra.appendChild(Util.el('span', { class: 'net-mod ' + m.kind, title: m.desc, text: m.name + (m.kind === 'bad' ? ' ▼' : ' ▲') }));
+      });
+      extra.appendChild(Util.el('span', { class: 'net-obj', text: 'Objetivo: ' + run.objective.desc + ' (+' + run.objective.bonus + ' NC)' }));
+    }
   }
 
   function renderMap() {
@@ -481,9 +618,7 @@
         var box = Util.el('div', {
           class: 'net-node' + (node.drained ? ' drained' : '') + (reach ? ' reach' : '') + (!visible ? ' hidden' : '') + (selectedId === node.id ? ' sel' : '') + (node.kind === 'boss' ? ' boss' : '')
         });
-        var svg = Util.el('svg', { class: 'icon' });
-        svg.innerHTML = '<use href="#' + (node.kind === 'boss' ? 'ic-error' : node.kind === 'isp' ? 'ic-computer' : node.kind === 'dark' ? 'ic-hacker' : 'ic-net') + '"/>';
-        box.appendChild(svg);
+        box.appendChild(Util.svgIcon(node.kind === 'boss' ? 'ic-error' : node.kind === 'isp' ? 'ic-computer' : node.kind === 'dark' ? 'ic-hacker' : 'ic-net'));
         box.appendChild(Util.el('div', { class: 'net-node-name', text: (visible ? node.name : '???') }));
         box.appendChild(Util.el('div', { class: 'net-node-sub', text: visible ? ('nivel ' + node.lvl + ' · FW ' + node.fw) : '' }));
         if (node.drained) box.appendChild(Util.el('div', { class: 'net-node-sub ok', text: '✓ drenado' }));
@@ -577,9 +712,7 @@
       var cost = NS.Catalog.implantCost(def, lvl);
       var maxed = lvl >= def.max;
       var row = Util.el('div', { class: 'inv-row' });
-      var svg = Util.el('svg', { class: 'icon' });
-      svg.innerHTML = '<use href="#' + def.icon + '"/>';
-      row.appendChild(svg);
+      row.appendChild(Util.svgIcon(def.icon));
       var mid = Util.el('div', { style: { flex: '1' } });
       mid.appendChild(Util.el('div', { class: 'mail-subj', text: def.name + ' (nivel ' + lvl + ')' }));
       mid.appendChild(Util.el('div', { class: 'cfg-sub', text: def.desc }));
@@ -606,9 +739,7 @@
       var cost = NS.Catalog.upgradeCost(def, lvl);
       var maxed = lvl >= def.max;
       var row = Util.el('div', { class: 'inv-row' });
-      var svg = Util.el('svg', { class: 'icon' });
-      svg.innerHTML = '<use href="#' + def.icon + '"/>';
-      row.appendChild(svg);
+      row.appendChild(Util.svgIcon(def.icon));
       var mid = Util.el('div', { style: { flex: '1' } });
       mid.appendChild(Util.el('div', { class: 'mail-subj', text: def.name + ' (nivel ' + lvl + ')' }));
       mid.appendChild(Util.el('div', { class: 'cfg-sub', text: def.desc }));
