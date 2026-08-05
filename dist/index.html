@@ -1,4 +1,4 @@
-<!-- NovaVista 2004 Edition · Build de producción 2026-08-05T16:00:47.557Z · autocontenido, sin red -->
+<!-- NovaVista 2004 Edition · Build de producción 2026-08-05T16:04:51.408Z · autocontenido, sin red -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -4578,6 +4578,7 @@ var open=false;
 var selected=null;
 var chatLogEl=null;
 var typingTimer=null;
+var echoTimer=null;
 var typing=false;
 function statusLabel(st){
 return{online:'En línea',busy:'Ocupado',invisible:'Invisible'}[st]||'En línea';
@@ -4620,7 +4621,8 @@ addMsg('Tú',text.trim(),'me');
 var input=Util.$('#msn-input');
 if(input)input.value='';
 if(contact.status==='invisible'){
-setTimeout(function(){addMsg(contact.name,'... (no hay respuesta: está invisible)','dim');},1200);
+clearTimeout(echoTimer);
+echoTimer=setTimeout(function(){addMsg(contact.name,'... (no hay respuesta: está invisible)','dim');},1200);
 }else{
 contactReply(contact);
 }
@@ -4644,6 +4646,10 @@ info.appendChild(Util.el('div',{class:'msn-cstatus',text:statusLabel(c.status)})
 info.style.color=statusColor(c.status);
 row.appendChild(info);
 row.addEventListener('click',function(){
+
+clearTimeout(typingTimer);
+clearTimeout(echoTimer);
+typing=false;
 selected=c;
 render(body);
 chatLogEl=Util.$('.msn-chatlog');
@@ -4685,7 +4691,12 @@ NS.Apps.register({
 id:'msn',title:'NovaMessenger',icon:'ic-msn',
 desktop:true,w:560,h:420,minW:460,minH:340,
 render:render,tick:tick,
-onClose:function(){open=false;}
+onClose:function(){
+open=false;
+clearTimeout(typingTimer);
+clearTimeout(echoTimer);
+typing=false;
+}
 });
 })();
 </script>
@@ -4754,10 +4765,6 @@ y:pivot.y+Math.sin(angle)*len
 }
 function step(dt){
 if(gameOver||!ball)return;
-
-if(charging&&!ball){
-
-}
 if(ball){
 ball.vy+=1300*dt;
 ball.vx*=(1-0.02*dt*60*0.15);
@@ -4769,8 +4776,8 @@ for(var i=0;i<BUMPERS.length;i++){
 var b=BUMPERS[i];
 var dx=ball.x-b.x,dy=ball.y-b.y;
 var d=Math.sqrt(dx*dx+dy*dy);
-if(d<b.r+ball.r){
-var nx=dx/(d||1),ny=dy/(d||1);
+if(d>0.001&&d<b.r+ball.r){
+var nx=dx/d,ny=dy/d;
 ball.x=b.x+nx*(b.r+ball.r+1);
 ball.y=b.y+ny*(b.r+ball.r+1);
 ball.vx+=nx*320;ball.vy+=ny*320;
@@ -5059,6 +5066,15 @@ setStatus('¡Metediste la blanca! Turno del rival.');
 return;
 }
 if(ball.num===8){
+
+if(!groupPlayer){
+ball.pocketed=false;
+ball.x=320;ball.y=H/2;ball.vx=0;ball.vy=0;
+turn=turn==='player'?'cpu':'player';
+again=false;
+NS.UI.toast('NovaPool','¡La 8 entró en la rotura! Se recoloca y sigue la partida.','important','ic-pool');
+return;
+}
 var mine=turn==='player'?groupPlayer:groupCpu;
 var cleared=balls.filter(function(b){return b.type===mine&&!b.pocketed;}).length===0;
 if(cleared){
@@ -5367,7 +5383,7 @@ var top=Util.el('div',{class:'panel'});
 top.appendChild(Util.el('div',{class:'panel-title',text:'Rendimiento'}));
 top.appendChild(Util.el('div',{class:'cfg-info',html:
 'CPU: <b>'+load+' %</b> · Memoria: <b>'+ram+' / 256 MB</b><br>'+
-'Procesos: <b>'+(open.length+6)+'</b> · Usuario: <b>'+NS.State.get().profile.name+'</b>'
+'Procesos: <b>'+(open.length+6)+'</b> · Usuario: <b>'+Util.esc(NS.State.get().profile.name)+'</b>'
 }));
 body.appendChild(top);
 var list=Util.el('div',{class:'panel'});

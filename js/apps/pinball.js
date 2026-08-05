@@ -78,11 +78,6 @@
   function step(dt) {
     if (gameOver || !ball) return;
 
-    // cargador
-    if (charging && !ball) {
-      // el lanzador se usa cuando la bola está en la zona de lanzamiento
-    }
-
     if (ball) {
       ball.vy += 1300 * dt;
       ball.vx *= (1 - 0.02 * dt * 60 * 0.15);
@@ -96,8 +91,8 @@
         var b = BUMPERS[i];
         var dx = ball.x - b.x, dy = ball.y - b.y;
         var d = Math.sqrt(dx * dx + dy * dy);
-        if (d < b.r + ball.r) {
-          var nx = dx / (d || 1), ny = dy / (d || 1);
+        if (d > 0.001 && d < b.r + ball.r) {
+          var nx = dx / d, ny = dy / d;
           ball.x = b.x + nx * (b.r + ball.r + 1);
           ball.y = b.y + ny * (b.r + ball.r + 1);
           ball.vx += nx * 320; ball.vy += ny * 320;

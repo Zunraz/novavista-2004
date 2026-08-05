@@ -80,6 +80,15 @@
       return;
     }
     if (ball.num === 8) {
+      // 8 en la rotura (sin grupos asignados): se recoloca y sigue el juego
+      if (!groupPlayer) {
+        ball.pocketed = false;
+        ball.x = 320; ball.y = H / 2; ball.vx = 0; ball.vy = 0;
+        turn = turn === 'player' ? 'cpu' : 'player';
+        again = false;
+        NS.UI.toast('NovaPool', '¡La 8 entró en la rotura! Se recoloca y sigue la partida.', 'important', 'ic-pool');
+        return;
+      }
       var mine = turn === 'player' ? groupPlayer : groupCpu;
       var cleared = balls.filter(function (b) { return b.type === mine && !b.pocketed; }).length === 0;
       if (cleared) {

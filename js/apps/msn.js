@@ -70,6 +70,7 @@
   var selected = null;
   var chatLogEl = null;
   var typingTimer = null;
+  var echoTimer = null;
   var typing = false;
 
   function statusLabel(st) {
@@ -116,7 +117,8 @@
     var input = Util.$('#msn-input');
     if (input) input.value = '';
     if (contact.status === 'invisible') {
-      setTimeout(function () { addMsg(contact.name, '... (no hay respuesta: está invisible)', 'dim'); }, 1200);
+      clearTimeout(echoTimer);
+      echoTimer = setTimeout(function () { addMsg(contact.name, '... (no hay respuesta: está invisible)', 'dim'); }, 1200);
     } else {
       contactReply(contact);
     }
@@ -142,6 +144,10 @@
       info.style.color = statusColor(c.status);
       row.appendChild(info);
       row.addEventListener('click', function () {
+        // cancelar respuestas pendientes del contacto anterior al cambiar
+        clearTimeout(typingTimer);
+        clearTimeout(echoTimer);
+        typing = false;
         selected = c;
         render(body);
         chatLogEl = Util.$('.msn-chatlog');
@@ -186,6 +192,11 @@
     id: 'msn', title: 'NovaMessenger', icon: 'ic-msn',
     desktop: true, w: 560, h: 420, minW: 460, minH: 340,
     render: render, tick: tick,
-    onClose: function () { open = false; }
+    onClose: function () {
+      open = false;
+      clearTimeout(typingTimer);
+      clearTimeout(echoTimer);
+      typing = false;
+    }
   });
 })();

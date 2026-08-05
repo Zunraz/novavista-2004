@@ -20,7 +20,7 @@
     top.appendChild(Util.el('div', { class: 'panel-title', text: 'Rendimiento' }));
     top.appendChild(Util.el('div', { class: 'cfg-info', html:
       'CPU: <b>' + load + ' %</b> · Memoria: <b>' + ram + ' / 256 MB</b><br>' +
-      'Procesos: <b>' + (open.length + 6) + '</b> · Usuario: <b>' + NS.State.get().profile.name + '</b>'
+      'Procesos: <b>' + (open.length + 6) + '</b> · Usuario: <b>' + Util.esc(NS.State.get().profile.name) + '</b>'
     }));
     body.appendChild(top);
 
