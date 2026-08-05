@@ -28,7 +28,8 @@ db.exec(`
     pwd_hash TEXT NOT NULL,
     pwd_salt TEXT NOT NULL,
     avatar INTEGER NOT NULL DEFAULT 0,
-    created_at INTEGER NOT NULL
+    created_at INTEGER NOT NULL,
+    last_active INTEGER NOT NULL DEFAULT 0
   );
   CREATE TABLE IF NOT EXISTS sessions (
     token TEXT PRIMARY KEY,
@@ -40,7 +41,21 @@ db.exec(`
     data TEXT NOT NULL,
     updated_at INTEGER NOT NULL
   );
+  CREATE TABLE IF NOT EXISTS friends (
+    user_id INTEGER NOT NULL REFERENCES users(id),
+    friend_id INTEGER NOT NULL REFERENCES users(id),
+    status TEXT NOT NULL DEFAULT 'pending',
+    created_at INTEGER NOT NULL,
+    PRIMARY KEY (user_id, friend_id)
+  );
 `);
+// migración: columna last_active en instalaciones antiguas
+try {
+  const cols = db.prepare("PRAGMA table_info(users)").all();
+  if (!cols.some(c => c.name === 'last_active')) {
+    db.exec('ALTER TABLE users ADD COLUMN last_active INTEGER NOT NULL DEFAULT 0');
+  }
+} catch (e) {}
 
 /* ---------- utilidades ---------- */
 function now() { return Date.now(); }
@@ -173,6 +188,37 @@ async function handleApi(req, res, url) {
   let session = null;
   if (auth) {
     session = db.prepare('SELECT s.token, s.user_id, u.username, u.avatar FROM sessions s JOIN users u ON u.id = s.user_id WHERE s.token = ?').get(auth);
+    if (session) db.prepare('UPDATE users SET last_active = ? WHERE id = ?').run(now(), session.user_id);
+  }
+  const ONLINE_WINDOW = 5 * 60 * 1000; // 5 min
+
+  /* perfil público de un usuario (datos + estado + amigos) */
+  function profileOf(userRow, myId) {
+    const save = db.prepare('SELECT data FROM saves WHERE user_id = ?').get(userRow.id);
+    let st = null;
+    if (save) st = parseState(save.data);
+    const sc = st ? scoreOf(st) : { power: 0, elo: 400, level: 1 };
+    const social = (st && st.social) || {};
+    const prof = social.profile || {};
+    const fc = db.prepare('SELECT COUNT(*) AS n FROM friends WHERE user_id = ? AND status = ?').get(userRow.id, 'accepted');
+    let rel = 'none';
+    if (myId && myId !== userRow.id) {
+      const a = db.prepare('SELECT status FROM friends WHERE user_id = ? AND friend_id = ?').get(myId, userRow.id);
+      const b = db.prepare('SELECT status FROM friends WHERE user_id = ? AND friend_id = ?').get(userRow.id, myId);
+      if (a && a.status === 'accepted') rel = 'friend';
+      else if (b && b.status === 'pending') rel = 'incoming';
+      else if (a && a.status === 'pending') rel = 'outgoing';
+    }
+    return {
+      username: userRow.username, avatar: userRow.avatar,
+      level: sc.level, power: sc.power, elo: sc.elo,
+      online: now() - (userRow.last_active || 0) < ONLINE_WINDOW,
+      mood: prof.mood || '', about: prof.about || '', music: prof.music || '',
+      movies: prof.movies || '', heroes: prof.heroes || '', looking: prof.looking || '',
+      style: prof.style || '',
+      friendCount: (fc && fc.n) || 0,
+      rel: rel
+    };
   }
 
   // ---- logout ----
@@ -213,9 +259,83 @@ async function handleApi(req, res, url) {
     return json(res, 200, { ok: true });
   }
 
+  // ---- búsqueda de usuarios (amigos) ----
+  if (p === '/api/users/search' && method === 'GET') {
+    if (!session) return json(res, 401, { ok: false, error: 'Sesión no válida.' });
+    const q = String(url.searchParams.get('q') || '').toLowerCase().trim();
+    if (!q) return json(res, 200, { ok: true, list: [] });
+    const all = db.prepare('SELECT * FROM users WHERE id != ?').all(session.user_id);
+    const out = all.filter(u => u.username.indexOf(q) !== -1).slice(0, 20).map(u => profileOf(u, session.user_id));
+    return json(res, 200, { ok: true, list: out });
+  }
+
+  // ---- lista de amigos / solicitudes ----
+  if (p === '/api/friends' && method === 'GET') {
+    if (!session) return json(res, 401, { ok: false, error: 'Sesión no válida.' });
+    const acc = db.prepare('SELECT u.* FROM friends f JOIN users u ON u.id = f.friend_id WHERE f.user_id = ? AND f.status = ?').all(session.user_id, 'accepted');
+    const inc = db.prepare('SELECT u.* FROM friends f JOIN users u ON u.id = f.user_id WHERE f.friend_id = ? AND f.status = ?').all(session.user_id, 'pending');
+    const out = db.prepare('SELECT u.* FROM friends f JOIN users u ON u.id = f.friend_id WHERE f.user_id = ? AND f.status = ?').all(session.user_id, 'pending');
+    return json(res, 200, {
+      ok: true,
+      friends: acc.map(u => profileOf(u, session.user_id)),
+      incoming: inc.map(u => ({ username: u.username, avatar: u.avatar })),
+      outgoing: out.map(u => ({ username: u.username, avatar: u.avatar }))
+    });
+  }
+
+  // ---- enviar solicitud de amistad ----
+  if (p === '/api/friends/request' && method === 'POST') {
+    if (!session) return json(res, 401, { ok: false, error: 'Sesión no válida.' });
+    let body;
+    try { body = await readBody(req, 4096); } catch (e) { return json(res, 400, { ok: false, error: e.message }); }
+    const target = findUser(body.to);
+    if (!target) return json(res, 404, { ok: false, error: 'Ese usuario no existe.' });
+    if (target.id === session.user_id) return json(res, 400, { ok: false, error: 'No puedes ser tu propio amigo.' });
+    const exists = db.prepare('SELECT status FROM friends WHERE user_id = ? AND friend_id = ?').get(session.user_id, target.id);
+    const reverse = db.prepare('SELECT status FROM friends WHERE user_id = ? AND friend_id = ?').get(target.id, session.user_id);
+    if (exists || reverse) return json(res, 409, { ok: false, error: 'Ya hay una solicitud o sois amigos.' });
+    db.prepare('INSERT INTO friends (user_id, friend_id, status, created_at) VALUES (?, ?, ?, ?)').run(session.user_id, target.id, 'pending', now());
+    return json(res, 200, { ok: true });
+  }
+
+  // ---- aceptar solicitud ----
+  if (p === '/api/friends/accept' && method === 'POST') {
+    if (!session) return json(res, 401, { ok: false, error: 'Sesión no válida.' });
+    let body;
+    try { body = await readBody(req, 4096); } catch (e) { return json(res, 400, { ok: false, error: e.message }); }
+    const from = findUser(body.from);
+    if (!from) return json(res, 404, { ok: false, error: 'Ese usuario no existe.' });
+    const row = db.prepare('SELECT * FROM friends WHERE user_id = ? AND friend_id = ? AND status = ?').get(from.id, session.user_id, 'pending');
+    if (!row) return json(res, 409, { ok: false, error: 'No hay ninguna solicitud de ese usuario.' });
+    db.prepare('UPDATE friends SET status = ? WHERE user_id = ? AND friend_id = ?').run('accepted', from.id, session.user_id);
+    db.prepare('INSERT OR IGNORE INTO friends (user_id, friend_id, status, created_at) VALUES (?, ?, ?, ?)').run(session.user_id, from.id, 'accepted', now());
+    return json(res, 200, { ok: true });
+  }
+
+  // ---- eliminar amigo / rechazar solicitud ----
+  if (p === '/api/friends/remove' && method === 'POST') {
+    if (!session) return json(res, 401, { ok: false, error: 'Sesión no válida.' });
+    let body;
+    try { body = await readBody(req, 4096); } catch (e) { return json(res, 400, { ok: false, error: e.message }); }
+    const other = findUser(body.username);
+    if (!other) return json(res, 404, { ok: false, error: 'Ese usuario no existe.' });
+    db.prepare('DELETE FROM friends WHERE (user_id = ? AND friend_id = ?) OR (user_id = ? AND friend_id = ?)')
+      .run(session.user_id, other.id, other.id, session.user_id);
+    return json(res, 200, { ok: true });
+  }
+
+  // ---- perfil público de un usuario ----
+  if (p.indexOf('/api/profile/') === 0 && method === 'GET') {
+    const uname = decodeURIComponent(p.slice('/api/profile/'.length)).toLowerCase();
+    const u = findUser(uname);
+    if (!u) return json(res, 404, { ok: false, error: 'Ese usuario no existe.' });
+    const prof = profileOf(u, session ? session.user_id : null);
+    if (session && u.id === session.user_id) prof.me = true;
+    return json(res, 200, { ok: true, profile: prof });
+  }
+
   // ---- rankings ----
-  if (p === '/api/rankings' && method === 'GET') {
-    const type = url.searchParams.get('type') === 'elo' ? 'elo' : 'power';
+  if (p === '/api/rankings' && method === 'GET') {    const type = url.searchParams.get('type') === 'elo' ? 'elo' : 'power';
     const rows = db.prepare('SELECT u.username, u.avatar, s.data FROM users u LEFT JOIN saves s ON s.user_id = u.id').all();
     const out = [];
     for (const r of rows) {

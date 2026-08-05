@@ -32,7 +32,7 @@
       media: { skin: 'classic', volume: 0.8, currentTrack: 't1', repeat: false, shuffle: false },
       currencies: { cash: 50, novaCoins: 0, xp: 0, level: 1, energy: 12, maxEnergy: 12, legacy: 0 },
       bank: { balance: 50, loanDebt: 0, totalInterest: 0, price: 12 },
-      social: { followers: 0, lastPostAt: 0, totalPosts: 0, viralBest: 0 },
+      social: { followers: 0, lastPostAt: 0, totalPosts: 0, viralBest: 0, posts: 0, profile: { mood: '', about: '', music: '', movies: '', heroes: '', looking: '', style: '#123a6e' } },
       bots: { count: 0 },
       broker: { priceLvl: 0, dataSold: 0 },
       data: { mb: 0, maxMB: 2000 },
@@ -43,7 +43,7 @@
       quests: {},
       events: { nextMalwareAt: 0, nextAdAt: 0 },
       browser: { impressions: 0, auto: 0, clicks: 0 },
-      games: { pinball: 0, pinballCash: 0, pool: 0, poolWins: 0 },
+      games: { pinball: 0, pinballCash: 0, pool: 0, poolWins: 0, minesweeper: { best: { b: 0, i: 0, e: 0 } } },
       docs: [],
       stats: { clicks: 0, posts: 0, hacks: 0, traces: 0, offlineSessions: 0 }
     };
@@ -384,8 +384,10 @@
     if (!isFinite(o.meta.bossesDrained) || o.meta.bossesDrained < 0) o.meta.bossesDrained = 0;
     if (!o.events.nextMalwareAt) o.events.nextMalwareAt = 0;
     if (!o.browser) o.browser = { impressions: 0, auto: 0, clicks: 0 };
-    if (!o.games) o.games = { pinball: 0, pinballCash: 0, pool: 0, poolWins: 0 };
+    if (!o.games) o.games = { pinball: 0, pinballCash: 0, pool: 0, poolWins: 0, minesweeper: { best: { b: 0, i: 0, e: 0 } } };
+    if (!o.games.minesweeper) o.games.minesweeper = { best: { b: 0, i: 0, e: 0 } };
     if (!o.docs) o.docs = [];
+    if (!o.social.profile) o.social.profile = { mood: '', about: '', music: '', movies: '', heroes: '', looking: '', style: '#123a6e' };
     if (!o.desktopIcons || typeof o.desktopIcons !== 'object') o.desktopIcons = {};
     if (!o.media || typeof o.media !== 'object') o.media = { skin: 'classic', volume: 0.8, currentTrack: 't1', repeat: false, shuffle: false };
     // partidas antiguas con un asalto a medias: rellenar los campos nuevos del roguelite

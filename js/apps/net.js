@@ -1204,6 +1204,9 @@
       case 'icmp': actIcmp(run); break;
       case 'decrypt': case 'descifrar': if (target) actDecrypt(run, target); else log('err', 'Uso: decrypt <nombre>'); break;
       case 'disconnect': case 'salir': actDisconnect(run); break;
+      case 'take': case 'robar': if (target) actTake(run, target); else log('err', 'Uso: take <nombre>'); break;
+      case 'shop': case 'entrar': if (target) actShop(run, target); else log('err', 'Uso: shop <nombre>'); break;
+      case 'event': case 'investigar': if (target) actEvent(run, target); else log('err', 'Uso: event <nombre>'); break;
       case 'trace': case 'rastro': log('dim', 'Rastro actual: ' + Math.floor(run.trace) + '/100.'); break;
       case 'energy': case 'energia': log('dim', 'Energía: ' + Math.floor(S.currencies.energy) + '/' + NS.State.maxEnergy() + '.'); break;
       case 'loot': case 'botin': log('dim', 'Botín sin cobrar: ' + Util.fmtBytes(run.loot.data * 1024 * 1024) + ' · ' + Util.fmtMoney(run.loot.cash) + '.'); break;

@@ -1,7 +1,8 @@
 /* ============================================================
-   NovaVista 2004 — NovaPinball (reescrito)
-   Física: gravedad, flippers dentro del campo, bumpers, desagüe
-   real y lanzador con carga. 50 puntos = 1 $ al acabar.
+   NovaVista 2004 — NovaPinball (v3)
+   Física robusta: flippers con colisión de segmento en movimiento,
+   lanzador lateral (plunger), túneles, slingshots, dianas y
+   bumpers. 50 puntos = 1 $ al acabar.
    ============================================================ */
 (function () {
   'use strict';
@@ -21,29 +22,45 @@
   var flipperL = false, flipperR = false;
   var charging = false;
   var launcher = 0;
-  var waiting = false; // bola en la cuna del lanzador
+  var waiting = false;       // bola en el lanzador lateral
+  var targetFlash = 0;       // parpadeo de dianas al golpearlas
 
   var BALL_R = 8;
   var GRAV = 1500;
 
   // Geometría del campo
   var WALL_TOP = 8, WALL_SIDE = 14;
-  var BOTTOM_Y = H - 58;            // paredes inferiores (flanquean el desagüe)
-  var DRAIN_Y = H - 40;             // por debajo = bola perdida
-  var GAP_HALF = 52;                // media anchura del desagüe central
-  var CRADLE = { x: W / 2, y: H - 50 };
+  var BOTTOM_Y = H - 58;             // paredes inferiores (flanquean el desagüe)
+  var DRAIN_Y = H - 40;              // por debajo = bola perdida
+  var GAP_HALF = 52;                 // media anchura del desagüe central
+  var CRADLE = { x: W - 26, y: H - 46 };  // lanzador lateral (plunger)
 
   var FL_PIV_L = { x: 85, y: H - 70 };
   var FL_PIV_R = { x: W - 85, y: H - 70 };
   var FL_LEN = 74;
+  var FL_THICK = 13;
   var FL_REST = -0.32, FL_UP = -1.02;
-  var FL_SPEED = 11;
+  var FL_SPEED = 12;
 
   var BUMPERS = [
-    { x: W * 0.30, y: 150, r: 17 },
-    { x: W * 0.50, y: 108, r: 17 },
-    { x: W * 0.70, y: 150, r: 17 }
+    { x: W * 0.25, y: 150, r: 17 },
+    { x: W * 0.50, y: 105, r: 17 },
+    { x: W * 0.75, y: 150, r: 17 },
+    { x: W * 0.38, y: 215, r: 15 },
+    { x: W * 0.62, y: 215, r: 15 }
   ];
+  // slingshots: propulsores inclinados sobre los flippers
+  var SLINGS = [
+    { x: 58, y: H - 128, r: 14, dx: -1, dy: -0.9 },
+    { x: W - 58, y: H - 128, r: 14, dx: 1, dy: -0.9 }
+  ];
+  // dianas (golpéalas: +8 y parpadean)
+  var TARGETS = [
+    { x: W * 0.5 - 34, y: 195, r: 10 },
+    { x: W * 0.5 + 34, y: 195, r: 10 }
+  ];
+  // túnel: entrada arriba a la izquierda, salida a la derecha
+  var TUNNEL = { in: { x: 60, y: 92, r: 15 }, out: { x: W - 46, y: 320, r: 14 } };
 
   function newGame() {
     score = 0; ballsLeft = 3; gameOver = false; launcher = 0; charging = false;
@@ -59,8 +76,8 @@
   /* -------- entrada -------- */
   function onKeyDown(e) {
     if (!running) return;
-    if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') flipperL = true;
-    if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') flipperR = true;
+    if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') { if (!flipperL) NS.Audio.flip(); flipperL = true; }
+    if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') { if (!flipperR) NS.Audio.flip(); flipperR = true; }
     if (e.key === ' ') { e.preventDefault(); chargeLaunch(); }
   }
   function onKeyUp(e) {
@@ -73,23 +90,50 @@
     charging = false;
     if (!waiting || !ball || gameOver) return;
     if (launcher > 5) {
-      ball.vy = -(460 + launcher * 6.2);
-      ball.vx = (Math.random() - 0.5) * 70;
+      ball.vy = -(500 + launcher * 6.4);
+      ball.vx = -60;                     // hacia el centro del campo
       waiting = false;
       launcher = 0;
-      NS.Audio.hack();
+      NS.Audio.launch();
     }
   }
 
-  /* -------- física -------- */
-  function flipperEnds(pivot, angle, len) {
-    return { x: pivot.x + Math.cos(angle) * len, y: pivot.y + Math.sin(angle) * len };
+  /* -------- colisión de flipper (segmento en movimiento) --------
+     Resuelve el problema de la bola que atraviesa: empuja la bola
+     fuera del segmento y aplica la velocidad del punto de impacto. */
+  function flipperCollide(ball, pivot, angle, len, dir, active) {
+    var ex = pivot.x + Math.cos(angle) * len;
+    var ey = pivot.y + Math.sin(angle) * len;
+    var dx = ex - pivot.x, dy = ey - pivot.y;
+    var L2 = dx * dx + dy * dy || 1;
+    var t = Util.clamp(((ball.x - pivot.x) * dx + (ball.y - pivot.y) * dy) / L2, 0, 1);
+    var cx = pivot.x + t * dx, cy = pivot.y + t * dy;
+    var rx = ball.x - cx, ry = ball.y - cy;
+    var d = Math.sqrt(rx * rx + ry * ry);
+    var minD = ball.r + FL_THICK / 2;
+    if (d >= minD || d < 0.001) return false;
+    // empujar fuera del segmento
+    var nx = rx / d, ny = ry / d;
+    ball.x = cx + nx * minD;
+    ball.y = cy + ny * minD;
+    // impulso: rebote + velocidad del punto del flipper (si se está moviendo)
+    var rel = t * len;
+    var vAng = dir * FL_SPEED * (active ? 1 : 0);
+    var vxTip = -Math.sin(angle) * vAng * rel * 0.55;
+    var vyTip = Math.cos(angle) * vAng * rel * 0.55;
+    var speed = Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy) || 60;
+    ball.vx = nx * speed * 0.55 + vxTip + dir * 30;
+    ball.vy = ny * speed * 0.55 + vyTip - (active ? 140 : 40);
+    addScore(10);
+    NS.Audio.ok();
+    return true;
   }
 
+  /* -------- física -------- */
   function step(dt) {
     if (gameOver || !ball) return;
 
-    // cuna del lanzador: la bola espera quieta hasta lanzar
+    // cuna del lanzador lateral
     if (waiting) {
       ball.x = CRADLE.x; ball.y = CRADLE.y; ball.vx = 0; ball.vy = 0;
       if (charging) launcher = Math.min(100, launcher + 2.4);
@@ -100,7 +144,7 @@
     ball.x += ball.vx * dt;
     ball.y += ball.vy * dt;
 
-    // paredes laterales y techo
+    // techo y paredes laterales
     if (ball.x - ball.r < WALL_SIDE) { ball.x = WALL_SIDE + ball.r; ball.vx = Math.abs(ball.vx) * 0.8; addScore(2); }
     else if (ball.x + ball.r > W - WALL_SIDE) { ball.x = W - WALL_SIDE - ball.r; ball.vx = -Math.abs(ball.vx) * 0.8; addScore(2); }
     if (ball.y - ball.r < WALL_TOP) { ball.y = WALL_TOP + ball.r; ball.vy = Math.abs(ball.vy) * 0.8; addScore(2); }
@@ -116,34 +160,67 @@
     // bumpers
     for (var i = 0; i < BUMPERS.length; i++) {
       var b = BUMPERS[i];
-      var dx = ball.x - b.x, dy = ball.y - b.y;
-      var d = Math.sqrt(dx * dx + dy * dy);
-      if (d > 0.001 && d < b.r + ball.r) {
-        var nx = dx / d, ny = dy / d;
-        ball.x = b.x + nx * (b.r + ball.r + 1);
-        ball.y = b.y + ny * (b.r + ball.r + 1);
-        ball.vx += nx * 340; ball.vy += ny * 340;
+      var bdx = ball.x - b.x, bdy = ball.y - b.y;
+      var bd = Math.sqrt(bdx * bdx + bdy * bdy);
+      if (bd > 0.001 && bd < b.r + ball.r) {
+        var bnx = bdx / bd, bny = bdy / bd;
+        ball.x = b.x + bnx * (b.r + ball.r + 1);
+        ball.y = b.y + bny * (b.r + ball.r + 1);
+        ball.vx += bnx * 340; ball.vy += bny * 340;
         addScore(25);
-        NS.Audio.ok();
+        NS.Audio.bump();
       }
     }
 
-    // flippers (con impulso del "latigazo")
+    // slingshots
+    for (var s = 0; s < SLINGS.length; s++) {
+      var sl = SLINGS[s];
+      var sdx = ball.x - sl.x, sdy = ball.y - sl.y;
+      var sd = Math.sqrt(sdx * sdx + sdy * sdy);
+      if (sd > 0.001 && sd < sl.r + ball.r) {
+        ball.x = sl.x + (sdx / sd) * (sl.r + ball.r + 1);
+        ball.y = sl.y + (sdy / sd) * (sl.r + ball.r + 1);
+        ball.vx += sl.dx * 430; ball.vy += sl.dy * 420;
+        addScore(10);
+        NS.Audio.kick();
+      }
+    }
+
+    // dianas
+    for (var tg = 0; tg < TARGETS.length; tg++) {
+      var t = TARGETS[tg];
+      var tdx = ball.x - t.x, tdy = ball.y - t.y;
+      var td = Math.sqrt(tdx * tdx + tdy * tdy);
+      if (td > 0.001 && td < t.r + ball.r) {
+        ball.x = t.x + (tdx / td) * (t.r + ball.r + 1);
+        ball.y = t.y + (tdy / td) * (t.r + ball.r + 1);
+        ball.vx *= 0.9; ball.vy *= 0.9;
+        addScore(8);
+        targetFlash = 0.35;
+        NS.Audio.ding();
+      }
+    }
+
+    // túnel (scoop): entra arriba, sale abajo a la derecha
+    var tin = TUNNEL.in;
+    var tdx2 = ball.x - tin.x, tdy2 = ball.y - tin.y;
+    if (Math.sqrt(tdx2 * tdx2 + tdy2 * tdy2) < tin.r + ball.r) {
+      ball.x = TUNNEL.out.x;
+      ball.y = TUNNEL.out.y;
+      ball.vx = 0; ball.vy = 160;
+      addScore(15);
+      NS.Audio.whoosh();
+    }
+
+    // flippers (colisión de segmento en movimiento)
     var aL = FL_REST + (FL_UP - FL_REST) * (flipperL ? 1 : 0);
     var aR = Math.PI - (FL_REST + (FL_UP - FL_REST) * (flipperR ? 1 : 0));
-    var eL = flipperEnds(FL_PIV_L, aL, FL_LEN);
-    var eR = flipperEnds(FL_PIV_R, aR, FL_LEN);
-    var hitL = NS.Physics.segmentCollide(ball, FL_PIV_L, eL, ball.r);
-    var hitR = NS.Physics.segmentCollide(ball, FL_PIV_R, eR, ball.r);
-    if (hitL || hitR) {
-      var dir = hitL ? 1 : -1;
-      var w = dir * FL_SPEED;
-      var tipV = w * FL_LEN;
-      ball.vx += Math.cos(aL) * tipV * 0.16;
-      ball.vy += Math.sin(aL) * tipV * 0.16 - 70;
-      addScore(10);
-      NS.Audio.ok();
-    }
+    flipperCollide(ball, FL_PIV_L, aL, FL_LEN, 1, flipperL);
+    flipperCollide(ball, FL_PIV_R, aR, FL_LEN, 1, flipperR);
+
+    // límite de velocidad: evita túneles a altísima velocidad
+    var sp = Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy);
+    if (sp > 1250) { ball.vx *= 1250 / sp; ball.vy *= 1250 / sp; }
 
     // desagüe
     if (ball.y > DRAIN_Y) {
@@ -170,13 +247,31 @@
     ctx.fillRect(0, 0, W, H);
     ctx.strokeStyle = '#2a4a8a';
     ctx.lineWidth = 3;
-    // paredes: laterales + techo
     ctx.strokeRect(WALL_SIDE, WALL_TOP, W - WALL_SIDE * 2, BOTTOM_Y - WALL_TOP);
+
     // zona de desagüe
     ctx.fillStyle = '#060a20';
     ctx.fillRect(W / 2 - GAP_HALF, BOTTOM_Y, GAP_HALF * 2, H - BOTTOM_Y);
     ctx.strokeStyle = '#8a3a2a';
     ctx.strokeRect(W / 2 - GAP_HALF, BOTTOM_Y, GAP_HALF * 2, H - BOTTOM_Y);
+
+    // túnel: entrada + salida + línea
+    ctx.strokeStyle = 'rgba(120,200,255,.4)';
+    ctx.setLineDash([5, 5]);
+    ctx.beginPath();
+    ctx.moveTo(TUNNEL.in.x, TUNNEL.in.y);
+    ctx.lineTo(TUNNEL.out.x, TUNNEL.out.y);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#0e2a4a';
+    ctx.beginPath(); ctx.arc(TUNNEL.in.x, TUNNEL.in.y, TUNNEL.in.r, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = '#7fc4ff'; ctx.stroke();
+    ctx.fillStyle = '#7fc4ff';
+    ctx.font = 'bold 11px Tahoma'; ctx.textAlign = 'center';
+    ctx.fillText('TÚNEL', TUNNEL.in.x, TUNNEL.in.y + 4);
+    ctx.fillStyle = '#0e2a4a';
+    ctx.beginPath(); ctx.arc(TUNNEL.out.x, TUNNEL.out.y, TUNNEL.out.r, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = '#7fc4ff'; ctx.stroke();
 
     // bumpers
     BUMPERS.forEach(function (b) {
@@ -193,11 +288,53 @@
       ctx.fill();
     });
 
+    // slingshots
+    SLINGS.forEach(function (sl) {
+      ctx.beginPath();
+      ctx.arc(sl.x, sl.y, sl.r, 0, Math.PI * 2);
+      ctx.fillStyle = '#d6a83f';
+      ctx.fill();
+      ctx.strokeStyle = '#6a4a10';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(sl.x, sl.y);
+      ctx.lineTo(sl.x + sl.dx * sl.r * 1.4, sl.y + sl.dy * sl.r * 1.4);
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    });
+
+    // dianas
+    var flash = targetFlash > 0;
+    TARGETS.forEach(function (t) {
+      ctx.beginPath();
+      ctx.arc(t.x, t.y, t.r, 0, Math.PI * 2);
+      ctx.fillStyle = flash ? '#ffe08a' : '#e8e2d0';
+      ctx.fill();
+      ctx.strokeStyle = '#8a8262';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.fillStyle = '#8a8262';
+      ctx.font = 'bold 10px Tahoma';
+      ctx.textAlign = 'center';
+      ctx.fillText('8', t.x, t.y + 3);
+    });
+
     // flippers
     var aL = FL_REST + (FL_UP - FL_REST) * (flipperL ? 1 : 0);
     var aR = Math.PI - (FL_REST + (FL_UP - FL_REST) * (flipperR ? 1 : 0));
     drawFlipper(FL_PIV_L, aL);
     drawFlipper(FL_PIV_R, aR);
+
+    // lanzador lateral
+    ctx.strokeStyle = '#2a4a8a';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(W - 32, H - 120, 14, 78);
+    if (waiting) {
+      ctx.fillStyle = '#d6a83f';
+      ctx.fillRect(W - 31, H - 42 - launcher * 0.9, 12, 6);
+    }
 
     // bola
     if (ball) {
@@ -238,9 +375,9 @@
   }
 
   function drawFlipper(pivot, angle) {
-    var e = flipperEnds(pivot, angle, FL_LEN);
+    var e = { x: pivot.x + Math.cos(angle) * FL_LEN, y: pivot.y + Math.sin(angle) * FL_LEN };
     ctx.strokeStyle = '#c03030';
-    ctx.lineWidth = 13;
+    ctx.lineWidth = FL_THICK;
     ctx.lineCap = 'round';
     ctx.beginPath();
     ctx.moveTo(pivot.x, pivot.y);
@@ -285,9 +422,11 @@
     if (!running) return;
     var dt = Math.min(0.033, (ts - lastTime) / 1000 || 0.016);
     lastTime = ts;
-    // dos sub-pasos de dt/2: integración estable y sin túnel en colisiones
-    step(dt / 2);
-    step(dt / 2);
+    // 3 sub-pasos: sin túneles en colisiones rápidas
+    step(dt / 3);
+    step(dt / 3);
+    step(dt / 3);
+    if (targetFlash > 0) targetFlash -= dt;
     draw();
     raf = requestAnimationFrame(loop);
   }
@@ -306,20 +445,20 @@
 
     var wrap = Util.el('div', { style: { display: 'flex', gap: '12px', alignItems: 'flex-start' } });
     cv = Util.el('canvas', { width: W, height: H, style: { border: '2px solid #1c3f6e', borderRadius: '4px' } });
-    ctx = cv.getContext('2d');
+    try { ctx = cv.getContext('2d'); } catch (e) { ctx = null; }
     wrap.appendChild(cv);
 
     var side = Util.el('div', { style: { flex: '1', minWidth: '150px' } });
     var p1 = Util.el('div', { class: 'panel' });
     p1.appendChild(Util.el('div', { class: 'panel-title', text: 'Controles' }));
-    p1.appendChild(Util.el('div', { class: 'cfg-sub', text: '← → / A D: flippers · ESPACIO (mantener): cargar y lanzar.' }));
+    p1.appendChild(Util.el('div', { class: 'cfg-sub', text: '← → / A D: flippers · ESPACIO (mantener): cargar el lanzador lateral y soltar.' }));
     var flRow = Util.el('div', { class: 'trade-row' });
     var bL = Util.el('button', { class: 'xp-btn', text: '◀ FLIP' });
     var bR = Util.el('button', { class: 'xp-btn', text: 'FLIP ▶' });
-    bL.addEventListener('mousedown', function () { flipperL = true; });
+    bL.addEventListener('mousedown', function () { if (!flipperL) NS.Audio.flip(); flipperL = true; });
     bL.addEventListener('mouseup', function () { flipperL = false; });
     bL.addEventListener('mouseleave', function () { flipperL = false; });
-    bR.addEventListener('mousedown', function () { flipperR = true; });
+    bR.addEventListener('mousedown', function () { if (!flipperR) NS.Audio.flip(); flipperR = true; });
     bR.addEventListener('mouseup', function () { flipperR = false; });
     bR.addEventListener('mouseleave', function () { flipperR = false; });
     flRow.appendChild(bL); flRow.appendChild(bR);
@@ -331,9 +470,9 @@
     side.appendChild(p1);
 
     var p2 = Util.el('div', { class: 'panel' });
-    p2.appendChild(Util.el('div', { class: 'panel-title', text: 'Premio' }));
+    p2.appendChild(Util.el('div', { class: 'panel-title', text: 'Premio y pista' }));
     p2.appendChild(Util.el('div', { class: 'cfg-sub', id: 'pin-best', text: 'Récord: ' + (NS.State.get().games.pinball || 0) + ' puntos' }));
-    p2.appendChild(Util.el('div', { class: 'cfg-sub', text: 'Cada 50 puntos = 1 $ al terminar. Bumpers +25, flippers +10.' }));
+    p2.appendChild(Util.el('div', { class: 'cfg-sub', text: 'Cada 50 puntos = 1 $ al terminar. Bumpers +25 · túnel +15 · slingshot +10 · flipper +10 · diana +8.' }));
     side.appendChild(p2);
 
     var overlay = Util.el('div', { class: 'pin-overlay hidden', id: 'pinball-overlay' });

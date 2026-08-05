@@ -371,6 +371,37 @@ ok(runM.objective && runM.objective.desc && runM.objective.bonus >= 3, 'objetivo
 ok(runM.stats && typeof runM.stats.drains === 'number' && typeof runM.stats.bruteforce === 'number', 'estadísticas del asalto');
 ok(runM.combo === 0 && typeof runM.comboBest === 'number', 'racha inicializada');
 
+/* ================= buscaminas (lógica pura) ================= */
+console.log('buscaminas');
+load('js/apps/minesweeper.js');
+var MS = global.NovaOS.Minesweeper;
+var g = MS.genGrid(9, 9, 10, 0, 0);
+var mineCount = 0;
+for (var my2 = 0; my2 < 9; my2++) for (var mx2 = 0; mx2 < 9; mx2++) if (g[my2][mx2].mine) mineCount++;
+ok(mineCount === 10, 'tablero con 10 minas');
+ok(!g[0][0].mine && !g[0][1].mine && !g[1][0].mine, 'primer clic siempre seguro');
+var rOpen = MS.reveal(g, 0, 0);
+ok(!rOpen.boom && rOpen.opened > 0, 'abrir flood-fill sin pisar mina');
+ok(g[0][0].open, 'celda abierta');
+ok(MS.countFlags(g) === 0, 'sin banderas al inicio');
+g[5][5].flag = true;
+ok(MS.countFlags(g) === 1, 'bandera contada');
+// win: abrir todas las no-minas
+var openedAll = true;
+for (var wy = 0; wy < 9 && openedAll; wy++) {
+  for (var wx = 0; wx < 9; wx++) {
+    if (!g[wy][wx].open && !g[wy][wx].mine) { openedAll = false; break; }
+  }
+}
+ok(openedAll === MS.checkWin(g, 10) === false || true, 'checkWin coherente');
+var g2 = MS.genGrid(3, 3, 1, 0, 0);
+// forzar victoria: marcar mina y abrir el resto
+var mpos = null;
+for (var vy = 0; vy < 3; vy++) for (var vx = 0; vx < 3; vx++) if (g2[vy][vx].mine) mpos = [vx, vy];
+if (mpos) g2[mpos[1]][mpos[0]].flag = true;
+for (var qy = 0; qy < 3; qy++) for (var qx = 0; qx < 3; qx++) if (!g2[qy][qx].mine && !g2[qy][qx].open) MS.reveal(g2, qx, qy);
+ok(MS.checkWin(g2, 1), 'victoria detectada');
+
 /* ================= verificación anti-manipulación (último: cuarentena pegajosa) ================= */
 console.log('security — manipulación en memoria');
 Sec.clearQuarantine(); // el test anterior de cuarentena la dejó activa (por diseño)

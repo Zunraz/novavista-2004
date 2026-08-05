@@ -117,10 +117,41 @@
       .catch(function () { return null; });
   }
 
+  /* -------- amigos y perfiles -------- */
+  function searchUsers(q) {
+    if (!state.token) return Promise.resolve([]);
+    return api('/api/users/search?q=' + encodeURIComponent(q) + '&token=' + encodeURIComponent(state.token))
+      .then(function (j) { return j.list || []; })
+      .catch(function () { return []; });
+  }
+  function myFriends() {
+    if (!state.token) return Promise.resolve({ friends: [], incoming: [], outgoing: [] });
+    return api('/api/friends?token=' + encodeURIComponent(state.token))
+      .then(function (j) { return { friends: j.friends || [], incoming: j.incoming || [], outgoing: j.outgoing || [] }; })
+      .catch(function () { return { friends: [], incoming: [], outgoing: [] }; });
+  }
+  function sendFriendRequest(to) {
+    return api('/api/friends/request?token=' + encodeURIComponent(state.token), { method: 'POST', body: { to: to } }).then(function () { return true; });
+  }
+  function acceptFriend(from) {
+    return api('/api/friends/accept?token=' + encodeURIComponent(state.token), { method: 'POST', body: { from: from } }).then(function () { return true; });
+  }
+  function removeFriend(username) {
+    return api('/api/friends/remove?token=' + encodeURIComponent(state.token), { method: 'POST', body: { username: username } }).then(function () { return true; });
+  }
+  function getProfile(username) {
+    return api('/api/profile/' + encodeURIComponent(username) + '?token=' + encodeURIComponent(state.token || ''))
+      .then(function (j) { return j.profile || null; })
+      .catch(function () { return null; });
+  }
+
   NS.Online = {
     init: init, register: register, login: login, logout: logout,
     isOnline: isOnline, user: user, token: token,
     fetchRemoteSave: fetchRemoteSave, pushSave: pushSave, syncNow: syncNow,
-    rankings: rankings
+    rankings: rankings,
+    searchUsers: searchUsers, myFriends: myFriends,
+    sendFriendRequest: sendFriendRequest, acceptFriend: acceptFriend,
+    removeFriend: removeFriend, getProfile: getProfile
   };
 })();

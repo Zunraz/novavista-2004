@@ -69,6 +69,20 @@
     var trash = Util.el('div', { class: 'desktop-icon', title: 'Papelera de reciclaje' });
     trash.appendChild(Util.svgIcon('ic-trash', 'icon icon-32'));
     trash.appendChild(Util.el('div', { class: 'di-name', text: 'Papelera' }));
+    var tSaved = S.desktopIcons['_trash'];
+    if (tSaved && typeof tSaved.x === 'number') {
+      trash.style.left = tSaved.x + 'px';
+      trash.style.top = tSaved.y + 'px';
+    } else {
+      // posición por defecto: tras el último icono de la cuadrícula
+      trash.style.left = (16 + (apps.length % 5) * 96) + 'px';
+      trash.style.top = (14 + Math.floor(apps.length / 5) * 92) + 'px';
+    }
+    trash.addEventListener('mousedown', function (e) {
+      e.stopPropagation();
+      select(trash);
+      startDrag(e, trash, '_trash');
+    });
     trash.addEventListener('dblclick', function () {
       Util.UI.alert('Papelera de reciclaje', 'La papelera está vacía. (Casi todo lo borrado se vende o se pierde en este sistema).', 'ic-trash');
     });

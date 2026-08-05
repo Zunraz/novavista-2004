@@ -142,10 +142,14 @@ function ok(cond, name, extra) {
   ok(runNodes.some(function (n) { return n.kind === 'loot' || n.kind === 'shop' || n.kind === 'event'; }), 'tipos de nodo especiales presentes');
   ok(runNodes.filter(function (n) { return n.kind === 'boss'; }).length === 1, 'un MasterServer');
 
-  // acciones del asalto: escanear y drenar el primer servidor de datos
+  // acciones del asalto: escanear y drenar el primer nodo del ISP
   var s2 = N.State.get();
-  var first = s2.run.nodes.filter(function (n) { return n.kind === 'data'; })[0];
-  ok(!!first, 'hay al menos un nodo de datos');
+  var ispNode = s2.run.nodes.filter(function (n) { return n.kind === 'isp'; })[0];
+  var first = s2.run.nodes.filter(function (n) { return ispNode.conn.indexOf(n.id) !== -1; })[0];
+  ok(!!first, 'hay un nodo alcanzable directo desde el ISP');
+  first.kind = 'data'; // el test valida el ciclo scan→crack→upload, no los tipos de nodo
+  if (first.data <= 0) first.data = 15; // los nodos shop/evento no traen botín: se le pone uno de prueba
+  if (first.cash <= 0) first.cash = 20;
   s2.run.trace = 0;
   N.State.addEnergy(99); // se recorta al máximo legítimo (12)
   // seleccionar nodo y usar acciones directamente
