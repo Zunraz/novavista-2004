@@ -33,9 +33,11 @@
   var lastHitAt = 0;
   var result = null;
 
-  var COLORS = {
-    solid: ['#f2c14e', '#3a5fd0', '#c03030', '#7a3aa0', '#e0752a', '#2c7a3e', '#8a3a2a', '#1a1f2e'],
-    stripe: ['#f2c14e', '#3a5fd0', '#c03030', '#7a3aa0', '#e0752a', '#2c7a3e', '#8a3a2a', '#1a1f2e']
+  var BALL_COLORS = {
+    1: '#f2c14e', 2: '#315bd8', 3: '#d13b32', 4: '#7b3ba8',
+    5: '#ed7b28', 6: '#25834b', 7: '#8f3028', 8: '#171a20',
+    9: '#f2c14e', 10: '#315bd8', 11: '#d13b32', 12: '#7b3ba8',
+    13: '#ed7b28', 14: '#25834b', 15: '#8f3028'
   };
 
   function makeBalls() {
@@ -175,15 +177,27 @@
       if (!running || phase !== 'cpu') return;
       var shot = cpuPick();
       if (!shot) { setStatus('La CPU no tiene tiro claro...'); endMove(); return; }
-      cue.vx = shot.dx * shot.power;
-      cue.vy = shot.dy * shot.power;
+      // `power` es un porcentaje (0..1), no una velocidad. Antes la CPU
+      // impulsaba la blanca a menos de 1 px/s y su turno parecía colgado.
+      var launch = cpuLaunchVector(shot);
+      cue.vx = launch.vx;
+      cue.vy = launch.vy;
       phase = 'move';
+      lastHitAt = performance.now();
       NS.Audio.hack();
     }, 1100);
   }
 
+  function cpuLaunchVector(shot) {
+    var speed = 400 + Util.clamp(shot.power, 0, 1) * 900;
+    return { vx: shot.dx * speed, vy: shot.dy * speed, speed: speed };
+  }
+
   function cpuPick() {
-    var mine = balls.filter(function (b) { return !b.pocketed && b.type === groupCpu; });
+    var mine = balls.filter(function (b) {
+      if (b.pocketed || b.type === 'cue' || b.num === 8) return false;
+      return groupCpu ? b.type === groupCpu : true;
+    });
     if (!mine.length) mine = balls.filter(function (b) { return !b.pocketed && b.num === 8; });
     var best = null;
     mine.forEach(function (target) {
@@ -222,6 +236,17 @@
         }
       });
     });
+    // Si no hay una tronera perfecta, la CPU hace un tiro de seguridad contra
+    // la bola legal más cercana. Nunca se queda inmóvil ni regala el turno.
+    if (!best && mine.length) {
+      mine.sort(function (a, b) {
+        return Math.hypot(a.x - cue.x, a.y - cue.y) - Math.hypot(b.x - cue.x, b.y - cue.y);
+      });
+      var t = mine[0];
+      var fx = t.x - cue.x, fy = t.y - cue.y;
+      var fd = Math.sqrt(fx * fx + fy * fy) || 1;
+      best = { dx: fx / fd, dy: fy / fd, power: 0.62, score: 0 };
+    }
     return best;
   }
 
@@ -277,7 +302,7 @@
     balls.forEach(function (b) {
       if (b.pocketed) return;
       var c = '#fff';
-      if (b.type === 'solid') c = COLORS.solid[b.num];
+      if (b.type === 'solid') c = BALL_COLORS[b.num];
       else if (b.type === 'stripe') c = '#f8f8f8';
       else if (b.type === '8') c = '#1a1f2e';
       ctx.beginPath();
@@ -288,8 +313,11 @@
       ctx.lineWidth = 1;
       ctx.stroke();
       if (b.type === 'stripe') {
-        ctx.fillStyle = COLORS.stripe[b.num];
+        ctx.save();
+        ctx.beginPath(); ctx.arc(b.x, b.y, b.r - 0.5, 0, Math.PI * 2); ctx.clip();
+        ctx.fillStyle = BALL_COLORS[b.num];
         ctx.fillRect(b.x - b.r, b.y - 4, b.r * 2, 8);
+        ctx.restore();
         ctx.beginPath();
         ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
         ctx.fillStyle = 'rgba(0,0,0,0)';
@@ -328,7 +356,7 @@
         ctx.strokeRect(8, H - 22, 120, 10);
         ctx.fillStyle = '#fff';
         ctx.font = '10px Tahoma';
-        ctx.fillText('POTENCIA ' + Math.round(power * 100) + ' %', 8, H - 28);
+        ctx.fillText((NS.I18n && NS.I18n.get() === 'en' ? 'POWER ' : 'POTENCIA ') + Math.round(power * 100) + ' %', 8, H - 28);
       }
     }
     // HUD de grupos
@@ -339,7 +367,7 @@
     var gTxt = 'Tú: ' + (groupPlayer ? groupLabel(groupPlayer) : '—') + '   CPU: ' + (groupCpu ? groupLabel(groupCpu) : '—');
     ctx.fillText(gTxt, 8, 16);
     ctx.font = '10px Tahoma';
-    ctx.fillText('Ganar = +25 $ · Mete la 8 al final', 8, H - 6);
+    ctx.fillText(NS.I18n ? NS.I18n.t('Ganar = +25 $ · Mete la 8 al final') : 'Ganar = +25 $ · Mete la 8 al final', 8, H - 6);
   }
 
   function loop(ts) {
@@ -363,8 +391,10 @@
   /* -------- app -------- */
   function onMove(e) {
     var r = cv.getBoundingClientRect();
-    aim.x = Util.clamp(e.clientX - r.left, T.x0, T.x1);
-    aim.y = Util.clamp(e.clientY - r.top, T.y0, T.y1);
+    var sx = cv.width / (r.width || cv.width);
+    var sy = cv.height / (r.height || cv.height);
+    aim.x = Util.clamp((e.clientX - r.left) * sx, T.x0, T.x1);
+    aim.y = Util.clamp((e.clientY - r.top) * sy, T.y0, T.y1);
   }
   function onDown(e) {
     if (phase !== 'aim') return;
@@ -374,7 +404,8 @@
     if (!dragActive) return;
     dragActive = false;
     var r = cv.getBoundingClientRect();
-    shootTo(e.clientX - r.left, e.clientY - r.top);
+    shootTo((e.clientX - r.left) * (cv.width / (r.width || cv.width)),
+      (e.clientY - r.top) * (cv.height / (r.height || cv.height)));
   }
 
   function render(body) {
@@ -427,4 +458,5 @@
       window.removeEventListener('mouseup', onUp);
     }
   });
+  NS.Pool = { _test: { cpuPick: cpuPick, cpuLaunchVector: cpuLaunchVector, newGame: newGame, ballColor: function (n) { return BALL_COLORS[n]; }, getBalls: function () { return balls; } } };
 })();

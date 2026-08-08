@@ -133,11 +133,19 @@
       content.appendChild(list);
 
       function paint(rows) {
-        rows = rows.slice();
+        rows = sortBy(rows, key);
         var myRow = rows.filter(function (r) { return r.isPlayer; })[0];
         var myPos = rows.indexOf(myRow) + 1;
         var infoEl = Util.$('#rank-info', content);
-        if (infoEl) infoEl.innerHTML = 'Tu puesto: <b>#' + myPos + ' de ' + rows.length + '</b> (' + fmt(myRow ? myRow[key] : 0) + ')';
+        if (infoEl) {
+          var chase = '';
+          if (myRow && myPos > 1) {
+            var rival = rows[myPos - 2];
+            var gap = Math.max(1, rival[key] - myRow[key] + 1);
+            chase = '<div class="rank-chase">Te faltan <b>' + fmt(gap) + '</b> para adelantar a <b>' + Util.esc(rival.name) + '</b>.</div>';
+          } else if (myRow) chase = '<div class="rank-chase first">👑 Estás en la cima. Defiende tu puesto.</div>';
+          infoEl.innerHTML = 'Tu puesto: <b>#' + myPos + ' de ' + rows.length + '</b> (' + fmt(myRow ? myRow[key] : 0) + ')' + chase;
+        }
         list.innerHTML = '';
         rows.forEach(function (row, i) {
           list.appendChild(rankRow(row, i + 1, fmt(row[key]), i < 3 ? i + 1 : 0));
@@ -192,5 +200,5 @@
     desktop: true, w: 480, h: 520, minW: 420, minH: 400,
     render: render
   });
-  NS.Ranking = { powerOf: powerOf, eloOf: eloOf };
+  NS.Ranking = { powerOf: powerOf, eloOf: eloOf, sortBy: sortBy };
 })();

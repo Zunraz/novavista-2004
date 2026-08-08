@@ -9,6 +9,17 @@
   function init() {
     var btnStart = Util.$('#btn-start');
     var menu = Util.$('#start-menu');
+    var langBtn = Util.$('#tray-lang');
+    if (langBtn) {
+      langBtn.addEventListener('click', function () {
+        var next = NS.I18n && NS.I18n.get() === 'en' ? 'es' : 'en';
+        var s = NS.State.get();
+        s.settings.language = next;
+        NS.I18n.set(next);
+        NS.State.saveNow();
+        updateLanguage();
+      });
+    }
     btnStart.addEventListener('click', function (e) {
       e.stopPropagation();
       menu.classList.toggle('hidden');
@@ -139,6 +150,13 @@
       av.title = 'NovaShield — Protección nivel ' + (s.av.level + s.av.firewall);
     }
   }
+  function updateLanguage() {
+    var b = Util.$('#tray-lang');
+    if (!b) return;
+    var current = NS.I18n ? NS.I18n.get() : 'es';
+    b.textContent = current.toUpperCase();
+    b.title = current === 'en' ? 'Switch to Spanish' : 'Cambiar a inglés';
+  }
 
-  NS.Taskbar = { init: init, refresh: refresh, buildStartMenu: buildStartMenu, tickClock: tickClock, refreshTray: refreshTray, updateMoney: updateMoney };
+  NS.Taskbar = { init: init, refresh: refresh, buildStartMenu: buildStartMenu, tickClock: tickClock, refreshTray: refreshTray, updateMoney: updateMoney, updateLanguage: updateLanguage };
 })();

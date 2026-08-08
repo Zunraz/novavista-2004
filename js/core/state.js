@@ -24,10 +24,10 @@
         installId: Util.hashStr(String(Date.now()) + Math.random()),
         createdAt: Date.now(), lastSeen: Date.now(), bootCount: 0, totalPlayMs: 0,
         runsDone: 0, runsTraced: 0, nodesDrained: 0, bossesDrained: 0,
-        allTimeCoins: 0, legacy: 0, formatsDone: 0, threatsStopped: 0
+        allTimeCoins: 0, legacy: 0, formatsDone: 0, threatsStopped: 0, era: 0
       },
       profile: { name: 'Usuario', avatar: 0 },
-      settings: { theme: 'luna', wallpaper: 'foto1', sound: true, notifs: true },
+      settings: { theme: 'luna', wallpaper: 'foto1', sound: true, notifs: true, language: 'es' },
       desktopIcons: {},
       media: { skin: 'classic', volume: 0.8, currentTrack: 't1', repeat: false, shuffle: false },
       currencies: { cash: 50, novaCoins: 0, xp: 0, level: 1, energy: 12, maxEnergy: 12, legacy: 0 },
@@ -40,7 +40,11 @@
       inventory: { tools: {} },
       av: { level: 0, firewall: 0, malwareStopped: 0, lastScanAt: 0 },
       run: null,
+      ctf: { completed: {}, active: null, reputation: 0, ending: null, evidence: [] },
       quests: {},
+      achievements: {},
+      lore: { read: {} },
+      objectives: { pinned: null },
       events: { nextMalwareAt: 0, nextAdAt: 0 },
       browser: { impressions: 0, auto: 0, clicks: 0 },
       games: { pinball: 0, pinballCash: 0, pool: 0, poolWins: 0, minesweeper: { best: { b: 0, i: 0, e: 0 } } },
@@ -59,7 +63,7 @@
   function incomeMult() {
     var m = 1;
     m *= 1 + 0.015 * S.currencies.level;
-    m *= 1 + 0.02 * S.currencies.legacy;
+    m *= 1 + 0.03 * S.currencies.legacy;
     m *= 1 + 0.04 * upg('i-income');
     return m;
   }
@@ -77,7 +81,9 @@
   function dataMaxMB() { return 2000 + 500 * upg('d-cap'); }
   function botCount() { return upg('b-count'); }
   function xpForLevel(l) { return Math.floor(40 * Math.pow(l, 1.5)); }
-  function legacyForCoins(c) { return Math.floor(10 * Math.sqrt(Math.max(0, c))); }
+  // Prestigio deliberado: 1 punto a 20 NC históricas, 2 a 80, 5 a 500.
+  // La curva anterior daba 50 puntos con sólo 25 NC y trivializaba la economía.
+  function legacyForCoins(c) { return Math.floor(Math.sqrt(Math.max(0, c) / 20)); }
 
   /* ---------------- mutadores validados ---------------- */
   function addCash(n) {
@@ -148,6 +154,49 @@
     S.broker.dataSold += real;
     return real;
   }
+
+  function claimAchievement(id) {
+    var def = Cat.ACHIEVEMENTS && Cat.ACHIEVEMENTS.filter(function (a) { return a.id === id; })[0];
+    if (!def) return { ok: false, why: 'inexistente' };
+    if (S.achievements[id] && S.achievements[id].claimed) return { ok: false, why: 'reclamado' };
+    if (def.check(S) < def.target) return { ok: false, why: 'incompleto' };
+    S.achievements[id] = { claimed: true, at: Date.now() };
+    if (def.type === 'coins') addCoins(def.reward); else addCash(def.reward);
+    emit('achievement', { id: id, reward: def.reward, type: def.type });
+    return { ok: true, reward: def.reward, type: def.type };
+  }
+
+  function upgradeEra() {
+    var current = S.meta.era || 0;
+    var next = Cat.ERAS && Cat.ERAS[current + 1];
+    if (!next) return { ok: false, why: 'max' };
+    if (S.currencies.level < next.level) return { ok: false, why: 'nivel', need: next.level };
+    if (S.currencies.legacy < next.legacy) return { ok: false, why: 'legado', need: next.legacy };
+    if (S.currencies.cash < next.cash) return { ok: false, why: 'dinero', need: next.cash };
+    if (S.currencies.novaCoins < next.coins) return { ok: false, why: 'coins', need: next.coins };
+    if (!spendCash(next.cash) || !spendCoins(next.coins)) return { ok: false, why: 'recursos' };
+    S.meta.era = current + 1;
+    emit('era', { era: S.meta.era, id: next.id });
+    return { ok: true, era: S.meta.era, def: next };
+  }
+
+  function markLoreRead(id) {
+    var def = Cat.LORE && Cat.LORE.filter(function (l) { return l.id === id; })[0];
+    if (!def || !def.check(S)) return false;
+    S.lore.read[id] = Date.now();
+    return true;
+  }
+
+  function pinObjective(kind, id) {
+    if (kind !== 'quest' && kind !== 'lore') return false;
+    var list = kind === 'quest' ? Cat.QUESTS : Cat.LORE;
+    var found = list && list.some(function (o) { return o.id === id; });
+    if (!found) return false;
+    S.objectives.pinned = { kind: kind, id: id, at: Date.now() };
+    emit('objectivePinned', S.objectives.pinned);
+    return true;
+  }
+  function unpinObjective() { S.objectives.pinned = null; emit('objectivePinned', null); return true; }
 
   /* ---------------- compras ---------------- */
   function buyUpgrade(id) {
@@ -252,17 +301,23 @@
   }
 
   /* ---------------- publicaciones sociales ---------------- */
-  function makePost() {
+  function postCooldownRemaining() {
+    return Math.max(0, 20000 - (Sec.now() - (S.social.lastPostAt || 0)));
+  }
+  function makePost(eventMult) {
+    var wait = postCooldownRemaining();
+    if (wait > 0) return { ok: false, wait: wait, gained: 0 };
+    eventMult = Util.clamp(Sec.guardNum(eventMult || 1, 'postMult'), 1, 2.5);
     var base = 4 * (1 + 0.4 * upg('s-post'));
     var viral = 0.5 + Math.random() * 1.2;               // multiplicador de viralidad
-    var burst = Math.floor(base * viral * (1 + upg('s-vrf') * 0.12));
+    var burst = Math.max(1, Math.floor(base * viral * (1 + upg('s-vrf') * 0.12) * eventMult));
     addFollowers(burst);
     S.social.totalPosts++;
     S.social.lastPostAt = Sec.now();
     S.social.viralBest = Math.max(S.social.viralBest, viral);
     S.stats.posts++;
-    emit('post', { gained: burst, viral: viral });
-    return burst;
+    emit('post', { gained: burst, viral: viral, eventMult: eventMult });
+    return { ok: true, gained: burst, viral: viral, eventMult: eventMult };
   }
 
   /* ---------------- tick ---------------- */
@@ -351,7 +406,7 @@
     if (grant <= 0) return { ok: false, why: 'sin-legado' };
     var keep = {
       meta: S.meta, profile: S.profile, settings: S.settings,
-      stats: S.stats
+      stats: S.stats, achievements: S.achievements, lore: S.lore, objectives: S.objectives, ctf: S.ctf
     };
     S = fresh();
     // conservar identidad y progreso duro
@@ -360,6 +415,11 @@
     S.profile = keep.profile;
     S.settings = keep.settings;
     S.stats = keep.stats;
+    S.achievements = keep.achievements;
+    S.lore = keep.lore;
+    S.objectives = keep.objectives;
+    S.ctf = keep.ctf || { completed: {}, active: null, reputation: 0, ending: null, evidence: [] };
+    S.ctf.active = null;
     S.currencies.legacy = keep.meta.legacy + grant;
     S.meta.legacy = S.currencies.legacy;
     S.bank.price = 12;
@@ -383,10 +443,21 @@
     if (!isFinite(o.meta.nodesDrained) || o.meta.nodesDrained < 0) o.meta.nodesDrained = (o.stats && o.stats.hacks) || 0;
     if (!isFinite(o.meta.bossesDrained) || o.meta.bossesDrained < 0) o.meta.bossesDrained = 0;
     if (!o.events.nextMalwareAt) o.events.nextMalwareAt = 0;
+    if (!o.settings.language) o.settings.language = 'es';
     if (!o.browser) o.browser = { impressions: 0, auto: 0, clicks: 0 };
     if (!o.games) o.games = { pinball: 0, pinballCash: 0, pool: 0, poolWins: 0, minesweeper: { best: { b: 0, i: 0, e: 0 } } };
     if (!o.games.minesweeper) o.games.minesweeper = { best: { b: 0, i: 0, e: 0 } };
     if (!o.docs) o.docs = [];
+    if (!o.achievements || typeof o.achievements !== 'object') o.achievements = {};
+    if (!isFinite(o.meta.era) || o.meta.era < 0) o.meta.era = 0;
+    o.meta.era = Math.min((Cat.ERAS || []).length - 1, Math.floor(o.meta.era));
+    if (!o.lore || typeof o.lore !== 'object') o.lore = { read: {} };
+    if (!o.lore.read || typeof o.lore.read !== 'object') o.lore.read = {};
+    if (!o.objectives || typeof o.objectives !== 'object') o.objectives = { pinned: null };
+    if (!o.ctf || typeof o.ctf !== 'object') o.ctf = { completed: {}, active: null, reputation: 0, ending: null, evidence: [] };
+    if (!o.ctf.completed || typeof o.ctf.completed !== 'object') o.ctf.completed = {};
+    if (!Array.isArray(o.ctf.evidence)) o.ctf.evidence = [];
+    o.ctf.reputation = Math.max(0, Number(o.ctf.reputation) || 0);
     if (!o.social.profile) o.social.profile = { mood: '', about: '', music: '', movies: '', heroes: '', looking: '', style: '#123a6e' };
     if (!o.desktopIcons || typeof o.desktopIcons !== 'object') o.desktopIcons = {};
     if (!o.media || typeof o.media !== 'object') o.media = { skin: 'classic', volume: 0.8, currentTrack: 't1', repeat: false, shuffle: false };
@@ -396,8 +467,19 @@
       o.run.modIds = o.run.modIds || o.run.modifiers.map(function (m) { return m.id; });
       o.run.objective = o.run.objective || null;
       o.run.stats = o.run.stats || { drains: 0, crack: 0, bruteforce: 0, tools: {}, maxTrace: 0 };
+      o.run.stats.tools = o.run.stats.tools || {};
+      o.run.stats.drains = Number(o.run.stats.drains) || 0;
+      o.run.stats.crack = Number(o.run.stats.crack) || 0;
+      o.run.stats.bruteforce = Number(o.run.stats.bruteforce) || 0;
+      o.run.stats.maxTrace = Number(o.run.stats.maxTrace) || 0;
       o.run.combo = o.run.combo || 0;
       o.run.comboBest = o.run.comboBest || 0;
+      o.run.focus = Math.max(0, Math.min(5, Number(o.run.focus) || 0));
+      o.run.turn = Math.max(0, Number(o.run.turn) || 0);
+      o.run.payloadArmed = !!o.run.payloadArmed;
+      (o.run.nodes || []).forEach(function (node) {
+        node.iceTurn = Math.max(0, Number(node.iceTurn) || 0);
+      });
     }
     return o;
   }
@@ -503,10 +585,12 @@
     addCash: addCash, spendCash: spendCash, addCoins: addCoins, spendCoins: spendCoins,
     addXP: addXP, addEnergy: addEnergy, spendEnergy: spendEnergy,
     addFollowers: addFollowers, addDataMB: addDataMB, sellDataMB: sellDataMB,
-    buyUpgrade: buyUpgrade, buyImplant: buyImplant, buyTool: buyTool, useTool: useTool,
+    buyUpgrade: buyUpgrade, buyImplant: buyImplant, buyTool: buyTool, useTool: useTool, claimAchievement: claimAchievement,
+    upgradeEra: upgradeEra, markLoreRead: markLoreRead,
+    pinObjective: pinObjective, unpinObjective: unpinObjective,
     loanTake: loanTake, loanRepay: loanRepay,
     deposit: deposit, withdraw: withdraw,
-    buyCoins: buyCoins, sellCoins: sellCoins, makePost: makePost, format: format,
+    buyCoins: buyCoins, sellCoins: sellCoins, makePost: makePost, postCooldownRemaining: postCooldownRemaining, format: format,
     bankRate: bankRate, socialAdRate: socialAdRate, followerGrowthRate: followerGrowthRate,
     botCoinRate: botCoinRate, energyRegen: energyRegen, maxEnergy: maxEnergy,
     dataPrice: dataPrice, dataMaxMB: dataMaxMB, botCount: botCount,

@@ -17,6 +17,7 @@
 
     // Iconos estáticos del HTML: <img data-icon="..."> -> PNG incrustado
     Util.applyDataIcons(document);
+    if (NS.I18n) NS.I18n.init();
 
     // Compatibilidad de iconos: en motores antiguos <use> necesita xlink:href.
     // (Los iconos ya se incrustan literalmente, esto es una red de seguridad.)
@@ -88,12 +89,18 @@
     var res = NS.State.loadGame();
     var S = NS.State.get();
     S.meta.bootCount++;
+    if (NS.I18n) {
+      var storedLang = NS.I18n.get();
+      if (!S.settings.language || (S.meta.bootCount <= 1 && storedLang === 'en')) S.settings.language = storedLang;
+      NS.I18n.set(S.settings.language, false);
+    }
 
     // Aplicar ajustes del perfil
     NS.Desktop.refresh();
     NS.Audio.setEnabled(S.settings.sound);
     NS.Taskbar.buildStartMenu();
     NS.Taskbar.refreshTray();
+    NS.Taskbar.updateLanguage();
 
     // Reloj de la bandeja + dinero en vivo
     NS.Taskbar.tickClock();
@@ -116,10 +123,14 @@
       NS.UI.dialog({
         title: 'Bienvenido a NovaVista 2004',
         icon: 'ic-hacker',
-        message: 'Este sistema operativo simulado esconde un <b>juego incremental con rasgos roguelite</b>.<br><br>' +
-          'Gana dinero con el banco y MyNova, roba datos en los asaltos de red, mina NovaCoins y acumula <b>legado</b> formateando el sistema.<br><br>' +
-          'Abre el <b>Manual de NovaVista</b> del escritorio para empezar con buen pie. ¡Bienvenido, ' + Util.esc(S.profile.name) + '!',
-        buttons: [{ label: '¡A jugar!', value: true, primary: true }]
+        message: '<div class="welcome-card"><div class="welcome-kicker">CUENTA ACTIVADA</div>' +
+          '<div class="welcome-name">Hola, ' + Util.esc(S.profile.name) + '.</div>' +
+          '<p>NovaNet está despertando. Otros operadores ya están acumulando seguidores, NovaCoins y acceso a servidores privados.</p>' +
+          '<div class="welcome-goals"><span>① Hazte visible en <b>MyNova</b></span><span>② Entra al <b>Mapa de Red</b></span><span>③ Supera al siguiente rival del <b>Ranking</b></span></div>' +
+          '<p class="welcome-hint">Tu primera oportunidad ya está activa. El Manual queda en el escritorio por si lo necesitas.</p></div>',
+        buttons: [{ label: 'Entrar en NovaNet', value: true, primary: true }]
+      }).then(function () {
+        if (!S.meta.tutorialDone && !S.meta.tutorialDismissed && NS.Tutorial) NS.Tutorial.start(0);
       });
     }
 
@@ -179,6 +190,7 @@
         NS.Taskbar.refreshTray();
         NS.State.verify();
         if (NS.Mail && NS.Mail.refreshBadge) NS.Mail.refreshBadge();
+        if (NS.Desktop && NS.Desktop.refreshGuide) NS.Desktop.refreshGuide();
       }
     } catch (e) {
       // El juego nunca debe romperse por un error de UI

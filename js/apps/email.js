@@ -34,6 +34,16 @@
     return Math.min(v, q.target);
   }
 
+  function questApp(id) {
+    if (/bank|coins|bots/.test(id)) return 'bank';
+    if (/500|5k/.test(id)) return 'social';
+    if (/data/.test(id)) return 'files';
+    if (/malware/.test(id)) return 'av';
+    if (/pinball/.test(id)) return 'pinball';
+    if (/pool/.test(id)) return 'pool';
+    return 'net';
+  }
+
   function render(body) {
     var S = NS.State.get();
     body.innerHTML = '';
@@ -61,6 +71,14 @@
       info.appendChild(bar);
       info.appendChild(Util.el('div', { class: 'cfg-sub', text: Util.fmtInt(prog) + ' / ' + Util.fmtInt(q.target) + ' — Recompensa: ' + q.reward + ' NovaCoins' }));
       r.appendChild(info);
+      var pinned = S.objectives && S.objectives.pinned && S.objectives.pinned.kind === 'quest' && S.objectives.pinned.id === q.id;
+      var pin = Util.el('button', { class: 'xp-btn small pin-btn' + (pinned ? ' on' : ''), text: pinned ? '📌 Anclada' : '📌 Anclar', title: 'Mostrar esta misión en el escritorio' });
+      pin.addEventListener('click', function () {
+        if (pinned) NS.State.unpinObjective(); else NS.State.pinObjective('quest', q.id);
+        if (NS.Desktop.refreshGuide) NS.Desktop.refreshGuide();
+        NS.State.saveNow(); NS.WM.rerender('email');
+      });
+      r.appendChild(pin);
       if (done && !claimed) {
         var btn = Util.el('button', { class: 'xp-btn small primary', text: 'Reclamar' });
         btn.addEventListener('click', function () {
@@ -103,4 +121,6 @@
     render: render
   });
   NS.Mail = { notify: notify, refreshBadge: refreshBadge, claimableCount: claimableCount };
+  NS.Mail.questProgress = questProgress;
+  NS.Mail.questApp = questApp;
 })();

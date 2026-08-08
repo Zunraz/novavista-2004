@@ -216,7 +216,7 @@
     var aL = FL_REST + (FL_UP - FL_REST) * (flipperL ? 1 : 0);
     var aR = Math.PI - (FL_REST + (FL_UP - FL_REST) * (flipperR ? 1 : 0));
     flipperCollide(ball, FL_PIV_L, aL, FL_LEN, 1, flipperL);
-    flipperCollide(ball, FL_PIV_R, aR, FL_LEN, 1, flipperR);
+    flipperCollide(ball, FL_PIV_R, aR, FL_LEN, -1, flipperR);
 
     // límite de velocidad: evita túneles a altísima velocidad
     var sp = Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy);
@@ -268,7 +268,7 @@
     ctx.strokeStyle = '#7fc4ff'; ctx.stroke();
     ctx.fillStyle = '#7fc4ff';
     ctx.font = 'bold 11px Tahoma'; ctx.textAlign = 'center';
-    ctx.fillText('TÚNEL', TUNNEL.in.x, TUNNEL.in.y + 4);
+    ctx.fillText(NS.I18n && NS.I18n.get() === 'en' ? 'TUNNEL' : 'TÚNEL', TUNNEL.in.x, TUNNEL.in.y + 4);
     ctx.fillStyle = '#0e2a4a';
     ctx.beginPath(); ctx.arc(TUNNEL.out.x, TUNNEL.out.y, TUNNEL.out.r, 0, Math.PI * 2); ctx.fill();
     ctx.strokeStyle = '#7fc4ff'; ctx.stroke();
@@ -354,9 +354,9 @@
     ctx.fillStyle = '#9ec5f5';
     ctx.font = 'bold 16px Tahoma';
     ctx.textAlign = 'left';
-    ctx.fillText('PUNTOS: ' + Math.floor(score), 16, 28);
+    ctx.fillText((NS.I18n && NS.I18n.get() === 'en' ? 'SCORE: ' : 'PUNTOS: ') + Math.floor(score), 16, 28);
     ctx.textAlign = 'right';
-    ctx.fillText('BOLAS: ' + ballsLeft, W - 16, 28);
+    ctx.fillText((NS.I18n && NS.I18n.get() === 'en' ? 'BALLS: ' : 'BOLAS: ') + ballsLeft, W - 16, 28);
     if (charging && waiting) {
       ctx.fillStyle = '#ffe08a';
       ctx.fillRect(W / 2 - 50, H - 26, launcher, 8);
@@ -365,12 +365,12 @@
       ctx.fillStyle = '#fff';
       ctx.textAlign = 'center';
       ctx.font = '11px Tahoma';
-      ctx.fillText('¡SUELTA ESPACIO!', W / 2, H - 34);
+      ctx.fillText(NS.I18n && NS.I18n.get() === 'en' ? 'RELEASE SPACE!' : '¡SUELTA ESPACIO!', W / 2, H - 34);
     } else if (waiting) {
       ctx.fillStyle = '#9ec5f5';
       ctx.textAlign = 'center';
       ctx.font = '11px Tahoma';
-      ctx.fillText('MANTÉN ESPACIO PARA LANZAR', W / 2, H - 34);
+      ctx.fillText(NS.I18n && NS.I18n.get() === 'en' ? 'HOLD SPACE TO LAUNCH' : 'MANTÉN ESPACIO PARA LANZAR', W / 2, H - 34);
     }
   }
 
@@ -513,4 +513,7 @@
       if (Math.floor(score) > S.games.pinball) S.games.pinball = Math.floor(score);
     }
   });
+  NS.Pinball = { _test: { newGame: newGame, step: step, charge: chargeLaunch, release: releaseLaunch, getState: function () {
+    return { score: score, ballsLeft: ballsLeft, waiting: waiting, gameOver: gameOver, ball: ball };
+  } } };
 })();

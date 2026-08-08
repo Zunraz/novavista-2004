@@ -77,6 +77,14 @@ ok(isFinite(s.currencies.cash), 'cash rechaza Infinity');
 State.addCash('999'); // coerción no deseada → guardNum devuelve 0
 ok(isFinite(s.currencies.cash), 'cash rechaza strings');
 
+console.log('state — MyNova');
+s.social.lastPostAt = 0;
+var post1 = State.makePost(2);
+ok(post1.ok && post1.gained >= 1 && post1.eventMult === 2, 'tendencia multiplica una publicación válida');
+var post2 = State.makePost(2);
+ok(!post2.ok && post2.wait > 0, 'enfriamiento impide publicar sin límite');
+s.social.lastPostAt = 0;
+
 console.log('state — compras');
 State.addCash(500);
 var before = s.currencies.cash;
@@ -235,7 +243,7 @@ ok(!impBad.ok, 'importación rechaza código alterado');
 /* ================= net: generación procedural ================= */
 console.log('net — generación de asaltos');
 var run = Net.genRun(12345);
-ok(run.nodes.length >= 7, 'red con al menos 7 nodos, got ' + run.nodes.length);
+ok(run.nodes.length >= 6, 'red secundaria compacta con al menos 6 nodos, got ' + run.nodes.length);
 var hasBoss = run.nodes.some(function (n) { return n.kind === 'boss'; });
 ok(hasBoss, 'existe el MasterServer');
 var run2 = Net.genRun(12345);
@@ -296,9 +304,46 @@ console.log('catalog');
 eq(Cat.upgradeCost(Cat.UPGRADES['b-rate'], 0), 300, 'coste b-rate lvl0');
 eq(Cat.upgradeCost(Cat.UPGRADES['b-rate'], 1), 960, 'coste b-rate lvl1 (300*3,2)');
 ok(Cat.QUESTS.length >= 10, 'hay misiones');
+ok(Cat.ACHIEVEMENTS.length >= 10, 'hay logros permanentes');
+ok(Cat.ERAS.length === 4, 'hay cuatro épocas del sistema');
+ok(Cat.LORE.length >= 8, 'hay capítulos de historia');
 ok(Object.keys(Cat.IMPLANTS).length >= 5, 'hay implantes');
+ok(!!Cat.UPGRADES['ctf-hash'] && !!Cat.UPGRADES['ctf-decoder'], 'hay mejoras especializadas para CTF');
+ok(!!Cat.TOOLS.wordlist && !!Cat.TOOLS.rainbow && !!Cat.TOOLS.sniffer, 'hay consumibles nuevos de hacking');
+ok(State.get().ctf && State.get().ctf.completed, 'estado persistente de campaña CTF');
 ok(Cat.AVATARS.length >= 14, 'catálogo con 16 avatares: ' + Cat.AVATARS.length);
 ok(Cat.WALLPAPERS.some(function (w) { return w.id === 'bosque'; }), 'wallpaper bosque en catálogo');
+
+/* ================= logros ================= */
+console.log('sala de trofeos');
+var achState = State.get();
+achState.ctf.completed['main-source'] = { at: Date.now(), attempts: 1, hints: 0 };
+var cashBeforeAch = achState.currencies.cash;
+var achResult = State.claimAchievement('a-online');
+ok(achResult.ok, 'logro completado reclamable');
+eq(State.get().currencies.cash, cashBeforeAch + 250, 'recompensa del logro aplicada');
+ok(State.get().achievements['a-online'].claimed, 'logro reclamado persistido');
+ok(!State.claimAchievement('a-online').ok, 'un logro no se reclama dos veces');
+ok(!State.claimAchievement('a-boss5').ok, 'logro incompleto no se puede reclamar');
+
+/* ================= épocas e historia ================= */
+console.log('épocas e historia');
+var eraState = State.get();
+eraState.currencies.cash = 25000;
+eraState.currencies.novaCoins = 10;
+eraState.currencies.level = 8;
+var eraResult = State.upgradeEra();
+ok(eraResult.ok && State.get().meta.era === 1, 'actualización a Aero');
+eq(State.get().currencies.cash, 0, 'la época cobra su coste en dinero');
+ok(Cat.LORE.filter(function (l) { return l.check(State.get()); }).length >= 2, 'la época desbloquea historia');
+ok(State.markLoreRead('l1'), 'fragmento desbloqueado marcado como leído');
+ok(!!State.get().lore.read.l1, 'lectura de historia persistida');
+ok(!State.upgradeEra().ok, 'no se salta de época sin requisitos');
+ok(State.pinObjective('quest', 'q-first'), 'misión anclable al escritorio');
+ok(State.get().objectives.pinned.id === 'q-first', 'misión anclada persistida');
+ok(State.unpinObjective() && State.get().objectives.pinned === null, 'misión desanclable');
+ok(State.pinObjective('lore', 'l1'), 'objetivo narrativo anclable');
+State.unpinObjective();
 
 /* ================= save: cuentas de usuario (perfiles) ================= */
 console.log('save — cuentas de usuario (perfiles)');

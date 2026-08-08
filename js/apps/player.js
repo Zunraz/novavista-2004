@@ -37,20 +37,21 @@
       var kind = d % 8 === 0 ? 'kick' : (d % 4 === 2 ? 'snare' : (rng() < 0.12 ? 'hat' : null));
       if (kind) drums.push({ step: d, kind: kind });
     }
-    return { id: id, name: cfg.name, artist: cfg.artist, bpm: cfg.bpm, notes: notes, bass: bass, drums: drums };
+    return { id: id, name: cfg.name, artist: cfg.artist, bpm: cfg.bpm, era: cfg.era || 0, notes: notes, bass: bass, drums: drums };
   }
   function buildLibrary() {
     var lib = [
-      genTrack('t1', 101, { name: 'Chips al amanecer', artist: '8-Bit Bros', bpm: 132, root: 48, scale: 'major' }),
-      genTrack('t2', 202, { name: 'Hielo binario', artist: '8-Bit Bros', bpm: 112, root: 45, scale: 'minor' }),
-      genTrack('t3', 303, { name: 'Descarga final', artist: 'Sebas el DJ', bpm: 142, root: 50, scale: 'dorian' }),
-      genTrack('t4', 404, { name: 'Subsuelo', artist: 'Sebas el DJ', bpm: 128, root: 43, scale: 'phrygian' }),
-      genTrack('t5', 505, { name: 'Neón 84', artist: 'Neón 84', bpm: 100, root: 52, scale: 'major' }),
-      genTrack('t6', 606, { name: 'Autopista nocturna', artist: 'Neón 84', bpm: 96, root: 47, scale: 'minor' }),
-      genTrack('t7', 707, { name: 'Martillo y plomo', artist: 'Los Rompecráneos', bpm: 160, root: 45, scale: 'phrygian' }),
-      genTrack('t8', 808, { name: 'Salvaje 2004', artist: 'Los Rompecráneos', bpm: 150, root: 50, scale: 'dorian' })
+      genTrack('t1', 101, { name: 'Chips al amanecer', artist: '8-Bit Bros', bpm: 132, root: 48, scale: 'major', era: 0 }),
+      genTrack('t2', 202, { name: 'Hielo binario', artist: '8-Bit Bros', bpm: 112, root: 45, scale: 'minor', era: 0 }),
+      genTrack('t3', 303, { name: 'Descarga final', artist: 'Sebas el DJ', bpm: 142, root: 50, scale: 'dorian', era: 1 }),
+      genTrack('t4', 404, { name: 'Subsuelo', artist: 'Sebas el DJ', bpm: 128, root: 43, scale: 'phrygian', era: 1 }),
+      genTrack('t5', 505, { name: 'Neón 84', artist: 'Neón 84', bpm: 100, root: 52, scale: 'major', era: 2 }),
+      genTrack('t6', 606, { name: 'Autopista nocturna', artist: 'Neón 84', bpm: 96, root: 47, scale: 'minor', era: 2 }),
+      genTrack('t7', 707, { name: 'Memoria sintética', artist: 'N0VA_SYS', bpm: 118, root: 45, scale: 'phrygian', era: 3 }),
+      genTrack('t8', 808, { name: 'Último arranque', artist: 'El Arquitecto', bpm: 150, root: 50, scale: 'dorian', era: 3 })
     ];
-    return lib;
+    var era = NS.State && NS.State.get() ? (NS.State.get().meta.era || 0) : 0;
+    return lib.filter(function (t) { return t.era <= era; });
   }
 
   /* ---------------- motor de sonido ---------------- */
@@ -226,14 +227,19 @@
     var S = NS.State.get();
     if (!S.media) S.media = { skin: 'classic', volume: 0.8, currentTrack: 't1', repeat: false, shuffle: false };
     var m = S.media;
+    var eraIndex = S.meta.era || 0;
+    var eraDef = NS.Catalog.ERAS[eraIndex];
+    var eraSkins = ['classic', 'chrome', 'neon', 'candy'];
+    if (m.eraSkinApplied !== eraIndex) { m.skin = eraSkins[eraIndex]; m.eraSkinApplied = eraIndex; }
     body.innerHTML = '';
-    body.className = 'app-pad mp-body skin-' + m.skin;
+    body.className = 'app-pad mp-body skin-' + m.skin + ' mp-era-' + eraDef.id;
 
     var lib = buildLibrary();
     var cur = lib.filter(function (t) { return t.id === m.currentTrack; })[0] || lib[0];
     volGain = m.volume;
 
     var main = Util.el('div', { class: 'mp-main' });
+    main.appendChild(Util.el('div', { class: 'mp-era-label', text: eraDef.year + ' · ' + eraDef.name.toUpperCase() + ' · BIBLIOTECA ' + lib.length + '/8' }));
 
     // pantalla
     var disp = Util.el('div', { class: 'mp-display' });

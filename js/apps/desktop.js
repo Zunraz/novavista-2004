@@ -28,7 +28,8 @@
 
   function applyTheme() {
     var s = NS.State.get();
-    document.body.className = 'theme-' + (s.settings.theme || 'luna');
+    var era = (NS.Catalog.ERAS[s.meta.era || 0] || NS.Catalog.ERAS[0]).id;
+    document.body.className = 'theme-' + (s.settings.theme || 'luna') + ' era-' + era;
   }
 
   function buildIcons() {
@@ -87,6 +88,58 @@
       Util.UI.alert('Papelera de reciclaje', 'La papelera está vacía. (Casi todo lo borrado se vende o se pierde en este sistema).', 'ic-trash');
     });
     layer.appendChild(trash);
+
+    var guide = Util.el('div', { class: 'mission-guide', id: 'mission-guide', role: 'button', tabindex: '0' });
+    guide.addEventListener('click', function (e) {
+      if (e.target.closest('.mission-unpin')) { NS.State.unpinObjective(); refreshGuide(); NS.State.saveNow(); e.stopPropagation(); return; }
+      var target = guide.dataset.target || 'net';
+      NS.WM.open(target); NS.Audio.click();
+    });
+    layer.appendChild(guide);
+    refreshGuide();
+  }
+
+  function guideStep(S) {
+    var pinned = S.objectives && S.objectives.pinned;
+    if (pinned) {
+      if (pinned.kind === 'quest') {
+        var q = NS.Catalog.QUESTS.filter(function (x) { return x.id === pinned.id; })[0];
+        if (q) {
+          var qv = Math.min(q.target, Number(q.check(S)) || 0);
+          var qapp = /bank|coins|bots/.test(q.id) ? 'bank' : /500|5k/.test(q.id) ? 'social' : /data/.test(q.id) ? 'files' : /malware/.test(q.id) ? 'av' : /pinball/.test(q.id) ? 'pinball' : /pool/.test(q.id) ? 'pool' : 'net';
+          return { n: '📌 MISIÓN ANCLADA', title: q.title, body: q.desc, target: qapp, pinned: true, progress: qv, total: q.target };
+        }
+      } else if (pinned.kind === 'lore') {
+        var l = NS.Catalog.LORE.filter(function (x) { return x.id === pinned.id; })[0];
+        var lm = NS.Catalog.LORE_OBJECTIVES[pinned.id];
+        if (l && lm) return { n: '📌 HISTORIA ANCLADA', title: 'Capítulo ' + l.chapter + ': ' + l.title, body: lm.instruction, target: lm.app, pinned: true, progress: Math.min(lm.target, Number(lm.progress(S)) || 0), total: lm.target };
+      }
+    }
+    if (S.run) return { n: 'ASALTO ACTIVO', title: 'Elige un nodo iluminado', body: 'Escanea, decide cómo romper su defensa y cobra antes de llegar a 100 de rastro.', en: ['ACTIVE RAID','Choose a glowing node','Scan it, choose how to break its defense, and cash out before trace reaches 100.'], target: 'net' };
+    if (NS.CTF) {
+      var mainJobs = NS.CTF.jobs.filter(function (j) { return j.type === 'main'; }).sort(function (a, b) { return a.order - b.order; });
+      var nextJob = mainJobs.filter(function (j) { return !NS.CTF.isCompleted(j); })[0];
+      var progress = NS.CTF.mainProgress();
+      if (nextJob) {
+        if ((S.meta.era || 0) < nextJob.era) {
+          var requiredEra = NS.Catalog.ERAS[nextJob.era];
+          return { n: 'CAMPAÑA CTF · ' + progress + '/' + mainJobs.length, title: 'Instala ' + requiredEra.name, body: 'El siguiente caso ocurre en ' + requiredEra.year + '. Revisa sus requisitos en Panel de control → Sistema.', en: ['CTF CAMPAIGN · ' + progress + '/' + mainJobs.length, 'Install ' + requiredEra.name, 'The next case takes place in ' + requiredEra.year + '. Check its requirements in Control Panel → System.'], target: 'settings', progress: progress, total: mainJobs.length };
+        }
+        return { n: 'SIGUIENTE CTF · ' + (progress + 1) + '/' + mainJobs.length, title: nextJob.title, body: 'Abre NovaOps, lee el encargo y resuelve su siguiente prueba. Puedes pedir una pista sin perder el progreso.', en: ['NEXT CTF · ' + (progress + 1) + '/' + mainJobs.length, nextJob.title, 'Open NovaOps, read the brief, and solve its next challenge. You can request a hint without losing progress.'], target: 'net', progress: progress, total: mainJobs.length };
+      }
+      return { n: 'ENDGAME CTF', title: 'Explora el Archivo ∞', body: 'La historia principal ha terminado. Resuelve el contrato diario y los nuevos CTF que añadamos.', en: ['CTF ENDGAME','Explore the Infinite Archive','The main story is complete. Solve the daily contract and future CTF drops.'], target: 'net', progress: mainJobs.length, total: mainJobs.length };
+    }
+    return { n: 'OBJETIVO 1', title: 'Abre NovaOps', body: 'Acepta un contrato y sigue su objetivo paso a paso.', en: ['OBJECTIVE 1','Open NovaOps','Accept a contract and follow its objective step by step.'], target: 'net' };
+  }
+
+  function refreshGuide() {
+    var el = Util.$('#mission-guide');
+    if (!el) return;
+    var g = guideStep(NS.State.get());
+    if (NS.I18n && NS.I18n.get() === 'en' && g.en) { g.n = g.en[0]; g.title = g.en[1]; g.body = g.en[2]; }
+    el.dataset.target = g.target;
+    var progress = g.total ? '<div class="mission-progress"><u style="width:' + Math.round(g.progress / g.total * 100) + '%"></u><strong>' + Util.fmtInt(g.progress) + ' / ' + Util.fmtInt(g.total) + '</strong></div>' : '';
+    el.innerHTML = (g.pinned ? '<em class="mission-unpin" title="Desanclar">×</em>' : '') + '<span>' + Util.esc(g.n) + '</span><b>' + Util.esc(g.title) + '</b><small>' + Util.esc(g.body) + '</small>' + progress + '<i>Abrir →</i>';
   }
 
   /* ---------- arrastrar iconos libremente ---------- */
@@ -185,7 +238,7 @@
 
   NS.Desktop = {
     buildIcons: buildIcons, select: select, clearSelection: clearSelection,
-    refresh: refresh, onContext: onDesktopContext, setMailBadge: setMailBadge,
+    refresh: refresh, refreshGuide: refreshGuide, guideStep: guideStep, onContext: onDesktopContext, setMailBadge: setMailBadge,
     arrangeIcons: arrangeIcons
   };
 })();

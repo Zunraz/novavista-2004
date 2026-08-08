@@ -106,6 +106,19 @@
 
     /* -------- Sonido -------- */
     makeTab('sonido', 'Sonido', function () {
+      var lc = section('Idioma');
+      var language = Util.el('select', { class: 'xp-input', id: 'language-select' });
+      language.appendChild(Util.el('option', { value: 'es', text: 'Español' }));
+      language.appendChild(Util.el('option', { value: 'en', text: 'English' }));
+      language.value = S.settings.language || 'es';
+      language.addEventListener('change', function () {
+        S.settings.language = language.value === 'en' ? 'en' : 'es';
+        if (NS.I18n) NS.I18n.set(S.settings.language);
+        NS.State.saveNow();
+      });
+      lc.appendChild(row('Idioma del sistema', language));
+      content.appendChild(lc);
+
       var sc = section('Efectos de sonido');
       var toggle = Util.el('button', {
         class: 'xp-btn', text: S.settings.sound ? 'Sonido: ACTIVADO' : 'Sonido: DESACTIVADO'
@@ -192,6 +205,38 @@
 
     /* -------- Sistema -------- */
     makeTab('sistema', 'Sistema', function () {
+      var eraIndex = S.meta.era || 0;
+      var eras = NS.Catalog.ERAS;
+      var currentEra = eras[eraIndex];
+      var nextEra = eras[eraIndex + 1];
+      var eraSec = section('Evolución del sistema');
+      var timeline = Util.el('div', { class: 'era-timeline' });
+      eras.forEach(function (e, i) {
+        var step = Util.el('div', { class: 'era-step' + (i < eraIndex ? ' done' : '') + (i === eraIndex ? ' current' : '') });
+        step.appendChild(Util.el('b', { text: String(e.year) }));
+        step.appendChild(Util.el('span', { text: e.name.replace('NovaVista ', '') }));
+        timeline.appendChild(step);
+      });
+      eraSec.appendChild(timeline);
+      eraSec.appendChild(Util.el('div', { class: 'era-current', html: '<b>' + Util.esc(currentEra.name) + '</b><br>' + Util.esc(currentEra.desc) }));
+      if (nextEra) {
+        eraSec.appendChild(Util.el('div', { class: 'cfg-info', html: '<b>Siguiente actualización: ' + Util.esc(nextEra.name) + '</b><br>Requisitos: nivel ' + nextEra.level + ' · legado ' + nextEra.legacy + ' · ' + Util.fmtMoney(nextEra.cash) + ' · ' + nextEra.coins + ' NovaCoins.<br><span class="cfg-sub">La época y la historia sobreviven al formateo.</span>' }));
+        var eraBtn = Util.el('button', { class: 'xp-btn primary era-upgrade-btn', text: 'Instalar ' + nextEra.name });
+        eraBtn.disabled = S.currencies.level < nextEra.level || S.currencies.legacy < nextEra.legacy || S.currencies.cash < nextEra.cash || S.currencies.novaCoins < nextEra.coins;
+        eraBtn.addEventListener('click', function () {
+          NS.UI.confirm('Actualización de época', 'La instalación cuesta <b>' + Util.fmtMoney(nextEra.cash) + '</b> y <b>' + nextEra.coins + ' NovaCoins</b>. También abrirá otro capítulo de RED-NOVA.').then(function (ok) {
+            if (!ok) return;
+            var result = NS.State.upgradeEra();
+            if (!result.ok) { NS.UI.alert('Actualización', 'Todavía no cumples todos los requisitos.', 'ic-warning'); return; }
+            NS.Desktop.refresh(); NS.Taskbar.buildStartMenu(); NS.State.saveNow(); NS.Audio.startup();
+            NS.UI.toast('Nueva época instalada', result.def.name + ' ya está en funcionamiento. Revisa NovaMessenger.', 'important', 'ic-logo');
+            NS.WM.rerender('settings');
+          });
+        });
+        eraSec.appendChild(eraBtn);
+      } else eraSec.appendChild(Util.el('div', { class: 'cfg-info', text: 'Has alcanzado la última época disponible. RED-NOVA todavía tiene secretos que revelar.' }));
+      content.appendChild(eraSec);
+
       var sc = section('Guardado');
       var exp = Util.el('button', { class: 'xp-btn', text: 'Exportar código de guardado' });
       exp.addEventListener('click', function () {
@@ -255,10 +300,11 @@
       sf.appendChild(row('Formatear sistema', fmt));
       content.appendChild(sf);
 
-      var ab = section('Acerca de NovaVista 2004');
+      var ab = section('Acerca de NovaVista');
       ab.appendChild(Util.el('div', { class: 'cfg-info', html:
-        'NovaVista 2004 Edition — un sistema operativo de ficción con juego incremental y rasgos roguelite.<br>' +
-        '© 2004 NovaCorp Systems. Todo lo que ves es simulado. Ninguna conexión real se realiza.<br>' +
+        'NovaVista — un sistema operativo de ficción con juego incremental y rasgos roguelite.<br>' +
+        '© 2004–2026 NovaCorp Systems (ficción). Obra original inspirada en la evolución general de los sistemas de escritorio; no afiliada, respaldada ni distribuida por Microsoft u otros fabricantes.<br>' +
+        'Las marcas citadas en la documentación pertenecen a sus titulares. Los nombres, iconos, sonidos e interfaces del juego son originales. Ninguna conexión real se realiza.<br>' +
         'Núcleo v2 · Integridad de guardado: <b>firma verificada</b>.'
       }));
       content.appendChild(ab);

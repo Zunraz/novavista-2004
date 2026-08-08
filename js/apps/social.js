@@ -16,6 +16,29 @@
     'El rastreo de red me pone nervioso...',
     'Descubrí un nodo secreto en la red. No cuentes a nadie.'
   ];
+  var TRENDS = [
+    { tag: '#NovaVista', title: 'NovaVista cumple años', mult: 1.6 },
+    { tag: '#MasterServer', title: 'Filtración del MasterServer', mult: 1.8 },
+    { tag: '#FotoPerfil', title: 'Cadena de fotos de perfil', mult: 1.5 },
+    { tag: '#NovaCoin', title: 'NovaCoin está en boca de todos', mult: 1.7 },
+    { tag: '#NocheHacker', title: 'Noche Hacker en NovaNet', mult: 2.0 }
+  ];
+
+  function trendState(S) {
+    var now = Date.now();
+    var ev = S.events.socialTrend;
+    if (ev && ev.expiresAt <= now) { S.events.socialTrend = null; ev = null; }
+    if (!ev && (!S.events.nextTrendAt || now >= S.events.nextTrendAt)) {
+      var t = TRENDS[Math.floor(Math.random() * TRENDS.length)];
+      ev = S.events.socialTrend = { tag: t.tag, title: t.title, mult: t.mult, expiresAt: now + 90000 };
+      S.events.nextTrendAt = ev.expiresAt + 120000 + Math.floor(Math.random() * 90000);
+    }
+    return ev;
+  }
+  function countdown(ms) {
+    var sec = Math.max(0, Math.ceil(ms / 1000));
+    return Math.floor(sec / 60) + ':' + Util.pad2(sec % 60);
+  }
 
   function upgBtn(id, label) {
     var S = NS.State.get();
@@ -38,6 +61,7 @@
 
   function render(body) {
     var S = NS.State.get();
+    var trend = trendState(S);
     body.innerHTML = '';
     body.className = 'app-pad';
     var col = Util.el('div', { class: 'files-cols' });
@@ -79,18 +103,27 @@
     var right = Util.el('div', { class: 'files-col' });
     var pub = Util.el('div', { class: 'panel' });
     pub.appendChild(Util.el('div', { class: 'panel-title', text: 'Escribe una publicación' }));
+    if (trend) {
+      pub.appendChild(Util.el('div', { class: 'social-trend', id: 'social-trend', html:
+        '<b>🔥 TENDENCIA AHORA: ' + Util.esc(trend.tag) + '</b><span>' + Util.esc(trend.title) + ' · ×' + trend.mult.toFixed(1).replace('.', ',') + ' alcance · termina en <b id="trend-time">' + countdown(trend.expiresAt - Date.now()) + '</b></span>'
+      }));
+    }
     var ta = Util.el('textarea', { class: 'xp-input post-box', maxlength: '200', placeholder: '¿Qué estás haciendo, ' + S.profile.name + '?' });
     pub.appendChild(ta);
-    var btn = Util.el('button', { class: 'xp-btn primary', text: 'Publicar ahora' });
+    var remain = NS.State.postCooldownRemaining();
+    var btn = Util.el('button', { class: 'xp-btn primary', id: 'social-publish', text: remain > 0 ? 'Espera ' + Math.ceil(remain / 1000) + ' s' : (trend ? 'Publicar con ' + trend.tag : 'Publicar ahora') });
+    btn.disabled = remain > 0;
     btn.addEventListener('click', function () {
       var txt = ta.value.trim() || SLOGANS[Math.floor(Math.random() * SLOGANS.length)];
-      var gained = NS.State.makePost();
-      NS.Mail.notify('Publicación en MyNova', '«' + Util.esc(txt.slice(0, 60)) + '…» ganó <b>' + Util.fmtInt(gained) + ' seguidores</b>.', 'ic-social');
+      var activeTrend = trendState(S);
+      var result = NS.State.makePost(activeTrend ? activeTrend.mult : 1);
+      if (!result.ok) { NS.WM.rerender('social'); return; }
+      NS.Mail.notify('Publicación en MyNova', '«' + Util.esc(txt.slice(0, 60)) + '…» llegó a <b>' + Util.fmtInt(result.gained) + ' personas</b>' + (activeTrend ? ' gracias a ' + Util.esc(activeTrend.tag) : '') + '.', 'ic-social');
       NS.Audio.cash();
       NS.WM.rerender('social');
     });
     pub.appendChild(btn);
-    pub.appendChild(Util.el('div', { class: 'cfg-sub', text: 'Cada publicación da un golpe de seguidores con viralidad aleatoria (0,5× a 1,7×). El crecimiento pasivo viene de la chapa verificada.' }));
+    pub.appendChild(Util.el('div', { class: 'cfg-sub', text: 'Las tendencias duran poco. Publica en el momento adecuado para ampliar tu alcance.' }));
     right.appendChild(pub);
 
     var feed = Util.el('div', { class: 'panel' });
@@ -129,6 +162,15 @@
         'Ingresos por publicidad: <b>' + Util.fmtMoney(S.social.followers * NS.State.socialAdRate()) + '/s</b><br>' +
         'Crecimiento orgánico: <b>' + Util.fmtNum(S.social.followers * NS.State.followerGrowthRate()) + ' seg/s</b><br>' +
         'Publicaciones: <b>' + S.social.totalPosts + '</b> · Mejor viralidad: <b>' + (S.social.viralBest || 0).toFixed(2).replace('.', ',') + '×</b>';
+      var trend = trendState(S);
+      var time = Util.$('#trend-time');
+      if (time && trend) time.textContent = countdown(trend.expiresAt - Date.now());
+      var publish = Util.$('#social-publish');
+      if (publish) {
+        var rem = NS.State.postCooldownRemaining();
+        publish.disabled = rem > 0;
+        publish.textContent = rem > 0 ? 'Espera ' + Math.ceil(rem / 1000) + ' s' : (trend ? 'Publicar con ' + trend.tag : 'Publicar ahora');
+      }
     }
   });
 })();

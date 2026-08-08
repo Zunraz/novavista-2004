@@ -5,6 +5,8 @@
 'use strict';
 const { spawn } = require('child_process');
 const path = require('path');
+const fs = require('fs');
+const os = require('os');
 
 const PORT = 3910;
 let passed = 0, failed = 0;
@@ -15,7 +17,10 @@ function ok(cond, label) {
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 (async () => {
-  const srv = spawn(process.execPath, [path.join(__dirname, '..', 'server', 'index.js'), String(PORT)], { stdio: 'ignore' });
+  const testData = fs.mkdtempSync(path.join(os.tmpdir(), 'novavista-test-'));
+  const srv = spawn(process.execPath, [path.join(__dirname, '..', 'server', 'index.js'), String(PORT)], {
+    stdio: 'ignore', env: Object.assign({}, process.env, { NOVAVISTA_DATA_DIR: testData })
+  });
   await sleep(1200);
   const B = 'http://localhost:' + PORT;
   const post = (p, body, token) => fetch(B + p + (token ? '?token=' + token : ''), {
@@ -97,6 +102,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
     console.error('Error en test:', e.message);
   } finally {
     srv.kill();
+    try { fs.rmSync(testData, { recursive: true, force: true }); } catch (e) {}
   }
   process.exit(failed ? 1 : 0);
 })();

@@ -39,27 +39,29 @@
 
   /* ---------- formato de números ---------- */
   var UNITS = ['', 'K', 'M', 'B', 'T', 'Qa', 'Qi', 'Sx', 'Sp'];
+  function locale() { return NS.I18n && NS.I18n.get && NS.I18n.get() === 'en' ? 'en-US' : 'es-ES'; }
+  function decimal(s) { return locale() === 'en-US' ? String(s) : String(s).replace('.', ','); }
   function fmtNum(n) {
     if (!isFinite(n)) return '∞';
     var neg = n < 0;
     n = Math.abs(n);
-    if (n < 1000) return (neg ? '-' : '') + Math.floor(n).toLocaleString('es-ES');
+    if (n < 1000) return (neg ? '-' : '') + Math.floor(n).toLocaleString(locale());
     var tier = Math.floor(Math.log10(n) / 3);
     if (tier >= UNITS.length) tier = UNITS.length - 1;
     var scaled = n / Math.pow(10, tier * 3);
     var digits = scaled >= 100 ? 0 : scaled >= 10 ? 1 : 2;
-    return (neg ? '-' : '') + scaled.toFixed(digits).replace('.', ',') + ' ' + UNITS[tier];
+    return (neg ? '-' : '') + decimal(scaled.toFixed(digits)) + ' ' + UNITS[tier];
   }
   function fmtMoney(n) { return '$' + fmtNum(n); }
-  function fmtInt(n) { return Math.floor(n).toLocaleString('es-ES'); }
+  function fmtInt(n) { return Math.floor(n).toLocaleString(locale()); }
   function fmtBytes(b) {
     if (!isFinite(b)) return '∞';
     var u = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
     var i = 0;
     while (b >= 1024 && i < u.length - 1) { b /= 1024; i++; }
-    return (i === 0 ? Math.floor(b) : b.toFixed(1).replace('.', ',')) + ' ' + u[i];
+    return (i === 0 ? Math.floor(b) : decimal(b.toFixed(1))) + ' ' + u[i];
   }
-  function fmtPct(n) { return (n * 100).toFixed(2).replace('.', ',') + ' %'; }
+  function fmtPct(n) { return decimal((n * 100).toFixed(2)) + ' %'; }
   function pad2(n) { return (n < 10 ? '0' : '') + n; }
   function fmtClock(ts) {
     var d = new Date(ts);

@@ -23,6 +23,11 @@
   --winborder:#333; --sel:#6a7078;
 }
 
+/* Épocas NovaVista: identidades originales, no réplicas de productos reales */
+.era-aero{--tbar1:#153c61;--tbar2:#4d86ad;--tbar3:#a8d7e9;--accent:#287aa8;--accent-light:#a8d9ed;--start1:#38a4b4;--start2:#176779;--winbody:rgba(238,246,250,.94);--winface:rgba(213,228,236,.95);--winborder:#315d78;--font:"Segoe UI","Trebuchet MS",sans-serif}.era-aero .window{border:1px solid rgba(180,225,245,.8);border-radius:10px 10px 3px 3px;box-shadow:0 9px 25px rgba(0,18,35,.55),inset 0 0 0 1px rgba(255,255,255,.75);backdrop-filter:blur(7px)}.era-aero .win-titlebar{height:31px;flex-basis:31px;background:linear-gradient(rgba(117,187,220,.88),rgba(26,83,120,.9));border-radius:9px 9px 0 0}.era-aero #taskbar{height:38px;background:linear-gradient(rgba(30,69,94,.85),rgba(8,32,51,.94));border-top-color:#80c0dd;backdrop-filter:blur(8px)}.era-aero #desktop{bottom:38px}.era-aero .start-btn{width:37px;height:37px;border-radius:50%;padding:7px;font-size:0;background:radial-gradient(circle at 35% 30%,#79e5f0,#177d91 60%,#0c405d 65%)}.era-aero .start-logo{width:20px}.era-aero #tray{height:38px;background:rgba(19,54,76,.72)}
+.era-metro{--tbar1:#202020;--tbar2:#2b2b2b;--tbar3:#333;--accent:#0078a8;--accent-light:#62c9eb;--start1:#008fc7;--start2:#006c9a;--winbody:#f4f4f4;--winface:#e5e5e5;--winborder:#444;--font:"Segoe UI",Arial,sans-serif}.era-metro .window{border:1px solid #555;border-radius:0;box-shadow:0 7px 18px rgba(0,0,0,.4)}.era-metro .win-titlebar{height:32px;flex-basis:32px;border-radius:0;background:#242424;text-shadow:none;font-weight:400}.era-metro .win-btns button{height:30px;width:36px;border:0;border-radius:0;background:transparent;color:#fff}.era-metro .win-btns button.wc-close{background:transparent}.era-metro .win-btns button:hover{background:#555}.era-metro .win-btns button.wc-close:hover{background:#c42b1c}.era-metro #taskbar{height:40px;background:#171717;border:0;box-shadow:none}.era-metro #desktop{bottom:40px}.era-metro .start-btn{height:40px;border-radius:0;background:#0078a8;font-size:0;padding:9px}.era-metro .start-logo{transform:none}.era-metro #tray{height:40px;background:#171717;border-left:1px solid #444}.era-metro .tb-btn{height:34px;border-radius:0;background:#292929;box-shadow:none}.era-metro .tb-btn.active{background:#414141;border-bottom:3px solid #3bc1ee}
+.era-nova{--tbar1:#242a38;--tbar2:#242a38;--tbar3:#242a38;--accent:#6657d9;--accent-light:#c1baff;--start1:#6756dc;--start2:#4e3bc4;--winbody:rgba(248,248,252,.97);--winface:#eeeef5;--winborder:#c9c7da;--font:"Segoe UI Variable","Segoe UI",sans-serif}.era-nova .window{border:1px solid rgba(190,188,213,.8);border-radius:11px;box-shadow:0 12px 38px rgba(17,13,42,.35);overflow:hidden}.era-nova .win-titlebar{height:36px;flex-basis:36px;border-radius:10px 10px 0 0;background:rgba(37,40,55,.96);text-shadow:none}.era-nova .win-btns{gap:6px}.era-nova .win-btns button{width:24px;height:24px;border:0;border-radius:7px;background:#404658;color:#fff}.era-nova .win-btns button.wc-close{background:#c34558}.era-nova #taskbar{left:50%;right:auto;bottom:7px;transform:translateX(-50%);width:min(760px,94vw);height:48px;border:1px solid rgba(255,255,255,.35);border-radius:13px;background:rgba(29,31,43,.9);box-shadow:0 7px 26px rgba(0,0,0,.4);backdrop-filter:blur(14px);padding:5px}.era-nova #desktop{bottom:0}.era-nova .start-btn{height:38px;width:42px;border-radius:9px;padding:9px;font-size:0;background:#6657d9}.era-nova .start-logo{transform:none}.era-nova #quicklaunch{border:0}.era-nova #tray{height:38px;border:0;border-radius:8px;background:#303443}.era-nova .tb-btn{height:36px;border-radius:8px;background:#3a3e50;box-shadow:none}.era-nova #start-menu{left:50%;bottom:60px;transform:translateX(-50%);border-radius:12px}
+
 *{margin:0;padding:0;box-sizing:border-box;}
 html,body{width:100%;height:100%;overflow:hidden;}
 body{font-family:var(--font);font-size:12px;color:#000;background:#000;user-select:none;-webkit-user-select:none;}
@@ -78,6 +83,7 @@ svg.icon-64{width:64px;height:64px;}
 .desktop-icon.sel{background:rgba(49,106,197,.6);border:1px solid #fff;outline:1px solid rgba(49,106,197,.8);}
 .desktop-icon .di-name{font-size:11px;line-height:1.15;overflow-wrap:anywhere;}
 .desktop-icon .di-badge{position:absolute;transform:translate(34px,-6px);background:#c03030;color:#fff;font-size:9px;font-weight:bold;padding:0 4px;border-radius:8px;border:1px solid #7a1c1c;}
+.mission-guide{position:absolute;right:18px;bottom:18px;width:275px;padding:11px 13px;text-align:left;border:1px solid rgba(255,255,255,.75);border-radius:7px;background:linear-gradient(135deg,rgba(7,34,72,.94),rgba(18,73,119,.94));color:#fff;box-shadow:0 5px 20px rgba(0,0,0,.4),inset 0 1px rgba(255,255,255,.2);cursor:pointer;pointer-events:auto}.mission-guide:hover{filter:brightness(1.12);transform:translateY(-1px)}.mission-guide span{display:block;color:#74d7ff;font-size:9px;font-weight:bold;letter-spacing:1.4px}.mission-guide b{display:block;font-size:13px;margin:3px 0}.mission-guide small{display:block;color:#c7dceb;font-size:10px;line-height:1.35;padding-right:30px}.mission-guide i{position:absolute;right:12px;bottom:10px;color:#ffe27a;font-size:9px;font-style:normal}.era-metro .mission-guide{border-radius:0;background:rgba(25,25,25,.94);border-color:#18a5d4}.era-nova .mission-guide{border-radius:13px;background:rgba(37,39,56,.92);border-color:#8275ef;backdrop-filter:blur(12px)}@media(max-width:700px){.mission-guide{width:220px;right:8px;bottom:8px}.mission-guide small{display:none}}
 
 /* ---------------- Ventanas ---------------- */
 #windows-layer{position:absolute;inset:0;z-index:2;pointer-events:none;}
@@ -91,6 +97,7 @@ svg.icon-64{width:64px;height:64px;}
   display:flex;flex-direction:column;
 }
 .window.maximized{border-radius:0;}
+.win-resize{position:absolute;right:0;bottom:0;width:16px;height:16px;z-index:8;cursor:nwse-resize;background:linear-gradient(135deg,transparent 0 42%,rgba(70,80,95,.5) 43% 50%,transparent 51% 62%,rgba(70,80,95,.65) 63% 70%,transparent 71%);touch-action:none}.window.maximized .win-resize{display:none}
 .win-titlebar{
   height:28px;flex:0 0 28px;display:flex;align-items:center;gap:4px;padding:0 4px 0 6px;
   background:linear-gradient(180deg,var(--tbar1) 0%,var(--tbar2) 45%,var(--tbar2) 55%,var(--tbar3) 100%);
@@ -125,24 +132,26 @@ svg.icon-64{width:64px;height:64px;}
   box-shadow:0 -1px 2px rgba(0,0,0,.4);
 }
 .start-btn{
-  display:flex;align-items:center;gap:5px;height:26px;padding:0 10px 0 4px;border:0;border-radius:0 8px 8px 0;
+  flex:0 0 auto;display:flex;align-items:center;gap:6px;height:28px;padding:0 13px 0 7px;border:0;border-radius:0 9px 9px 0;
   background:linear-gradient(180deg,#7ed957 0%,#5cb842 35%,#3e8f2a 70%,#6fd14e 100%);
   color:#fff;font-weight:bold;font-size:14px;text-shadow:0 1px 1px rgba(0,0,0,.4);cursor:pointer;
   font-style:italic;box-shadow:inset 0 0 0 1px rgba(255,255,255,.45);
 }
 .start-btn:hover{filter:brightness(1.12);}
 .start-btn:active{filter:brightness(.95);}
-.start-btn .start-logo svg{width:22px;height:22px;vertical-align:middle;}
-#quicklaunch{display:flex;gap:1px;padding:2px;border-right:1px solid #1a4fa8;margin-right:2px;}
+.start-logo{width:20px;height:20px;display:grid;grid-template-columns:repeat(2,8px);grid-template-rows:repeat(2,8px);gap:2px;transform:skew(-7deg);filter:drop-shadow(0 1px 1px rgba(0,0,0,.45));}
+.start-logo i{display:block;border:1px solid rgba(255,255,255,.72);box-shadow:inset 0 0 2px rgba(255,255,255,.8);}
+.start-logo i:nth-child(1){background:#ef4938}.start-logo i:nth-child(2){background:#67c447}.start-logo i:nth-child(3){background:#3c82e8}.start-logo i:nth-child(4){background:#f5cf3b}
+#quicklaunch{display:flex;gap:3px;padding:2px 5px;border-right:1px solid #1a4fa8;margin-right:3px;}
 #quicklaunch button{
   width:24px;height:24px;padding:3px;border:0;background:transparent;cursor:pointer;border-radius:2px;display:flex;align-items:center;justify-content:center;
 }
 #quicklaunch button:hover{background:rgba(255,255,255,.25);}
-#taskbar-apps{flex:1 1 auto;min-width:0;display:flex;gap:2px;overflow-x:auto;overflow-y:hidden;padding-bottom:2px;scrollbar-width:thin;}
+#taskbar-apps{flex:1 1 auto;min-width:0;display:flex;gap:5px;overflow-x:auto;overflow-y:hidden;padding:1px 4px 2px;scrollbar-width:thin;}
 #taskbar-apps::-webkit-scrollbar{height:5px;}
 #taskbar-apps::-webkit-scrollbar-thumb{background:#5a8fe0;border-radius:3px;}
 .tb-btn{
-  flex:1 1 150px;min-width:34px;max-width:150px;height:26px;margin-top:2px;padding:0 5px;display:flex;align-items:center;gap:4px;
+  flex:1 1 150px;min-width:42px;max-width:160px;height:25px;margin-top:1px;padding:0 7px;display:flex;align-items:center;gap:6px;
   background:linear-gradient(180deg,#5a8fe0 0%,#3d7fd8 45%,#2a6fd6 50%,#4f8fe8 100%);
   border:0;border-radius:3px;color:#fff;font-size:11px;cursor:pointer;text-align:left;overflow:hidden;
   box-shadow:inset 0 1px 1px rgba(255,255,255,.3);
@@ -155,6 +164,7 @@ svg.icon-64{width:64px;height:64px;}
 .tb-btn .tb-title{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .tb-btn .icon{width:14px;height:14px;flex:0 0 auto;}
 #tray{display:flex;align-items:center;gap:2px;padding:0 4px;border-left:1px solid #1a4fa8;background:linear-gradient(180deg,#0e3f9f 0%,#1a4fa8 40%,#3d7fd8 100%);height:30px;color:#fff;}
+.tray-lang{height:21px;min-width:28px;padding:0 4px;border:1px solid rgba(255,255,255,.45);border-radius:2px;background:rgba(0,30,100,.32);color:#fff;font:bold 10px Tahoma;cursor:pointer;box-shadow:inset 0 1px rgba(255,255,255,.18)}.tray-lang:hover{background:rgba(255,255,255,.22)}
 .tray-item{width:22px;height:22px;border:0;background:transparent;cursor:pointer;border-radius:2px;display:flex;align-items:center;justify-content:center;}
 .tray-item:hover{background:rgba(255,255,255,.22);}
 #tray-money{font-size:10px;padding:0 6px;text-align:right;line-height:1.3;cursor:default;color:#e8f0ff;border-right:1px solid #1a4fa8;margin-right:4px;white-space:nowrap;}
@@ -279,6 +289,8 @@ svg.icon-64{width:64px;height:64px;}
 /* ---------------- Ventanas fijas de la barra de tareas ---------------- */
 .window .win-body{padding:0;}
 .app-pad{padding:10px;}
+.era-aero .panel,.era-aero .xp-btn,.era-aero .xp-input{border-radius:6px}.era-aero .panel-title{background:linear-gradient(#f9fdff,#cde5f1)}.era-metro .panel,.era-metro .xp-btn,.era-metro .xp-input,.era-metro .tab-btn{border-radius:0;box-shadow:none}.era-metro .panel-title{background:#dedede}.era-metro .xp-btn.primary{background:#0078a8;color:#fff}.era-nova .panel,.era-nova .xp-input{border-radius:9px}.era-nova .xp-btn{border-radius:7px}.era-nova .tab-btn{border-radius:8px 8px 0 0}.era-nova .panel-title{background:linear-gradient(90deg,#eeeefa,#e5e2f7);border-radius:8px 8px 0 0}
+.mission-unpin{position:absolute;right:8px;top:5px;width:18px;height:18px;border-radius:50%;background:rgba(0,0,0,.3);color:#fff;text-align:center;line-height:17px;font:bold 14px Arial;font-style:normal}.mission-unpin:hover{background:#b83838}.mission-progress{position:relative;height:11px;margin:7px 35px 0 0;border:1px solid rgba(255,255,255,.45);border-radius:7px;overflow:hidden;background:rgba(0,0,0,.3)}.mission-progress u{display:block;height:100%;background:linear-gradient(90deg,#26a874,#70edb9);text-decoration:none}.mission-progress strong{position:absolute;inset:0;text-align:center;font-size:8px;line-height:10px;color:#fff;text-shadow:0 1px #000}
 .clickable{cursor:pointer;}
 
 ::selection{background:var(--sel);color:#fff;}

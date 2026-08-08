@@ -48,6 +48,21 @@ function ok(cond, name, extra) {
     return document.getElementById('login-screen').classList.contains('hidden');
   });
   ok(loginGone, 'sesión iniciada');
+  var startUi = await page.evaluate(function () {
+    var apps = document.getElementById('taskbar-apps');
+    return {
+      panes: document.querySelectorAll('#btn-start .start-logo i').length,
+      gap: parseFloat(getComputedStyle(apps).gap) || 0
+    };
+  });
+  ok(startUi.panes === 4, 'icono Inicio compuesto y correctamente renderizado');
+  ok(startUi.gap >= 5, 'botones de tareas con separación legible');
+  await page.evaluate(function () { window.NovaOS.I18n.set('en'); });
+  await page.waitForTimeout(150);
+  var englishUi = await page.evaluate(function () {
+    return document.documentElement.lang === 'en' && document.getElementById('btn-start').textContent.indexOf('Start') !== -1;
+  });
+  ok(englishUi, 'cambio inmediato al idioma inglés');
   var okBtn = await page.$('.modal-overlay .xp-btn');
   if (okBtn) { await okBtn.click(); await page.waitForTimeout(200); }
 
@@ -107,10 +122,28 @@ function ok(cond, name, extra) {
   await page.waitForTimeout(600);
   await page.screenshot({ path: path.join(shotsDir, 'all-open.png') });
 
+  var untranslated = await page.evaluate(function () {
+    var re = /[¿¡]|\b(Partida|Historial|Nivel|Victorias|Ganadas|Consejo|Selecciona|Cargando|Aún|Todavía|Mejoras|Estadísticas|Publicaciones|seguidores|dinero|datos|energía|rastro|botín|Guardar|Buscar|Enviar|Cuenta|Sonido|para|desde|hasta|cada|puedes|tienes|esta|este|cuando|como|todos|ahora|más|menos|nuevo|nueva|mejor|primero|antes|después)\b/i;
+    var found = [];
+    document.querySelectorAll('.window:not(.hidden),#taskbar,#start-menu,.modal-overlay').forEach(function (root) {
+      var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+      var n;
+      while ((n = walker.nextNode())) {
+        var value = (n.nodeValue || '').trim();
+        if (value && re.test(value) && !/^nova:\/\//i.test(value) && found.indexOf(value) === -1) found.push(value.slice(0, 100));
+      }
+    });
+    return found;
+  });
+  ok(untranslated.length === 0, 'interfaz inglesa sin fragmentos españoles', untranslated.slice(0, 50));
+
   var m = await metrics();
   ok(m.hOverflow.length === 0, 'sin desbordes horizontales en la página', m.hOverflow.slice(0, 8));
   ok(m.zeroText.length === 0, 'sin texto con tamaño 0', m.zeroText.slice(0, 8));
   ok(m.winOverflow.length === 0, 'ventanas sin desbordar su marco', m.winOverflow.slice(0, 8));
+  var tutorialVisible = await page.$('.tutorial-step');
+  ok(!!tutorialVisible, 'tutorial guiado visible para una cuenta nueva');
+  await page.evaluate(function () { window.NovaOS.UI.closeModals(); });
 
   // ---- navegador: cada página interna ----
   var routes = ['nova://inicio', 'nova://noticias', 'nova://foros', 'nova://descargas', 'nova://novaclick', 'nova://ayuda', 'nova://red', 'nova://buscar?q=prueba'];
@@ -143,7 +176,60 @@ function ok(cond, name, extra) {
 
   await page.evaluate(function () { window.NovaOS.WM.open('net'); });
   await page.waitForTimeout(300);
+  await page.screenshot({ path: path.join(shotsDir, 'ctf-board.png') });
+  var ctfBoard = await page.evaluate(function () {
+    return !!window.NovaOS.CTF && document.querySelectorAll('#win-net .ctf-job-card').length >= 10 && !!document.querySelector('#win-net .ctf-start');
+  });
+  ok(ctfBoard, 'NovaOps abre por defecto el banco de trabajos CTF');
+  await page.click('#win-net .ctf-start');
+  await page.click('#win-net .ctf-inspect-btn');
+  var inspectedFlag = await page.$eval('#win-net .ctf-devtools', function (el) { return el.textContent.indexOf('NOVA-ROOT-01') !== -1; });
+  ok(inspectedFlag, 'el primer CTF permite inspeccionar el HTML real del reto');
+  await page.fill('#win-net .ctf-answer', 'NOVA-ROOT-01');
+  await page.click('#win-net .ctf-submit-row .primary');
+  await page.waitForTimeout(100);
+  var ctfCompleted = await page.evaluate(function () { return window.NovaOS.CTF.isCompleted('main-source'); });
+  ok(ctfCompleted, 'la bandera correcta completa el CTF y persiste el progreso');
+  await page.evaluate(function () { window.NovaOS.UI.closeModals(); });
+  await page.click('#win-net .tab-btn[data-tab="mapa"]');
+  await page.waitForTimeout(100);
   await page.screenshot({ path: path.join(shotsDir, 'net-empty.png') });
+  var netEmpty = await page.evaluate(function () {
+    var w = document.getElementById('win-net');
+    return {
+      connectButtons: w.querySelectorAll('.net-empty .xp-btn').length,
+      consoleOpen: w.querySelector('.net-console-wrap').open
+    };
+  });
+  ok(netEmpty.connectButtons === 1, 'mapa inactivo con una sola llamada a conectar');
+  ok(!netEmpty.consoleOpen, 'consola avanzada plegada por defecto');
+  await page.click('#win-net .net-empty .xp-btn');
+  await page.waitForTimeout(350);
+  await page.screenshot({ path: path.join(shotsDir, 'net-active.png') });
+  var netActive = await page.evaluate(function () {
+    var run = window.NovaOS.State.get().run;
+    return !!run && run.nodes.length >= 6 && document.querySelectorAll('#win-net .net-route-node').length >= 5 && !!document.querySelector('#win-net .net-protocol');
+  });
+  ok(netActive, 'operación activa con rutas pulsables y protocolos tácticos');
+  var tacticalTarget = await page.evaluate(function () {
+    var N = window.NovaOS;
+    var run = N.State.get().run;
+    var isp = run.nodes.filter(function (n) { return n.kind === 'isp'; })[0];
+    var node = run.nodes.filter(function (n) { return isp.conn.indexOf(n.id) !== -1; })[0];
+    node.kind = 'data'; node.fw = 2; node.fwMax = 2;
+    if (!node.data) node.data = 12;
+    if (!node.cash) node.cash = 20;
+    N.State.addEnergy(99);
+    return node.id;
+  });
+  await page.click('#win-net .net-route-node[data-node-id="' + tacticalTarget + '"]', { position: { x: 3, y: 3 } });
+  var edgeClickSelected = await page.$eval('#win-net .net-route-node[data-node-id="' + tacticalTarget + '"]', function (el) { return el.classList.contains('selected'); });
+  ok(edgeClickSelected, 'el clic en el borde de una tarjeta también selecciona el nodo');
+  await page.click('#win-net .net-protocol.recommended');
+  var tacticalResolved = await page.evaluate(function (id) {
+    return window.NovaOS.State.get().run.nodes.filter(function (n) { return n.id === id; })[0].drained;
+  }, tacticalTarget);
+  ok(tacticalResolved, 'un contraprotocol resuelve la brecha en el navegador real');
 
   // ---- panel de control: pestaña apariencia con 16 avatares ----
   await page.evaluate(function () { window.NovaOS.WM.open('settings'); });

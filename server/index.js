@@ -14,7 +14,7 @@ const crypto = require('crypto');
 const { DatabaseSync } = require('node:sqlite');
 
 const ROOT = path.join(__dirname, '..');
-const DATA_DIR = path.join(__dirname, 'data');
+const DATA_DIR = process.env.NOVAVISTA_DATA_DIR || path.join(__dirname, 'data');
 const DB_PATH = path.join(DATA_DIR, 'nova.db');
 const PORT = parseInt(process.argv[2] || process.env.PORT || '3000', 10);
 

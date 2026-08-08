@@ -1,3 +1,28 @@
 node_modules/
 server/data/
 test/shots/
+
+# Local/editor metadata
+.reasonix/
+.codex/
+.agents/
+.vscode/
+.idea/
+
+# Environment files and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Local databases, logs and generated reports
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+*.log
+coverage/
+.public-release/
