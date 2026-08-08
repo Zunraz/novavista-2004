@@ -1,6 +1,6 @@
 # NovaVista 2004 — Sistema Operativo Incremental Roguelite
 
-Un **sistema operativo completo de los años 2000** totalmente funcional que esconde un **juego incremental con rasgos roguelite**. Ventanas arrastrables, barra de tareas, menú inicio, arranque estilo BIOS, navegador, banco, red social, correo, antivirus, terminal… y una red subterránea de **asaltos procedurales** donde robas datos, esquivas el rastreo y acumulas **NovaCoins** para comprar implantes permanentes.
+Un **sistema operativo completo de los años 2000** totalmente funcional que esconde una aventura incremental de **contratos CTF**. Ventanas arrastrables, barra de tareas, navegador, banco, red social, correo, antivirus, terminal… y una campaña de hacking ficticio que atraviesa cuatro épocas, con encargos secundarios, herramientas mejorables, una Red táctica roguelite opcional y endgame ampliable.
 
 100 % **autocontenido**: sin servidores, sin CDN, sin dependencias externas. Funciona abriendo `index.html` (o `dist/index.html`, la versión de producción) en cualquier navegador moderno, incluso sin conexión.
 
@@ -14,11 +14,14 @@ Un **sistema operativo completo de los años 2000** totalmente funcional que esc
 El idioma puede cambiarse en cualquier momento con el botón **ES/EN de la bandeja**, a la derecha de la barra de tareas, o desde **Panel de control → Sonido → Idioma**. Español e inglés se aplican al instante y la preferencia queda guardada en la cuenta.
 
 ### Flujo recomendado
-- **Gana dinero**: publica en **MyNova** (seguidores → publicidad), deja saldo en el **Primer Banco Nova** (intereses), vende datos en **Mis Archivos** y haz clic en **NovaClick**.
-- **Avanza el roguelite**: abre el **Mapa de Red**, conéctate, escanea nodos, rompe firewalls y drena datos. Cuidado con el **rastro**: si llega a 100 te localizan y pierdes el botín.
-- **Progresión meta**: las **NovaCoins** (minadas con bots, robadas en nodos profundos o ganadas en el MasterServer) se gastan en **implantes** que persisten entre asaltos.
+- **Sigue la campaña CTF**: abre **NovaOps**, acepta el siguiente caso y resuelve pruebas de inspección HTML, FTP, cifrado, hashes, capas y paquetes. El widget del escritorio siempre señala el objetivo concreto.
+- **Elige tus encargos**: los siete contratos principales conectan Classic, Aero, Metro y Nova; los secundarios tienen lore propio y pagan dinero, XP, fama y reputación sin bloquear la historia.
+- **Mejora tu equipo**: el Laboratorio acelera fuentes, wordlists, decodificación y hashes; las herramientas consumibles ayudan con tareas concretas sin sustituir el razonamiento.
+- **Alterna actividades**: publica en **MyNova**, usa el banco, vende datos, juega a NovaClick o entra en la **Red táctica**, un roguelite breve de pocos nodos que ya no condiciona la campaña.
+- **Progresión meta**: las **NovaCoins** se gastan en implantes permanentes y permiten acumular legado entre formateos.
 - **Prestige**: en *Panel de control → Sistema* puedes **Formatear C:** para convertir tus NovaCoins históricas en **puntos de legado** (+3 % de ingresos permanentes cada uno). La curva es de largo plazo: 1 punto a 20 NC, 2 a 80 y 5 a 500.
 - **Misiones**: revisa **NovaMail** para reclamar recompensas.
+- **Historia, épocas y final**: cada CTF principal añade evidencia al expediente y nuevos mensajes en **NovaMessenger**. Classic, Aero, Metro y Nova cambian la identidad visual y las aplicaciones. Tras la decisión final se abre el **Archivo ∞**, preparado para contratos diarios y futuros CTF.
 
 ### Apps del sistema
 | App | Función |
@@ -27,14 +30,16 @@ El idioma puede cambiarse en cualquier momento con el botón **ES/EN de la bande
 | Primer Banco Nova | Intereses, mercado de NovaCoins (compra/venta con precio fluctuante) y préstamos |
 | MyNova | Red social: publicaciones, seguidores e ingresos publicitarios |
 | Mis Archivos | Almacén de datos (con límite de disco), venta de datos e inventario de herramientas |
-| Mapa de Red | **Núcleo roguelite**: asaltos procedurales, implantes, legado y registro |
+| NovaOps | **Núcleo del juego**: campaña y contratos CTF secundarios, expediente RED-NOVA, herramientas, reputación y endgame |
+| Red táctica | Roguelite secundario de pocos nodos: ICE con intenciones anunciadas, protocolos, botín e implantes |
 | NovaShield | Antivirus/cortafuegos: bloquea amenazas y gestiona la cuarentena |
 | NovaMail | Misiones (con badge de reclamables en el escritorio) y notificaciones |
 | Símbolo del sistema | Consola con comandos de época (prueba `explorer`, `manual`, `hack`, `gato`…) |
-| Manual de NovaVista | **Tutorial del juego en el escritorio**: cómo ganar dinero, asaltos, implantes y legado |
-| NovaMessenger | Mensajero instantáneo estilo MSN: contactos con estado, "escribiendo..." y regalos ocasionales |
+| Manual de NovaVista | **Tutorial guiado**: primer CTF, herramientas, economía, épocas, historia, misiones y actividades opcionales |
+| NovaMessenger | Mensajero estilo MSN y archivo narrativo: contactos, conversaciones y capítulos ligados a evidencias CTF |
 | NovaPinball | Pinball 2D con física real: 50 puntos = 1 $ canjeable al acabar la partida |
 | NovaPool 8-Ball | Billar contra la CPU: gana 25 $ por partida |
+| Sala de Trofeos | 10 logros permanentes con insignias, rarezas, progreso y recompensas reclamables |
 | Administrador de tareas | Abre con Ctrl+Mayús+Esc: cierra ventanas colgadas y muestra CPU/RAM simuladas |
 | Panel de control | Temas, 6 fondos, 16 avatares, sonido, notificaciones, cuenta y gestión del guardado |
 
@@ -59,10 +64,10 @@ Este es un juego de navegador: el código se ejecuta en tu máquina, por lo que 
 ## 🧪 Tests
 
 ```bash
-node test/core.test.js       # 139 tests de lógica pura (economía, MyNova, banco, física, integridad, asaltos)
-node test/dom.test.js        # 74 tests de integración con jsdom (incluye selector ES/EN de la bandeja)
+node test/core.test.js       # lógica pura (economía, catálogo CTF, estado, física e integridad)
+node test/dom.test.js        # integración con jsdom, incluido el primer CTF y la Red táctica
 TARGET="$(pwd)/dist/index.html" node test/dom.test.js   # mismos tests contra el build
-node test/layout.test.js     # 25 tests visuales con Chromium headless (auditoría lingüística, barra, mapa y canvas)
+node test/layout.test.js     # auditoría visual con Chromium (idiomas, ventanas, CTF y Red táctica)
 node test/layout.test.js dist# idem contra dist/index.html (capturas en test/shots/)
 ```
 
@@ -80,7 +85,7 @@ css/main.css          # chrome del sistema (tema Luna/XP, ventanas, barra de tar
 css/apps.css          # estilos de las aplicaciones
 js/core/              # utils, seguridad, guardado, catálogo, estado, ventanas, eventos
 js/apps/              # boot, diálogos, escritorio, barra, panel, archivos, terminal,
-                      # correo, banco, social, navegador, antivirus, mapa de red
+                      # correo, banco, social, navegador, antivirus, CTF y Red táctica
 js/main.js            # arranque y bucle del juego
 build/build.js        # generador de dist/
 test/                 # suites de tests

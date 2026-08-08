@@ -129,6 +129,8 @@
           '<div class="welcome-goals"><span>① Hazte visible en <b>MyNova</b></span><span>② Entra al <b>Mapa de Red</b></span><span>③ Supera al siguiente rival del <b>Ranking</b></span></div>' +
           '<p class="welcome-hint">Tu primera oportunidad ya está activa. El Manual queda en el escritorio por si lo necesitas.</p></div>',
         buttons: [{ label: 'Entrar en NovaNet', value: true, primary: true }]
+      }).then(function () {
+        if (!S.meta.tutorialDone && !S.meta.tutorialDismissed && NS.Tutorial) NS.Tutorial.start(0);
       });
     }
 
@@ -188,6 +190,7 @@
         NS.Taskbar.refreshTray();
         NS.State.verify();
         if (NS.Mail && NS.Mail.refreshBadge) NS.Mail.refreshBadge();
+        if (NS.Desktop && NS.Desktop.refreshGuide) NS.Desktop.refreshGuide();
       }
     } catch (e) {
       // El juego nunca debe romperse por un error de UI

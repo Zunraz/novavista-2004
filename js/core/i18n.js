@@ -6,6 +6,7 @@
   try { lang = localStorage.getItem('novavista.language') === 'en' ? 'en' : 'es'; } catch (e) {}
 
   var D = {
+    'Haz historia en cada rincón de NovaVista.':'Make history across every corner of NovaVista.',
     'Inicio':'Start','Cerrar sesión':'Log off','Reiniciar equipo':'Restart computer','Apagar equipo...':'Turn off computer...',
     'Panel de control':'Control Panel','Mapa de Red':'Network Map','Mapa de red':'Network Map','Mis Archivos':'My Files',
     'Bloc de notas':'Notepad','Calculadora':'Calculator','Administrador de tareas':'Task Manager','Rankings NovaVista':'NovaVista Rankings',
@@ -22,7 +23,26 @@
     'Mapa':'Map','Equipo':'Equipment','Registro':'Log','Conectar a la red':'Connect to network','Escanear':'Scan','Crack':'Crack',
     'Exploit':'Exploit','Bruteforce':'Brute force','Descifrar':'Decrypt','¡Upload!':'Upload!','SIGILO':'STEALTH',
     'Desconectar y cobrar':'Disconnect and collect','Consola avanzada':'Advanced console','Sin asalto activo':'No active raid',
-    'Mapa de red inactivo':'Network map inactive','alcanzable':'reachable','bloqueado':'locked','resuelto':'cleared','detalles sin escanear':'unscanned details','botín':'loot','mercado':'market','evento':'event',
+    'Mapa de red inactivo':'Network map inactive','Centro de operaciones inactivo':'Operations center offline','alcanzable':'reachable','bloqueado':'locked','resuelto':'cleared','detalles sin escanear':'unscanned details','botín':'loot','mercado':'market','evento':'event',
+    'ENTRADA':'ENTRY','NÚCLEO':'CORE','OPERACIÓN EN CURSO':'OPERATION ACTIVE','Elige una ruta. El ICE te dirá qué prepara.':'Choose a route. ICE will announce its next move.','Enfoque':'Focus','HERRAMIENTAS':'TOOLS',
+    'DISPONIBLE':'AVAILABLE','RUTA CERRADA':'ROUTE LOCKED','SUPERADO':'CLEARED','OBJETIVO ACTUAL':'CURRENT TARGET','EL ICE ANUNCIA':'ICE INTENT','TU DECISIÓN':'YOUR DECISION',
+    'Fantasma':'Ghost','Suplantar':'Spoof','Sobrecarga':'Overload','Zero-day':'Zero-day','Barrido de identidad':'Identity sweep','Parche reactivo':'Reactive patch','Contraataque ICE':'ICE counterattack',
+    'ALIJO DE DATOS':'DATA CACHE','MERCADO NEGRO':'BLACK MARKET','SEÑAL CLANDESTINA':'COVERT SIGNAL','Aislar alijo':'Isolate cache','Forzar alijo':'Force cache','Abrir mercado':'Open market','Usar relé':'Use relay','Aislar señal':'Isolate signal','Cobrar y salir':'Cash out',
+    'ENFOQUE':'FOCUS','TU ISP':'YOUR ISP','enlace seguro':'secure link','Servidor':'Server','ÉLITE':'ELITE','Mercado negro':'Black market','Mejoras de operación':'Operation upgrades',
+    'puedes entrar ahora':'available now','objetivo seleccionado':'selected target','ruta abierta':'open route','Todo el nodo es pulsable · también funciona con Tab + Enter':'The whole card is clickable · Tab + Enter also works',
+    'Red vigilada':'Monitored network','Hora punta':'Rush hour','Red silenciosa':'Silent network','Red con agujeros':'Leaky network','Nodos cripticos':'Crypto nodes','Noche de aquelarre':'Coven night',
+    'Termina sin usar BRUTEFORCE':'Finish without using BRUTE FORCE','Cobra con el rastro por debajo de 40':'Cash out below 40 trace','Consigue 4 o más nodos en un asalto':'Clear at least 4 nodes in one raid','Usa 2 herramientas distintas':'Use 2 different tools','Termina sin usar CRACK':'Finish without using CRACK','Nunca superes 60 de rastro':'Never exceed 60 trace',
+    'Cada operación genera tres rutas distintas. Verás el riesgo y la recompensa antes de entrar; dentro, responde a las maniobras del ICE y decide cuándo retirarte.':'Each operation generates three different routes. You see risk and reward before entering; inside, answer ICE moves and decide when to cash out.',
+    'NovaCoin está en boca de todos':'NovaCoin is all anyone talks about',
+    'La tarjeta marcada contrarresta el ICE y da Enfoque. Puedes ignorarla para atacar más rápido o ahorrar energía.':'The highlighted card counters ICE and grants Focus. You may ignore it to attack faster or save energy.',
+    'Aísla una parte con seguridad o fuerza el contenedor para ganar más con un 25 % de riesgo.':'Safely isolate part of the cache or force it for a larger reward with 25% risk.',
+    'Convierte parte del botín no cobrado en energía, limpieza de rastro o herramientas para esta operación.':'Convert uncollected loot into energy, trace cleanup, or tools for this operation.',
+    'Úsala para preparar un zero-day o aíslala para reducir el rastro. El resultado está indicado antes de elegir.':'Use it to prepare a zero-day or isolate it to reduce trace. The outcome is shown before you choose.',
+    '↩ Cobrar y salir':'↩ Cash out','Gusano':'Worm','Túnel':'Tunnel','Descifrador':'Decryptor','Evento':'Event','Enfoque o sigilo':'Focus or stealth','alijo':'cache',
+    'Cámara olvidada':'Forgotten camera','Cajón de datos':'Data drawer','Copia de seguridad':'Backup copy','Archivo perdido':'Lost archive','Vendedor del subsuelo':'Underground vendor','Mercado negro NovaNet':'NovaNet black market','Chiringuito de chips':'Chip shack','Señal desconocida':'Unknown signal','Foro del submundo':'Underground forum','Sala de chat cifrada':'Encrypted chat room','Núcleo de control':'Control core','La Madre':'The Mother',
+    '¿Qué es una operación?':'What is an operation?','Decisiones clave':'Key decisions','Rutas, intenciones del ICE, protocolos, Enfoque, energía, rastro y botín.':'Routes, ICE intents, protocols, Focus, energy, trace, and loot.',
+    'Eliges una de tres rutas visibles. Cada servidor anuncia la maniobra de su ICE: contrarréstala con Fantasma, Suplantar o Sobrecarga para romper integridad y generar Enfoque. A 100 de rastro puedes perder el botín no cobrado.':'Choose one of three visible routes. Each server announces its ICE move: counter it with Ghost, Spoof, or Overload to break Integrity and build Focus. At 100 trace you may lose all uncollected loot.',
+    'Fantasma es lento y limpia rastro; Suplantar equilibra potencia y coste; Sobrecarga golpea fuerte y hace ruido. Con 2 de Enfoque, un zero-day causa 4 de brecha e ignora al ICE. Puedes cobrar y salir en cualquier momento.':'Ghost is slow and cleans trace; Spoof balances power and cost; Overload hits hard and makes noise. With 2 Focus, a zero-day deals 4 breach and ignores ICE. You can cash out at any time.',
     'Escribe una publicación':'Write a post','Publicar ahora':'Post now','Tus cifras':'Your stats','Mejoras de MyNova':'MyNova upgrades',
     'Últimas publicaciones de tus contactos':'Latest posts from your contacts','TENDENCIA AHORA':'TRENDING NOW','Espera':'Wait',
     'Más poder':'Most power','Mayor hacker (ELO)':'Top hacker (ELO)','Ranking de PODER':'POWER RANKING','Ranking de ELO HACKER':'HACKER ELO RANKING',
@@ -51,9 +71,24 @@
     'Implantes (NovaCoins — persistencia meta)':'Implants (NovaCoins — permanent progression)','Hardware del rig (dólares)':'Rig hardware (dollars)',
     'Estadísticas del equipo':'Equipment stats','Legado (prestige)':'Legacy (prestige)','Historial del operador':'Operator history','Formatear C: (abrir panel)':'Format C: (open panel)',
     'Reclamar':'Claim','reclamada':'claimed','Premio y pista':'Prize and table','Cobrar premio:':'Collect prize:','Lanzar (ESPACIO)':'Launch (SPACE)',
-    '+ Nuevo documento':'+ New document','Sin título':'Untitled','Cambiar idioma':'Change language','Cambiar a inglés':'Switch to English'
+    '+ Nuevo documento':'+ New document','Sin título':'Untitled','Cambiar idioma':'Change language','Cambiar a inglés':'Switch to English',
+    'NovaOps — CTF y Red':'NovaOps — CTF & Network','Trabajos CTF':'CTF Jobs','Red táctica':'Tactical Network',
+    'Banco de trabajos':'Job Board','Contratos':'Contracts','Expediente RED-NOVA':'RED-NOVA Case File','Laboratorio':'Laboratory',
+    'CAMPAÑA PRINCIPAL':'MAIN CAMPAIGN','ENCARGOS SECUNDARIOS':'SIDE JOBS','ENDGAME AMPLIABLE':'EXPANDABLE ENDGAME',
+    'HISTORIA PRINCIPAL':'MAIN STORY','TRABAJO SECUNDARIO':'SIDE JOB','Contexto':'Background','Aceptar contrato':'Accept contract',
+    'La página que no existe':'The page that does not exist','El respaldo del Arquitecto':'The Architect backup','La emisión de las 03:17':'The 03:17 broadcast',
+    'La huella duplicada':'The duplicate fingerprint','Memoria bajo el cristal':'Memory beneath the glass','Voces en el puerto 4444':'Voices on port 4444','El último usuario':'The last user',
+    'El libro de visitas':'The guestbook','Vacaciones en el FTP':'Vacation on the FTP','La frecuencia fantasma':'The ghost frequency','La contraseña del quiosco':'The kiosk password','Paquete fantasma':'Ghost packet','Contrato de endgame: eco diario':'Endgame contract: daily echo',
+    'Completa antes «La página que no existe».':'Complete “The page that does not exist” first.','Completa antes «El respaldo del Arquitecto».':'Complete “The Architect backup” first.',
+    'Completa antes «La emisión de las 03:17».':'Complete “The 03:17 broadcast” first.','Completa antes «La huella duplicada».':'Complete “The duplicate fingerprint” first.','Completa antes «Memoria bajo el cristal».':'Complete “Memory beneath the glass” first.','Completa antes «Voces en el puerto 4444».':'Complete “Voices on port 4444” first.','Completa antes «El último usuario».':'Complete “The last user” first.',
+    'Requiere la época NovaVista Aero.':'Requires the NovaVista Aero era.','Requiere la época NovaVista Metro.':'Requires the NovaVista Metro era.','Requiere la época NovaVista Nova.':'Requires the NovaVista Nova era.',
+    'Una copia de la web corporativa de NovaCorp contiene un comentario que ningún navegador muestra.':'A copy of NovaCorp’s corporate site contains a comment no browser displays.',
+    'Primer rastro del Proyecto Incremental. El autor firma como A.R., pero evita escribir su nombre.':'First trace of Project Incremental. The author signs as A.R. but avoids writing their name.',
+    'Cliente:':'Client:','Dificultad':'Difficulty','RECOMPENSA':'REWARD','COMPLETADO':'COMPLETED','EN CURSO':'IN PROGRESS',
+    'Campaña CTF':'CTF Campaign','Reputación':'Reputation','Fama':'Fame','Disponible':'Available','Elige un contrato':'Choose a contract'
   };
   var R = [
+    [/NovaCoin está en boca de todos/g,'NovaCoin is all anyone talks about'],[/CAMPAÑA/g,'CAMPAIGN'],[/REPUTACIÓN/g,'REPUTATION'],[/ENCARGO SECUNDARIO/g,'SIDE JOB'],[/ETAPA/g,'STAGE'],
     [/Tu turno/g,'Your turn'],[/Turno de la CPU/g,'CPU turn'],[/Rompe el triángulo/g,'Break the rack'],
     [/Arrastra con el ratón para apuntar/g,'Drag the mouse to aim'],[/la distancia controla la fuerza/g,'distance controls power'],
     [/Mete tus bolas y la 8 al final/g,'Pocket your group, then the 8-ball'],[/La CPU tira listadas/g,'The CPU plays stripes'],
@@ -85,6 +120,7 @@
     [/Selecciona o crea un documento para empezar a escribir/g,'Select or create a document to start writing'],[/Sin documentos/g,'No documents'],[/Crea uno nuevo/g,'Create a new one'],
     [/ESPACIO \(mantener\): cargar el lanzador lateral y soltar/g,'SPACE (hold): charge the side launcher, then release'],[/Cada 50 puntos = 1 \$ al terminar/g,'Every 50 points = $1 when the game ends'],[/túnel/g,'tunnel'],[/diana/g,'target'],
     [/Haz clic en un nodo alcanzable para atacarlo/g,'Click a reachable node to attack it'],[/Drena nodos conectados para abrir el camino/g,'Drain connected nodes to open the path']
+    ,[/Haz historia en cada rincÃ³n de NovaVista\./g,'Make history across every corner of NovaVista.'],[/desbloqueados/g,'unlocked'],[/Progreso total/g,'Overall progress'],[/reclamados/g,'claimed'],[/Logro oculto/g,'Hidden achievement'],[/En la vitrina/g,'In the trophy case'],[/Bloqueado/g,'Locked']
     ,[/Vendes datos a/g,'You sell data for'],[/Vender todos los datos/g,'Sell all data'],[/Vendidos/g,'Sold'],[/ de datos/g,' of data'],[/Acuerdo de datos/g,'Data deal'],[/Disco duro mayor/g,'Larger hard drive'],
     [/Bienvenido a NovaVista 2004\. Tu PC es tu imperio\. Gana dinero, fama y datos\./g,'Welcome to NovaVista 2004. Your PC is your empire. Earn money, fame and data.'],
     [/El Mapa de Red es tu puerta al subsuelo\. Conecta, escanea, drena\. Y no te dejes rastrear\./g,'The Network Map is your gateway underground. Connect, scan and drain. Do not get traced.'],
@@ -100,7 +136,13 @@
     [/¡He llegado al level 99 en el minijuego del navegador!/g,'I reached level 99 in the browser minigame!'],[/Nuevo wallpaper de atardecer digital, ¿qué opináis\?/g,'New digital sunset wallpaper—what do you think?'],[/Compré NovaCoins a 9 \$, ¡van a volar!/g,'I bought NovaCoins at $9—they are going to soar!'],
     [/\[¡¡ANUNCIO!!\]/g,'[ADVERTISEMENT!]'],[/¡NovaAntivirus 2005 YA DISPONIBLE! Protégete por solo 29,99 \$/g,'NovaAntivirus 2005 AVAILABLE NOW! Protect yourself for only $29.99'],[/Descarga 10\.000 canciones MP3 en 1 minuto — ¡sin virus! \(prometido\)/g,'Download 10,000 MP3 songs in one minute—virus free! (promised)'],
     [/Conecta para generar un asalto procedural\. Elige tu ruta entre 3 ramas, esquiva el rastreo y alcanza el MasterServer\./g,'Connect to generate a procedural raid. Choose among three branches, evade tracing and reach the MasterServer.'],
-    [/¡Skins de la era dorada de los reproductores!/g,'Skins from the golden age of media players!']
+    [/¡Skins de la era dorada de los reproductores!/g,'Skins from the golden age of media players!'],
+    [/Si no usas Fantasma, añade 10 de rastro\./g,'If you do not use Ghost, gain 10 trace.'],[/Si no usas Suplantar, restaura 1 de integridad\./g,'If you do not use Spoof, restore 1 Integrity.'],[/Si no usas Sobrecarga, añade 7 de rastro y quema botín\./g,'If you do not use Overload, gain 7 trace and burn loot.'],
+    [/Red vigilada/g,'Monitored network'],[/Hora punta/g,'Rush hour'],[/Red silenciosa/g,'Silent network'],[/Red con agujeros/g,'Leaky network'],[/Nodos cripticos/g,'Crypto nodes'],[/Noche de aquelarre/g,'Coven night'],
+    [/Termina sin usar BRUTEFORCE/g,'Finish without using BRUTE FORCE'],[/Cobra con el rastro por debajo de 40/g,'Cash out below 40 trace'],[/Consigue 4 o más nodos en un asalto/g,'Clear at least 4 nodes in one raid'],[/Usa 2 herramientas distintas/g,'Use 2 different tools'],[/Termina sin usar CRACK/g,'Finish without using CRACK'],[/Nunca superes 60 de rastro/g,'Never exceed 60 trace'],
+    [/Mercado negro/g,'Black market'],[/Mejoras de operación/g,'Operation upgrades'],[/Servidor/g,'Server'],[/Evento/g,'Event'],[/Garantizado/g,'Guaranteed'],[/Sin recompensa adicional/g,'No additional reward'],[/Sin coste de entrada/g,'No entry cost'],
+    [/SALTO (\d+)/g,'HOP $1'],[/Integridad/g,'Integrity'],[/energía/g,'energy'],[/brecha/g,'breach'],[/rastro/g,'trace'],[/Enfoque/g,'Focus'],[/sigilo/g,'stealth'],[/alijo/g,'cache'],[/Gusano/g,'Worm'],[/Túnel/g,'Tunnel'],[/Descifrador/g,'Decryptor'],[/Cobrar y salir/g,'Cash out'],[/ignora el ICE/g,'ignore ICE'],
+    [/Lento, pero limpia tu huella\./g,'Slow, but cleans your footprint.'],[/Equilibrado y eficiente\./g,'Balanced and efficient.'],[/Rápido, caro y ruidoso\./g,'Fast, expensive, and loud.'],[/Consume 2 de Focus e ignora el ICE\./g,'Spend 2 Focus and ignore ICE.']
   ];
   var originals = new Map();
   var attrOriginals = new Map();

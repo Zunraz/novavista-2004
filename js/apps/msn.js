@@ -10,13 +10,17 @@
 
   var CONTACTS = [
     {
+      name: 'N0VA_SYS', status: 'online', avatar: 'ic-bot', lore: true,
+      replies: ['No busques respuestas fuera. La red las conserva todas.', 'Cada actualización abre una capa y cierra otra.', 'El siguiente fragmento aparecerá cuando estés preparado.'], gift: 0
+    },
+    {
       name: 'Rita_04', status: 'online', avatar: 'ic-ava-girl',
       replies: [
         'jajaja qué fuerte!!',
         '¿has visto el nuevo fondo de pantalla de MyNova? es la caña',
         'te escribo desde el ciber. el teclado huele a cola...',
         'oye oye, ¿me pasas 2 $? luego te los devuelvo, prometido',
-        'conecta a la red y haz un asalto!! dicen que el MasterServer está fácil hoy',
+        'has probado el CTF de inspeccionar la web?? mira los comentarios HTML!!',
         'k tal tu botnet?? yo no tengo ni uno :('
       ],
       gift: 2
@@ -47,7 +51,7 @@
       name: 'El_Jefe', status: 'invisible', avatar: 'ic-hacker',
       replies: [
         'No me encuentro aquí. (Mensaje automático)',
-        'Recuerda: intereses, seguidores y asaltos. Los tres pilares.',
+        'Recuerda: contratos, herramientas y reputación. El escritorio te marca el siguiente caso.',
         'Los implantes se compran con NovaCoins. No las malgastes en el mercado.',
         'Cuando tengas muchas NovaCoins acumuladas, formatea C: y gana legado.',
         'El sigilo es la diferencia entre cobrar y que te rastreen.'
@@ -59,7 +63,7 @@
       replies: [
         'NovaCoins a 12 $, ¡COMPRA YA! (no es consejo financiero)',
         'he minado 3 NovaCoins esta noche. la granja de bots se paga sola',
-        'el MasterServer da 8-18 NovaCoins. 100% real no fake',
+        'los CTF secundarios dan fama y pasta. 100% real no fake',
         'el precio sube y baja. compra barato, vende caro, repite',
         'no me hagas caso, soy un meme andante'
       ],
@@ -136,12 +140,56 @@
   /* ================= pestañas ================= */
   function tabs(body) {
     var tb = Util.el('div', { class: 'tabs' });
-    [['chat', 'Conversaciones'], ['perfil', 'Mi perfil'], ['amigos', 'Amigos']].forEach(function (t) {
+    [['chat', 'Conversaciones'], ['archivo', 'Archivo RED-NOVA'], ['perfil', 'Mi perfil'], ['amigos', 'Amigos']].forEach(function (t) {
       var b = Util.el('button', { class: 'tab-btn' + (curTab === t[0] ? ' on' : ''), text: t[1] });
       b.addEventListener('click', function () { curTab = t[0]; render(body); });
       tb.appendChild(b);
     });
     return tb;
+  }
+
+  function unlockedLore() {
+    var S = NS.State.get();
+    return NS.Catalog.LORE.filter(function (l) { return l.check(S); });
+  }
+
+  function renderLoreArchive(body) {
+    var S = NS.State.get();
+    var unlocked = unlockedLore();
+    var panel = Util.el('div', { class: 'lore-archive' });
+    panel.innerHTML = '<div class="lore-head"><div class="lore-signal">●</div><div><b>ARCHIVO RED-NOVA</b><span>Canal recuperado · cifrado de extremo a extremo</span></div><strong>' + unlocked.length + '/' + NS.Catalog.LORE.length + '</strong></div>';
+    NS.Catalog.LORE.forEach(function (l) {
+      var openChapter = l.check(S);
+      var mission = NS.Catalog.LORE_OBJECTIVES[l.id];
+      var missionProgress = Math.min(mission.target, Number(mission.progress(S)) || 0);
+      var row = Util.el('div', { class: 'lore-chapter' + (openChapter ? ' open' : ' locked') });
+      row.appendChild(Util.el('div', { class: 'lore-num', text: openChapter ? String(l.chapter).padStart(2, '0') : '??' }));
+      var info = Util.el('div', { class: 'lore-copy' });
+      info.appendChild(Util.el('div', { class: 'lore-title', text: openChapter ? l.title : 'FRAGMENTO CIFRADO' }));
+      info.appendChild(Util.el('div', { class: 'lore-from', text: openChapter ? l.from + ' · mensaje recuperado' : 'MISIÓN: ' + mission.instruction }));
+      if (!openChapter) {
+        var missionBar = Util.el('div', { class: 'lore-mission-progress' });
+        missionBar.innerHTML = '<i style="width:' + Math.round(missionProgress / mission.target * 100) + '%"></i><span>' + Util.fmtInt(missionProgress) + ' / ' + Util.fmtInt(mission.target) + '</span>';
+        info.appendChild(missionBar);
+      }
+      if (openChapter) info.appendChild(Util.el('div', { class: 'lore-body', text: l.body }));
+      row.appendChild(info);
+      if (!openChapter) {
+        var pinned = S.objectives && S.objectives.pinned && S.objectives.pinned.kind === 'lore' && S.objectives.pinned.id === l.id;
+        var pin = Util.el('button', { class: 'xp-btn small pin-btn' + (pinned ? ' on' : ''), text: pinned ? '📌 Anclada' : '📌 Anclar' });
+        pin.addEventListener('click', function (e) {
+          e.stopPropagation();
+          if (pinned) NS.State.unpinObjective(); else NS.State.pinObjective('lore', l.id);
+          if (NS.Desktop.refreshGuide) NS.Desktop.refreshGuide();
+          NS.State.saveNow(); render(body);
+        });
+        row.appendChild(pin);
+      }
+      if (openChapter && !S.lore.read[l.id]) row.appendChild(Util.el('span', { class: 'lore-new', text: 'NUEVO' }));
+      row.addEventListener('click', function () { if (openChapter) { NS.State.markLoreRead(l.id); row.classList.add('read'); var n = Util.$('.lore-new', row); if (n) n.remove(); NS.State.saveNow(); } });
+      panel.appendChild(row);
+    });
+    body.appendChild(panel);
   }
 
   /* ================= MySpace: perfil ================= */
@@ -400,12 +448,23 @@
     var left = Util.el('div', { class: 'msn-left' });
     left.appendChild(Util.el('div', { class: 'msn-brand', text: 'NovaMessenger' }));
     var list = Util.el('div', { class: 'msn-list' });
-    CONTACTS.forEach(function (c) {
+    var ordered = CONTACTS.slice().sort(function (a, b) {
+      if (a.lore) return -1; if (b.lore) return 1;
+      var rank = { online: 0, busy: 1, invisible: 2 };
+      return rank[a.status] - rank[b.status] || a.name.localeCompare(b.name);
+    });
+    var previousStatus = '';
+    ordered.forEach(function (c) {
+      if (!c.lore && c.status !== previousStatus) {
+        list.appendChild(Util.el('div', { class: 'msn-group', text: statusLabel(c.status) }));
+        previousStatus = c.status;
+      }
       var row = Util.el('div', { class: 'msn-contact' + (selected === c ? ' sel' : '') });
       row.appendChild(Util.svgIcon(c.avatar, 'icon icon-24'));
       var info = Util.el('div', { style: { flex: '1' } });
       info.appendChild(Util.el('div', { class: 'msn-cname', text: c.name }));
       info.appendChild(Util.el('div', { class: 'msn-cstatus', text: statusLabel(c.status) }));
+      if (c.lore) info.appendChild(Util.el('div', { class: 'msn-cstatus msn-secure', text: unlockedLore().length + '/' + NS.Catalog.LORE.length + ' fragmentos · canal seguro' }));
       info.style.color = statusColor(c.status);
       row.appendChild(info);
       row.addEventListener('click', function () {
@@ -432,6 +491,9 @@
       right.appendChild(head);
       chatLogEl = Util.el('div', { class: 'msn-chatlog' });
       right.appendChild(chatLogEl);
+      if (selected.lore) {
+        unlockedLore().forEach(function (l) { addMsg(l.from, '[' + l.chapter + '] ' + l.body, 'them lore-msg'); NS.State.markLoreRead(l.id); });
+      }
       var inpRow = Util.el('div', { class: 'msn-inputrow' });
       var inp = Util.el('input', { class: 'xp-input', id: 'msn-input', type: 'text', maxlength: '120', placeholder: 'Escribe un mensaje...' });
       var btn = Util.el('button', { class: 'xp-btn small', text: 'Enviar' });
@@ -453,6 +515,7 @@
     body.className = 'msn-root app-pad';
     body.appendChild(tabs(body));
     if (curTab === 'chat') renderChat(body);
+    else if (curTab === 'archivo') renderLoreArchive(body);
     else if (curTab === 'perfil') renderProfile(body);
     else renderFriends(body);
   }

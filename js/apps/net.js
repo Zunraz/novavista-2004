@@ -22,12 +22,12 @@
   function genNode(rng, kind, lvl) {
     var fw, data, cash, coins = 0, coinsChance = 0;
     if (kind === 'data') {
-      fw = 1 + Math.floor(lvl / 2) + (rng() < 0.4 ? 1 : 0);
+      fw = 2 + lvl + (rng() < 0.35 ? 1 : 0);
       data = Math.round(Math.pow(lvl, 1.4) * 14 * (0.8 + rng() * 0.6));
       cash = Math.round(Math.pow(lvl, 2.05) * 26 * (0.8 + rng() * 0.5));
       coinsChance = 0.25 + lvl * 0.04;
     } else if (kind === 'elite') {
-      fw = 2 + Math.floor(lvl / 2) + (rng() < 0.5 ? 1 : 0);
+      fw = 4 + lvl + (rng() < 0.5 ? 1 : 0);
       data = Math.round(Math.pow(lvl, 1.5) * 34 * (0.9 + rng() * 0.6));
       cash = Math.round(Math.pow(lvl, 2.1) * 60 * (0.9 + rng() * 0.5));
       coinsChance = 0.5;
@@ -39,7 +39,7 @@
     } else if (kind === 'event') {
       fw = 0; data = 0; cash = 0;
     } else if (kind === 'boss') {
-      fw = 4 + Math.floor(lvl / 2);
+      fw = 7 + lvl;
       data = 4200 + Math.floor(rng() * 2200);
       cash = 22000 + Math.floor(rng() * 16000);
       coins = 8 + Math.floor(rng() * 10);
@@ -59,7 +59,7 @@
       kind: kind,
       name: kind === 'isp' ? 'Proveedor ISP (tú)' : (NAMES[kind] || ['Nodo desconocido'])[Math.floor(rng() * (NAMES[kind] || ['Nodo desconocido']).length)],
       lvl: lvl,
-      fw: kind === 'boss' ? fw : Math.min(fw, 6),
+      fw: kind === 'boss' ? fw : Math.min(fw, 9),
       fwMax: fw,
       trace: (kind === 'elite' ? 8 : kind === 'boss' ? 14 : 5) + lvl * 2 + Math.floor(rng() * 4),
       data: data, cash: cash, coins: coins, coinsChance: coinsChance,
@@ -94,9 +94,10 @@
 
     var isp = add(genNode(rng, 'isp', 0));
 
-    // 3 ramas × 3 profundidades: el jugador elige su ruta (StS-style)
-    var branches = 3;
-    var depth = 3;
+    // El mapa táctico es una actividad secundaria compacta: 2 rutas × 2 saltos.
+    // El bucle principal vive ahora en los contratos CTF de NovaOps.
+    var branches = 2;
+    var depth = 2;
     var ends = [];
     for (var b = 0; b < branches; b++) {
       var prev = isp;
@@ -109,7 +110,7 @@
       }
     }
     // el jefe conecta con el final de las 3 ramas
-    var boss = add(genNode(rng, 'boss', 4));
+    var boss = add(genNode(rng, 'boss', depth + 1));
     ends.forEach(function (e) { e.conn.push(boss.id); });
     // a veces una conexión extra rama<->rama (atajos)
     if (rng() < 0.5) {
@@ -125,7 +126,7 @@
       { id: 'vigilada',  kind: 'bad',  name: 'Red vigilada',     desc: '+25 % de rastro por acción' },
       { id: 'hora-punta',kind: 'bad',  name: 'Hora punta',       desc: '+1 de energía por acción' },
       { id: 'silenciosa',kind: 'good', name: 'Red silenciosa',   desc: '-20 % de rastro por acción' },
-      { id: 'agujeros',  kind: 'good', name: 'Red con agujeros', desc: 'Los nodos tienen más vulnerabilidades' },
+      { id: 'agujeros',  kind: 'good', name: 'Red con agujeros', desc: 'Empiezas con +1 de Enfoque' },
       { id: 'criptico',  kind: 'good', name: 'Nodos cripticos',  desc: '+50 % de NovaCoins' },
       { id: 'aquelarre', kind: 'good', name: 'Noche de aquelarre', desc: 'Menos firewall en las ramas iniciales' }
     ];
@@ -179,6 +180,7 @@
       summary: null,
       modifiers: modifiers, modIds: modIds, objective: objective,
       combo: 0, comboBest: 0,
+      focus: modIds.indexOf('agujeros') !== -1 ? 1 : 0, turn: 0,
       stealthCount: 0,
       stats: { drains: 0, crack: 0, bruteforce: 0, tools: {}, maxTrace: 0 }
     };
@@ -584,12 +586,242 @@
     return { buffer: 'desbordamiento', openport: 'puerto abierto', weakpass: 'contraseña débil', backdoor: 'puerta trasera' }[v] || v;
   }
 
+  /* ================= brecha táctica =================
+     La interfaz principal ya no depende de acertar coordenadas en un canvas.
+     Cada servidor anuncia la maniobra de su ICE y el jugador responde con un
+     protocolo. Acertar el contraataque da Enfoque; ignorarlo tiene un coste
+     predecible. Así cada clic expresa una decisión, no una prueba de puntería. */
+  var ICE_INTENTS = [
+    { id: 'sweep', glyph: '◎', name: 'Barrido de identidad', counter: 'cloak', desc: 'Si no usas Fantasma, añade 10 de rastro.' },
+    { id: 'patch', glyph: '▦', name: 'Parche reactivo', counter: 'spoof', desc: 'Si no usas Suplantar, restaura 1 de integridad.' },
+    { id: 'counter', glyph: '⚡', name: 'Contraataque ICE', counter: 'burst', desc: 'Si no usas Sobrecarga, añade 7 de rastro y quema botín.' }
+  ];
+  var PROTOCOLS = {
+    cloak: { name: 'Fantasma', glyph: '◌', cost: 1, power: 1, trace: -5, tone: 'quiet', desc: 'Lento, pero limpia tu huella.' },
+    spoof: { name: 'Suplantar', glyph: '◇', cost: 1, power: 2, trace: 5, tone: 'smart', desc: 'Equilibrado y eficiente.' },
+    burst: { name: 'Sobrecarga', glyph: '▲', cost: 2, power: 3, trace: 12, tone: 'loud', desc: 'Rápido, caro y ruidoso.' },
+    zero: { name: 'Zero-day', glyph: '✦', cost: 1, focus: 2, power: 4, trace: 0, tone: 'zero', desc: 'Consume 2 de Enfoque e ignora el ICE.' }
+  };
+
+  function iceIntent(run, node) {
+    var key = String(node.id) + ':' + (node.iceTurn || 0) + ':' + (run.seed || 0);
+    var n = 0;
+    for (var i = 0; i < key.length; i++) n = (n * 31 + key.charCodeAt(i)) >>> 0;
+    return ICE_INTENTS[n % ICE_INTENTS.length];
+  }
+
+  function tacticalTrace(run, amount) {
+    if (amount < 0) {
+      run.trace = Math.max(0, run.trace + amount);
+      return false;
+    }
+    var S = NS.State.get();
+    var stealth = 1 - 0.04 * (S.upg['i-stealth'] || 0);
+    run.trace += Math.max(0, amount * stealth * runTraceMult(run));
+    if (run.trace > run.stats.maxTrace) run.stats.maxTrace = Math.floor(run.trace);
+    if (run.trace >= 70 && run.trace < 100 && !run.traceWarned) {
+      run.traceWarned = true;
+      log('warn', 'Rastro crítico: ' + Math.floor(run.trace) + '/100. Valora cobrar el botín o usar Fantasma.');
+      NS.Audio.trace();
+    }
+    if (run.trace < 100) return false;
+    run.trace = 100;
+    var escapeChance = Util.clamp(0.35 + 0.05 * (S.upg['i-stealth'] || 0), 0, 0.65);
+    if (Math.random() < escapeChance) {
+      run.trace = 35;
+      log('ok', 'El enlace de emergencia te ocultó. Rastro reiniciado a 35.');
+      NS.Audio.trace();
+      return false;
+    }
+    traced(run);
+    return true;
+  }
+
+  function completeHostile(run, node) {
+    if (run.trace < 50) run.combo++;
+    else run.combo = 0;
+    if (run.combo > run.comboBest) run.comboBest = run.combo;
+    var comboMult = 1 + 0.1 * Util.clamp(run.combo - 1, 0, 5);
+    var mult = lootMult() * comboMult;
+    var payloadMult = run.payloadArmed ? 1.4 : 1;
+    var data = Math.round(node.data * mult * payloadMult);
+    var cash = Math.round(node.cash * mult);
+    if (run.payloadArmed) log('ok', 'Payload cifrado ejecutado: +40 % de datos en esta brecha.');
+    run.payloadArmed = false;
+    run.loot.data += data;
+    run.loot.cash += cash;
+    node.fw = 0;
+    node.drained = true;
+    run.stats.drains++;
+    NS.State.get().stats.hacks++;
+    NS.State.get().meta.nodesDrained++;
+    NS.State.addXP(7 + node.lvl * 2);
+    log('ok', 'BRECHA COMPLETA: ' + node.name + ' → +' + Util.fmtBytes(data * 1024 * 1024) + ' y ' + Util.fmtMoney(cash) + '.');
+    if (run.combo >= 2) log('ok', 'Cadena limpia ×' + run.combo + ': bonus de botín +' + Math.min(50, (run.combo - 1) * 10) + ' %.');
+
+    if (node.coinsChance > 0 && (node.kind === 'boss' || Math.random() < node.coinsChance)) {
+      NS.State.addCoins(node.coins);
+      log('ok', '+' + node.coins + ' NovaCoins recuperadas del servidor.');
+    }
+    if (Math.random() < toolDropChance()) {
+      var tids = Object.keys(NS.Catalog.TOOLS);
+      var tid = tids[Math.floor(Math.random() * tids.length)];
+      NS.State.get().inventory.tools[tid] = (NS.State.get().inventory.tools[tid] || 0) + 1;
+      log('dim', 'Herramienta recuperada: 1× ' + NS.Catalog.TOOLS[tid].name + '.');
+    }
+    NS.Audio.hack();
+
+    if (node.kind === 'boss') {
+      run.status = 'done';
+      run.summary = 'victory';
+      var bonus = 10 + Math.floor(Math.random() * 15);
+      NS.State.addCoins(bonus);
+      NS.State.addXP(60);
+      NS.State.get().meta.bossesDrained++;
+      log('ok', '★★★★★ MASTER SERVER NEUTRALIZADO ★★★★★');
+      log('ok', 'Bonus de operación: +' + bonus + ' NovaCoins y +60 XP.');
+      NS.Audio.startup();
+      endRun(true);
+      return true;
+    }
+    return false;
+  }
+
+  function actProtocol(run, node, mode) {
+    var def = PROTOCOLS[mode];
+    if (!def || !node || !isReachable(run, node) || node.drained) return;
+    if (node.kind !== 'data' && node.kind !== 'elite' && node.kind !== 'boss') return;
+    if (mode === 'zero' && (run.focus || 0) < def.focus) return log('err', 'Necesitas 2 de Enfoque para ejecutar el zero-day.');
+    if (!spendE(run, def.cost)) return log('err', 'Energía insuficiente (necesitas ' + def.cost + ').');
+
+    node.explored = true;
+    node.iceTurn = node.iceTurn || 0;
+    run.turn = (run.turn || 0) + 1;
+    var intent = iceIntent(run, node);
+    var countered = mode === intent.counter || mode === 'zero';
+    var cpuBonus = Math.floor((NS.State.get().upg['i-cpu'] || 0) / 4);
+    var power = def.power + cpuBonus + (countered && mode !== 'zero' ? 1 : 0);
+    if (mode === 'zero') run.focus -= def.focus;
+    else if (countered) run.focus = Math.min(5, (run.focus || 0) + 1);
+    if (mode === 'burst') run.stats.bruteforce++;
+    else run.stats.crack++;
+
+    node.fw = Math.max(0, node.fw - power);
+    if (tacticalTrace(run, def.trace)) return;
+    if (countered) {
+      log('ok', def.name + ' neutraliza «' + intent.name + '» y causa ' + power + ' de brecha' + (mode === 'zero' ? '.' : ' (+1 Enfoque).'));
+    } else if (node.fw > 0) {
+      if (intent.id === 'sweep') {
+        if (tacticalTrace(run, 10)) return;
+      } else if (intent.id === 'patch') node.fw = Math.min(node.fwMax, node.fw + 1);
+      else {
+        if (tacticalTrace(run, 7)) return;
+        var lost = Math.min(run.loot.cash, Math.round(run.loot.cash * 0.08));
+        run.loot.cash -= lost;
+        if (lost) log('warn', 'El ICE corrompió ' + Util.fmtMoney(lost) + ' del botín de la operación.');
+      }
+      log('warn', def.name + ' no contrarrestó «' + intent.name + '». El ICE ejecutó su respuesta.');
+    } else {
+      log('ok', def.name + ' rompe el servidor antes de que el ICE pueda responder.');
+    }
+    if (!NS.State.get().run) return;
+    node.iceTurn++;
+    if (node.fw <= 0 && completeHostile(run, node)) return;
+    NS.State.saveNow();
+    refresh();
+  }
+
+  function resolveCache(run, node, greedy) {
+    if (!isReachable(run, node) || node.drained) return;
+    if (!spendE(run, 1)) return log('err', 'Energía insuficiente.');
+    var factor = greedy ? 1.15 : 0.7;
+    var data = Math.round(node.data * lootMult() * factor);
+    var cash = Math.round(node.cash * lootMult() * factor);
+    var trapped = greedy && Math.random() < 0.25;
+    node.drained = true;
+    run.stats.drains++;
+    if (!trapped) {
+      run.loot.data += data;
+      run.loot.cash += cash;
+      log('ok', (greedy ? 'Alijo forzado' : 'Alijo aislado') + ': +' + Util.fmtBytes(data * 1024 * 1024) + ' y ' + Util.fmtMoney(cash) + '.');
+      NS.Audio.cash();
+    } else {
+      if (tacticalTrace(run, 20)) return;
+      log('warn', 'Era un honeypot. No había botín y el rastro aumentó 20.');
+      NS.Audio.trace();
+    }
+    if (!NS.State.get().run) return;
+    if (tacticalTrace(run, greedy ? 5 : 1)) return;
+    NS.State.saveNow();
+    refresh();
+  }
+
+  function resolveSignal(run, node, choice) {
+    if (!isReachable(run, node) || node.drained) return;
+    if (!spendE(run, 1)) return log('err', 'Energía insuficiente.');
+    node.drained = true;
+    run.stats.drains++;
+    if (choice === 'relay') {
+      run.focus = Math.min(5, (run.focus || 0) + 2);
+      NS.State.addEnergy(4);
+      if (tacticalTrace(run, 8)) return;
+      log('ok', 'Usaste el relé clandestino: +2 Enfoque y +4 energía, pero +8 de rastro.');
+    } else {
+      run.trace = Math.max(0, run.trace - 14);
+      log('ok', 'Aislaste la señal: -14 de rastro y la ruta queda asegurada.');
+    }
+    NS.Audio.ok();
+    NS.State.saveNow();
+    refresh();
+  }
+
+  function actTacticalTool(run, node, tid) {
+    if (tid === 'proxy') return actProxy(run);
+    if (tid === 'worm') return actWorm(run);
+    if (tid === 'exploit' && (!node || node.drained || (node.kind !== 'data' && node.kind !== 'elite' && node.kind !== 'boss'))) {
+      return log('err', 'Selecciona un servidor hostil antes de usar el kit.');
+    }
+    if (!takeTool(run, tid)) return log('err', 'No tienes esa herramienta.');
+    run.stats.tools[tid] = 1;
+    if (tid === 'icmp') {
+      run.focus = Math.min(5, (run.focus || 0) + 2);
+      log('ok', 'Túnel ICMP sincronizado: +2 Enfoque.');
+    } else if (tid === 'decrypt') {
+      run.focus = Math.min(5, (run.focus || 0) + 1);
+      if (node && !node.drained) node.iceTurn = (node.iceTurn || 0) + 1;
+      log('ok', 'Descifrador ejecutado: +1 Enfoque y la maniobra del ICE ha cambiado.');
+    } else if (tid === 'payload') {
+      run.payloadArmed = true;
+      log('ok', 'Payload cifrado armado: la próxima brecha dará +40 % de datos.');
+    } else if (tid === 'exploit') {
+      node.fw = Math.max(0, node.fw - 2);
+      log('ok', 'Kit de explotación: 2 de brecha instantánea y sin rastro.');
+      if (node.fw <= 0 && completeHostile(run, node)) return;
+    }
+    NS.Audio.ok();
+    NS.State.saveNow();
+    refresh();
+  }
+
   /* ================= finalizar asalto ================= */
   function commitLoot(run) {
     var S = NS.State.get();
     var added = NS.State.addDataMB(run.loot.data);
     NS.State.addCash(run.loot.cash);
     return { data: added, cash: run.loot.cash };
+  }
+  function objectiveMet(run) {
+    if (!run.objective) return false;
+    if (typeof run.objective.check === 'function') return !!run.objective.check(run);
+    switch (run.objective.id) {
+      case 'o-no-bruteforce': return run.stats.bruteforce === 0;
+      case 'o-low-trace': return run.trace < 40;
+      case 'o-4-drains': return run.stats.drains >= 4;
+      case 'o-2-tools': return Object.keys(run.stats.tools || {}).length >= 2;
+      case 'o-no-crack': return run.stats.crack === 0;
+      case 'o-calm': return run.stats.maxTrace <= 60;
+      default: return false;
+    }
   }
   function endRun(victoryRun) {
     var S = NS.State.get();
@@ -614,7 +846,7 @@
     // objetivo secundario: bonus de NovaCoins
     var objBonus = 0;
     var objMet = false;
-    if (run.objective && run.objective.check(run)) {
+    if (objectiveMet(run)) {
       objMet = true;
       objBonus = run.objective.bonus;
       NS.State.addCoins(objBonus);
@@ -659,7 +891,7 @@
   var inpEl = null;
   var mapEl = null;
   var infoEl = null;
-  var curTab = 'mapa';
+  var curTab = 'ctf';
   var selectedId = null;
   var cmdHist = [];
   var cmdIdx = 0;
@@ -671,7 +903,8 @@
     outEl.scrollTop = outEl.scrollHeight;
   }
   function refresh() {
-    if (curTab === 'mapa') renderMap();
+    if (curTab === 'ctf' && NS.CTF && infoEl) NS.CTF.renderHub(infoEl);
+    else if (curTab === 'mapa') renderMap();
     else if (curTab === 'equipo') renderEquipo();
     else if (curTab === 'registro') renderRegistro();
   }
@@ -684,46 +917,66 @@
     var startTools = S.upg['i-start'] || 0;
     if (startTools > 0) run.tools.exploit = (run.tools.exploit || 0) + startTools;
     S.run = run;
+    selectedId = run.nodes.filter(function (n) { return n.kind !== 'isp' && isReachable(run, n); })[0].id;
     log('ok', '=== NUEVO ASALTO ===');
     log('dim', 'Conexión establecida con el Proveedor ISP.');
     log('ok', 'Modificadores: ' + run.modifiers.map(function (m) { return m.name + ' (' + m.desc + ')'; }).join(' · '));
     log('dim', 'Objetivo del asalto: ' + run.objective.desc + ' → +' + run.objective.bonus + ' NovaCoins.');
-    log('dim', 'Meta principal: drenar el MASTER SERVER. Drena nodos para abrir el camino.');
+    log('dim', 'Meta principal: neutralizar el MASTER SERVER. El ICE anuncia cada maniobra: contrarréstala para generar Enfoque.');
     NS.Audio.hack();
     renderMap();
     renderTop();
   }
 
   function actionButtons(container, run, node) {
-    var b = function (label, fn, disabled, title) {
-      var btn = Util.el('button', { class: 'xp-btn small', text: label, title: title || '' });
+    var b = function (label, glyph, meta, consequence, tone, fn, disabled, recommended, title) {
+      var btn = Util.el('button', { type: 'button', class: 'net-action-card net-protocol ' + tone + (recommended ? ' recommended' : ''), title: title || '' });
       btn.disabled = !!disabled;
       btn.addEventListener('click', fn);
+      btn.appendChild(Util.el('span', { class: 'net-protocol-glyph', text: glyph }));
+      var copy = Util.el('span', { class: 'net-protocol-copy' });
+      copy.appendChild(Util.el('b', { text: label }));
+      copy.appendChild(Util.el('span', { text: meta }));
+      copy.appendChild(Util.el('i', { text: consequence }));
+      btn.appendChild(copy);
       container.appendChild(btn);
     };
     if (!run || run.status !== 'active') return;
     var reach = node && isReachable(run, node);
-    b('Escanear', function () { actScan(run, node); }, !reach);
-    if (node) {
-      if (node.kind === 'data' || node.kind === 'elite' || node.kind === 'boss') {
-        b('Crack', function () { actCrack(run, node); }, !reach || node.fw <= 0);
-        b('Exploit', function () { actExploit(run, node); }, !reach || node.fw <= 0);
-        b('Bruteforce', function () { actBruteforce(run, node); }, !reach || node.fw <= 0);
-        b('Descifrar', function () { actDecrypt(run, node); }, !reach);
-        b('¡Upload!', function () { actUpload(run, node); }, !reach || node.fw > 0 || node.drained);
-      } else if (node.kind === 'loot') {
-        b('Robar botín', function () { actTake(run, node); }, !reach || node.drained, 'Recoge el botín: no hay firewall, pero puede ser una trampa.');
-      } else if (node.kind === 'shop') {
-        b('Entrar al mercado', function () { actShop(run, node); }, !reach || node.drained, 'Gasta botín del asalto en energía, limpieza de rastro o herramientas.');
-      } else if (node.kind === 'event') {
-        b('Investigar', function () { actEvent(run, node); }, !reach || node.drained, 'Resultado aleatorio: a veces una ganga, a veces una trampa.');
-      }
+    var hostile = node && (node.kind === 'data' || node.kind === 'elite' || node.kind === 'boss');
+    if (!node) return;
+    if (hostile) {
+      var intent = iceIntent(run, node);
+      ['cloak', 'spoof', 'burst'].forEach(function (id) {
+        var p = PROTOCOLS[id];
+        var trace = p.trace < 0 ? p.trace + ' rastro' : '+' + p.trace + ' rastro';
+        b(p.name, p.glyph, p.cost + ' energía · ' + p.power + ' brecha', trace + ' · ' + p.desc, p.tone,
+          function () { actProtocol(run, node, id); }, !reach || node.drained, intent.counter === id,
+          intent.counter === id ? 'Contrarresta la maniobra anunciada del ICE y genera Enfoque.' : p.desc);
+      });
+      var z = PROTOCOLS.zero;
+      b(z.name, z.glyph, '1 energía · 4 brecha', 'Consume 2 Enfoque · ignora el ICE', z.tone,
+        function () { actProtocol(run, node, 'zero'); }, !reach || node.drained || (run.focus || 0) < 2, false, z.desc);
+    } else if (node.kind === 'loot') {
+      b('Aislar alijo', '▣', '1 energía · 70 % del botín', 'Garantizado · +1 rastro', 'quiet', function () { resolveCache(run, node, false); }, !reach || node.drained, true, 'Recompensa menor sin posibilidad de trampa.');
+      b('Forzar alijo', '◆', '1 energía · 115 % del botín', '25 % honeypot · +5 rastro', 'loud', function () { resolveCache(run, node, true); }, !reach || node.drained, false, 'Más recompensa a cambio de un riesgo conocido.');
+    } else if (node.kind === 'shop') {
+      b('Abrir mercado', '¤', 'Sin coste de entrada', 'Compra mejoras con el botín de esta operación', 'smart', function () { actShop(run, node); }, !reach || node.drained, true, 'Puedes salir sin comprar.');
+    } else if (node.kind === 'event') {
+      b('Usar relé', '⌁', '1 energía · +2 Enfoque · +4 energía', '+8 rastro', 'smart', function () { resolveSignal(run, node, 'relay'); }, !reach || node.drained, (run.focus || 0) < 2, 'Potencia tu siguiente brecha a cambio de exposición.');
+      b('Aislar señal', '⊘', '1 energía · -14 rastro', 'Sin recompensa adicional', 'quiet', function () { resolveSignal(run, node, 'isolate'); }, !reach || node.drained, run.trace >= 45, 'Una salida segura para operaciones con rastro alto.');
     }
   }
 
   function renderTop() {
     var top = Util.$('#net-top');
     if (!top) return;
+    if (curTab === 'ctf' && NS.CTF) {
+      top.innerHTML = NS.CTF.statusHTML();
+      var oldExtra = Util.$('#net-extra');
+      if (oldExtra) { oldExtra.innerHTML = ''; oldExtra.style.display = 'none'; }
+      return;
+    }
     var S = NS.State.get();
     var run = S.run;
     var energyPct = S.currencies.energy / NS.State.maxEnergy() * 100;
@@ -732,6 +985,7 @@
     if (run) {
       html += '<div class="net-stat"><span class="net-lbl">Rastro</span><div class="xp-progress" style="width:110px"><div style="width:' + Math.floor(run.trace) + '%;' + (run.trace > 70 ? 'background:#c03030' : '') + '"></div></div><span>' + Math.floor(run.trace) + '/100</span></div>';
       html += '<div class="net-stat"><span class="net-lbl">Botín</span><span>' + Util.fmtBytes(run.loot.data * 1024 * 1024) + ' · ' + Util.fmtMoney(run.loot.cash) + '</span></div>';
+      html += '<div class="net-stat net-focus-stat"><span class="net-lbl">Enfoque</span><span>' + (run.focus || 0) + '/5' + (run.payloadArmed ? ' · payload armado' : '') + '</span></div>';
       if (run.combo >= 2) {
         html += '<div class="net-stat net-combo"><span class="net-lbl">RACHA</span><span>×' + run.combo + ' (+' + Math.min(50, (run.combo - 1) * 10) + ' %)</span></div>';
       }
@@ -745,6 +999,7 @@
       extra = Util.el('div', { class: 'net-extra', id: 'net-extra' });
       top.parentNode.insertBefore(extra, top.nextSibling);
     }
+    extra.style.display = '';
     extra.innerHTML = '';
     if (run) {
       (run.modifiers || []).forEach(function (m) {
@@ -795,8 +1050,9 @@
     var ctx = mapCtx;
     var W = cv.width, H = cv.height;
     ctx.clearRect(0, 0, W, H);
-    ctx.fillStyle = '#0a1230';
-    ctx.fillRect(0, 0, W, H);
+    var bg = ctx.createLinearGradient(0, 0, W, H);
+    bg.addColorStop(0, '#050b1c'); bg.addColorStop(0.55, '#0b2141'); bg.addColorStop(1, '#160d2d');
+    ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
     // retícula sutil
     ctx.strokeStyle = 'rgba(120,160,220,.06)';
     ctx.lineWidth = 1;
@@ -814,12 +1070,15 @@
       (n.conn || []).forEach(function (cid) {
         var b = pos[cid];
         if (!b) return;
-        ctx.strokeStyle = 'rgba(140,180,230,.25)';
-        ctx.lineWidth = 2;
+        var activePath = (n.kind === 'isp' || n.drained) && isReachable(run, byId[cid]);
+        ctx.strokeStyle = activePath ? 'rgba(75,205,255,.8)' : 'rgba(140,180,230,.2)';
+        ctx.lineWidth = activePath ? 3 : 2;
+        ctx.shadowColor = activePath ? '#42c9ff' : 'transparent'; ctx.shadowBlur = activePath ? 7 : 0;
         ctx.beginPath();
         ctx.moveTo(a.x, a.y);
         ctx.lineTo(b.x, b.y);
         ctx.stroke();
+        ctx.shadowBlur = 0;
       });
     });
 
@@ -832,11 +1091,19 @@
       var sel = selectedId === n.id;
       var x = p.x - 55, y = p.y - 23, w = 110, h = 46;
 
-      ctx.fillStyle = n.drained ? '#123a22' : (reach ? '#12305a' : '#151a26');
-      ctx.fillRect(x, y, w, h);
+      var ng = ctx.createLinearGradient(x, y, x, y + h);
+      if (n.drained) { ng.addColorStop(0, '#174c32'); ng.addColorStop(1, '#092617'); }
+      else if (reach) { ng.addColorStop(0, '#174c79'); ng.addColorStop(1, '#0b2346'); }
+      else { ng.addColorStop(0, '#20283a'); ng.addColorStop(1, '#101520'); }
+      ctx.fillStyle = ng;
+      ctx.beginPath();
+      ctx.moveTo(x + 7, y); ctx.lineTo(x + w - 7, y); ctx.quadraticCurveTo(x + w, y, x + w, y + 7);
+      ctx.lineTo(x + w, y + h - 7); ctx.quadraticCurveTo(x + w, y + h, x + w - 7, y + h);
+      ctx.lineTo(x + 7, y + h); ctx.quadraticCurveTo(x, y + h, x, y + h - 7);
+      ctx.lineTo(x, y + 7); ctx.quadraticCurveTo(x, y, x + 7, y); ctx.closePath(); ctx.fill();
       ctx.strokeStyle = n.drained ? '#3e9e4a' : (sel ? '#f2c14e' : (n.kind === 'boss' ? '#d6403f' : (reach ? '#3f8fd6' : '#3a4252')));
       ctx.lineWidth = sel ? 3 : 2;
-      ctx.strokeRect(x, y, w, h);
+      ctx.shadowColor = sel ? '#ffe26a' : (reach ? '#3faeff' : 'transparent'); ctx.shadowBlur = sel ? 13 : (reach ? 6 : 0); ctx.stroke(); ctx.shadowBlur = 0;
       if (n.drained) {
         ctx.fillStyle = '#3e9e4a';
         ctx.font = 'bold 20px Tahoma';
@@ -908,8 +1175,8 @@
     mapEl.innerHTML = '';
     if (!run) {
       var empty = Util.el('div', { class: 'net-empty' });
-      empty.innerHTML = '<div style="font-size:20px;margin-bottom:10px">Mapa de red inactivo</div>' +
-        '<div class="cfg-sub" style="margin-bottom:12px">Conecta para generar un asalto procedural. Elige tu ruta entre 3 ramas, esquiva el rastreo y alcanza el MasterServer.</div>';
+      empty.innerHTML = '<div class="net-empty-mark">◈</div><div style="font-size:20px;margin-bottom:7px">Centro de operaciones inactivo</div>' +
+        '<div class="cfg-sub" style="margin-bottom:12px;max-width:440px">Cada operación genera tres rutas distintas. Verás el riesgo y la recompensa antes de entrar; dentro, responde a las maniobras del ICE y decide cuándo retirarte.</div>';
       var btn = Util.el('button', { class: 'xp-btn primary', text: 'Conectar a la red' });
       btn.addEventListener('click', startRun);
       empty.appendChild(btn);
@@ -917,38 +1184,74 @@
       return;
     }
     renderTop();
-    mapCanvas = Util.el('canvas', { width: 560, height: 322, style: { width: '100%', maxWidth: '560px', display: 'block', margin: '0 auto', cursor: 'pointer' } });
-    try {
-      mapCtx = mapCanvas.getContext('2d');
-    } catch (e) { mapCtx = null; } // motores sin canvas (jsdom)
-    mapEl.appendChild(mapCanvas);
-    mapCanvas.addEventListener('click', function (e) {
-      var r = mapCanvas.getBoundingClientRect();
-      var mx = (e.clientX - r.left) * (mapCanvas.width / r.width);
-      var my = (e.clientY - r.top) * (mapCanvas.height / r.height);
-      var hit = mapHit(run, mx, my);
-      if (hit) {
-        selectedId = hit.id;
-        var reach = isReachable(run, hit);
-        if (hit.explored || run.mapRevealed) {
-          log('dim', 'Seleccionado: ' + hit.name + ' (' + (KIND_LABEL[hit.kind] || hit.kind) + ')' + (reach ? ' — alcanzable' : ' — bloqueado') + (hit.drained ? ' — ya resuelto' : ''));
-        }
-        drawMap(run);
-        renderActions();
-      }
-    });
-    drawMap(run);
 
-    // leyenda
-    var legend = Util.el('div', { class: 'net-legend' });
-    legend.appendChild(Util.el('span', { html: '<span class="lg lg-reach"></span> alcanzable' }));
-    legend.appendChild(Util.el('span', { html: '<span class="lg lg-lock"></span> bloqueado' }));
-    legend.appendChild(Util.el('span', { html: '<span class="lg lg-done"></span> resuelto' }));
-    legend.appendChild(Util.el('span', { html: '<span class="lg lg-hidden"></span> detalles sin escanear' }));
-    legend.appendChild(Util.el('span', { html: '<span class="lg lg-boss"></span> MasterServer' }));
-    legend.appendChild(Util.el('span', { html: '<span class="lg lg-d"></span> datos · <span class="lg lg-l"></span> botín · <span class="lg lg-s"></span> mercado · <span class="lg lg-e"></span> evento · <span class="lg lg-x"></span> élite' }));
+    // Si el objetivo anterior ya se resolvió, selecciona automáticamente el
+    // siguiente disponible. El jugador nunca tiene que buscar un píxel activo.
+    var selected = selectedId ? nodeById(run, selectedId) : null;
+    if (!selected || selected.drained) {
+      var available = run.nodes.filter(function (n) { return n.kind !== 'isp' && !n.drained && isReachable(run, n); });
+      available.sort(function (a, b) { return a.lvl - b.lvl || a.name.localeCompare(b.name); });
+      selectedId = available.length ? available[0].id : null;
+    }
+
+    var brief = Util.el('div', { class: 'net-operation-brief' });
+    brief.innerHTML = '<div><span class="net-kicker">OPERACIÓN EN CURSO</span><b>Elige una ruta. El ICE te dirá qué prepara.</b></div>' +
+      '<span class="net-focus-pill">ENFOQUE <strong>' + (run.focus || 0) + '/5</strong></span>';
+    mapEl.appendChild(brief);
+
+    var board = Util.el('div', { class: 'net-route-board', role: 'group', 'aria-label': 'Rutas de la operación' });
+    var entry = Util.el('div', { class: 'net-route-stage entry' });
+    entry.appendChild(Util.el('div', { class: 'net-stage-label', text: 'ENTRADA' }));
+    entry.appendChild(Util.el('div', { class: 'net-entry-node', html: '<span>◉</span><b>TU ISP</b><small>enlace seguro</small>' }));
+    board.appendChild(entry);
+
+    function nodeReward(n) {
+      if (n.kind === 'shop') return 'Mejoras de operación';
+      if (n.kind === 'event') return 'Enfoque o sigilo';
+      if (n.kind === 'loot') return Util.fmtMoney(n.cash) + ' · alijo';
+      return Util.fmtMoney(n.cash) + ' · ' + Util.fmtBytes(n.data * 1024 * 1024);
+    }
+    function nodeGlyph(n) {
+      return { data: '▤', elite: '♜', loot: '◆', shop: '¤', event: '⌁', boss: '◉' }[n.kind] || '?';
+    }
+
+    var maxRouteLvl = 0;
+    run.nodes.forEach(function (n) { if (n.kind !== 'isp' && n.kind !== 'boss') maxRouteLvl = Math.max(maxRouteLvl, n.lvl); });
+    for (var lvl = 1; lvl <= maxRouteLvl + 1; lvl++) {
+      var finalStage = lvl === maxRouteLvl + 1;
+      var stageNodes = run.nodes.filter(function (n) { return n.kind !== 'isp' && (finalStage ? n.kind === 'boss' : n.kind !== 'boss' && n.lvl === lvl); });
+      var stage = Util.el('div', { class: 'net-route-stage' + (finalStage ? ' final' : '') + (stageNodes.length === 2 ? ' two' : '') });
+      stage.appendChild(Util.el('div', { class: 'net-stage-label', text: finalStage ? 'NÚCLEO' : 'SALTO ' + lvl }));
+      stageNodes.forEach(function (node) {
+        var reach = isReachable(run, node);
+        var chosen = selectedId === node.id;
+        var stateClass = node.drained ? ' cleared' : reach ? ' available' : ' locked';
+        var btn = Util.el('button', {
+          type: 'button', class: 'net-route-node kind-' + node.kind + stateClass + (chosen ? ' selected' : ''),
+          'data-node-id': node.id, 'aria-pressed': chosen ? 'true' : 'false', 'aria-disabled': !reach || node.drained ? 'true' : 'false',
+          title: node.drained ? 'Nodo superado' : reach ? 'Seleccionar ' + node.name : 'Ruta cerrada: supera un nodo conectado anterior'
+        });
+        var status = node.drained ? 'SUPERADO' : reach ? 'DISPONIBLE' : 'RUTA CERRADA';
+        var integrity = (node.kind === 'data' || node.kind === 'elite' || node.kind === 'boss') ? 'Integridad ' + node.fw + '/' + node.fwMax : KIND_LABEL[node.kind];
+        btn.innerHTML = '<span class="net-route-glyph">' + nodeGlyph(node) + '</span>' +
+          '<span class="net-route-copy"><small>' + Util.esc(KIND_LABEL[node.kind] || node.kind) + ' · NV ' + node.lvl + '</small><b>' + Util.esc(node.name) + '</b><em>' + Util.esc(integrity) + ' · ' + Util.esc(nodeReward(node)) + '</em></span>' +
+          '<span class="net-route-state">' + status + '</span>';
+        btn.addEventListener('click', function () {
+          selectedId = node.id;
+          node.explored = true;
+          log('dim', 'Objetivo seleccionado: ' + node.name + ' — ' + status.toLowerCase() + '.');
+          renderMap();
+        });
+        stage.appendChild(btn);
+      });
+      board.appendChild(stage);
+    }
+    mapEl.appendChild(board);
+
+    var legend = Util.el('div', { class: 'net-route-legend' });
+    legend.innerHTML = '<span><i class="available"></i>puedes entrar ahora</span><span><i class="selected"></i>objetivo seleccionado</span><span><i class="cleared"></i>ruta abierta</span><span>Todo el nodo es pulsable · también funciona con Tab + Enter</span>';
     mapEl.appendChild(legend);
-    renderTop();
+    renderActions();
   }
 
   function renderActions() {
@@ -961,28 +1264,45 @@
       return;
     }
     var node = selectedId ? nodeById(run, selectedId) : null;
+    var intel = Util.el('div', { class: 'net-intel' });
+    var hostile = node && (node.kind === 'data' || node.kind === 'elite' || node.kind === 'boss');
+    if (!node) {
+      intel.innerHTML = '<div class="net-intel-copy"><b>ELIGE TU PRIMER SALTO</b><span>Los tres destinos disponibles muestran su riesgo, integridad y recompensa.</span></div>';
+    } else if (!isReachable(run, node)) {
+      intel.innerHTML = '<div class="net-intel-copy"><b>RUTA CERRADA</b><span>Supera un destino conectado de la columna anterior. Puedes elegir cualquier tarjeta marcada como DISPONIBLE.</span></div>';
+    } else if (node.drained) {
+      intel.innerHTML = '<div class="net-intel-copy"><b>DESTINO SUPERADO</b><span>La conexión está abierta. El siguiente salto disponible ya está resaltado.</span></div>';
+    } else if (hostile) {
+      var intent = iceIntent(run, node);
+      var hpPct = node.fwMax ? Math.round(node.fw / node.fwMax * 100) : 0;
+      intel.innerHTML = '<div class="net-target"><small>OBJETIVO ACTUAL</small><b>' + Util.esc(node.name) + '</b><span>Integridad <strong>' + node.fw + '/' + node.fwMax + '</strong></span><div class="net-integrity"><i style="width:' + hpPct + '%"></i></div></div>' +
+        '<div class="net-ice-intent"><span class="net-ice-glyph">' + intent.glyph + '</span><div><small>EL ICE ANUNCIA</small><b>' + Util.esc(intent.name) + '</b><span>' + Util.esc(intent.desc) + '</span></div></div>' +
+        '<div class="net-intel-copy"><b>TU DECISIÓN</b><span>La tarjeta marcada contrarresta el ICE y da Enfoque. Puedes ignorarla para atacar más rápido o ahorrar energía.</span></div>';
+    } else if (node.kind === 'loot') {
+      intel.innerHTML = '<div class="net-intel-copy"><b>ALIJO DE DATOS</b><span>Aísla una parte con seguridad o fuerza el contenedor para ganar más con un 25 % de riesgo.</span></div>';
+    } else if (node.kind === 'shop') {
+      intel.innerHTML = '<div class="net-intel-copy"><b>MERCADO NEGRO</b><span>Convierte parte del botín no cobrado en energía, limpieza de rastro o herramientas para esta operación.</span></div>';
+    } else {
+      intel.innerHTML = '<div class="net-intel-copy"><b>SEÑAL CLANDESTINA</b><span>Úsala para preparar un zero-day o aíslala para reducir el rastro. El resultado está indicado antes de elegir.</span></div>';
+    }
+    bar.appendChild(intel);
     var actions = Util.el('span', { class: 'net-actionset' });
     actionButtons(actions, run, node);
     bar.appendChild(actions);
 
-    var glob = Util.el('span', { class: 'net-actionset' });
-    var sBtn = Util.el('button', { class: 'xp-btn small', text: 'SIGILO' });
-    sBtn.addEventListener('click', function () { actStealth(run); });
-    glob.appendChild(sBtn);
-    ['proxy', 'worm', 'icmp'].forEach(function (tid) {
+    var glob = Util.el('span', { class: 'net-utility-row' });
+    glob.appendChild(Util.el('span', { class: 'net-utility-label', text: 'HERRAMIENTAS' }));
+    ['exploit', 'proxy', 'worm', 'icmp', 'payload', 'decrypt'].forEach(function (tid) {
       var def = NS.Catalog.TOOLS[tid];
       var cnt = (run.tools[tid] || 0) + (NS.State.get().inventory.tools[tid] || 0);
-      var b = Util.el('button', { class: 'xp-btn small', text: def.name.split(' ')[0] + ' (' + cnt + ')' });
-      b.disabled = cnt <= 0;
+      var armed = tid === 'payload' && run.payloadArmed;
+      var b = Util.el('button', { type: 'button', class: 'net-tool-chip' + (armed ? ' armed' : ''), text: def.name.split(' ')[0] + ' · ' + cnt });
+      b.disabled = cnt <= 0 || armed;
       b.title = def.desc;
-      b.addEventListener('click', function () {
-        if (tid === 'proxy') actProxy(run);
-        else if (tid === 'worm') actWorm(run);
-        else actIcmp(run);
-      });
+      b.addEventListener('click', function () { actTacticalTool(run, node, tid); });
       glob.appendChild(b);
     });
-    var dc = Util.el('button', { class: 'xp-btn small danger', text: 'Desconectar y cobrar' });
+    var dc = Util.el('button', { type: 'button', class: 'net-cashout', text: '↩ Cobrar y salir' });
     dc.addEventListener('click', function () { actDisconnect(run); });
     glob.appendChild(dc);
     bar.appendChild(glob);
@@ -1057,7 +1377,7 @@
     p3.appendChild(Util.el('div', { class: 'cfg-info', html:
       'Energía máxima: <b>' + NS.State.maxEnergy() + '</b> (regeneración ' + (NS.State.energyRegen() * 60).toFixed(1).replace('.', ',') + '/min)<br>' +
       'Sigilo: <b>-' + ((S.upg['i-stealth'] || 0) * 4) + ' %</b> de rastro por acción<br>' +
-      'CPU: <b>+' + ((S.upg['i-cpu'] || 0) * 12) + ' %</b> de éxito en crack<br>' +
+      'CPU: <b>+' + Math.floor((S.upg['i-cpu'] || 0) / 4) + '</b> de brecha para todos los protocolos<br>' +
       'Botín: <b>+' + ((S.upg['i-loot'] || 0) * 10) + ' %</b> · Caída de herramientas: <b>' + Math.round(toolDropChance() * 100) + ' %</b><br>' +
       'Ingresos globales: <b>+' + Math.round((NS.State.incomeMult() - 1) * 100) + ' %</b>'
     }));
@@ -1101,17 +1421,24 @@
     var actions = Util.el('div', { class: 'net-actions', id: 'net-actions' });
 
     function makeTab(id, label, fn) {
-      var b = Util.el('button', { class: 'tab-btn', text: label });
+      var b = Util.el('button', { class: 'tab-btn', text: label, 'data-tab': id });
       b.addEventListener('click', function () {
         curTab = id;
         Util.$$('.tab-btn', tabs).forEach(function (x) { x.classList.remove('on'); });
         b.classList.add('on');
         fn();
+        renderTop();
       });
       tabs.appendChild(b);
       return b;
     }
-    makeTab('mapa', 'Mapa', function () {
+    if (NS.CTF) makeTab('ctf', 'Trabajos CTF', function () {
+      content.innerHTML = '';
+      infoEl = Util.el('div', { class: 'ctf-host' });
+      content.appendChild(infoEl);
+      NS.CTF.renderHub(infoEl);
+    });
+    makeTab('mapa', 'Red táctica', function () {
       content.innerHTML = '';
       mapEl = Util.el('div', { class: 'net-map' });
       content.appendChild(mapEl);
@@ -1225,7 +1552,7 @@
   }
 
   NS.Apps.register({
-    id: 'net', title: 'Mapa de Red', icon: 'ic-net',
+    id: 'net', title: 'NovaOps — CTF y Red', icon: 'ic-net',
     desktop: true, w: 720, h: 540, minW: 600, minH: 440,
     render: render, tick: tick,
     status: function () {
@@ -1233,5 +1560,5 @@
       return s.run ? 'Asalto activo · Rastro ' + Math.floor(s.run.trace) + '/100' : 'Sin asalto activo';
     }
   });
-  NS.Net = { genRun: genRun, startRun: startRun };
+  NS.Net = { genRun: genRun, startRun: startRun, refreshTop: renderTop };
 })();

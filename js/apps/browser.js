@@ -85,7 +85,7 @@
       { t: 'Foros NovaNet — tema: «Cómo evitar el rastreo en asaltos»', u: 'nova://foros', d: 'Stealth, proxies y buenos hábitos. Los veteranos cuentan sus trucos.' },
       { t: 'Descargas NovaNet — herramientas y software', u: 'nova://descargas', d: 'Kits de explotación, gusanos, payloads cifrados. Todo con garantía de 30 días.' },
       { t: 'NovaClick — el minijuego más adictivo de la red', u: 'nova://novaclick', d: '¡Haz clic! ¡Haz clic! Gana dinero con las impresiones.' },
-      { t: 'Mapa de red — guía de asaltos (roguelite)', u: 'nova://red', d: 'Cómo funciona la intrusión: energía, rastro, firewall y botín.' },
+      { t: 'NovaOps — guía de contratos CTF', u: 'nova://red', d: 'HTML, FTP, cifrados, hashes, paquetes, herramientas y campaña RED-NOVA.' },
       { t: 'Ayuda de NovaVista 2004', u: 'nova://ayuda', d: 'Todo lo que necesitas saber para dominar el sistema.' }
     ];
     var h = '<div class="web-results">';
@@ -123,10 +123,10 @@
     var h = '<div class="web-news">';
     h += '<div class="web-rcount">Foros NovaNet — ' + Util.fmtInt(Math.floor(5000 + NS.State.get().stats.posts * 3)) + ' usuarios conectados</div>';
     var threads = [
-      { t: '[Guía] Cómo evitar el rastreo en asaltos de red', a: 'RastreadorPro', r: '42', d: 'Usa stealth antes de cada acción, guarda proxies para el final y no subestimes el escaneo: revela vulnerabilidades gratis.' },
+      { t: '[Guía] Cómo evitar el rastreo en operaciones de red', a: 'RastreadorPro', r: '42', d: 'Fantasma limpia rastro y contrarresta los barridos. Guarda proxies para el núcleo y genera Enfoque antes de un élite.' },
       { t: '¿Merece la pena la chapa verificada?', a: 'Fama_Total', r: '17', d: 'El crecimiento orgánico de seguidores se dispara. Recomendada si ya tienes 1.000 seguidores.' },
       { t: 'Vendí 1 GB de datos y me compré el disco duro mayor', a: 'DataLord', r: '9', d: 'Con el acuerdo de datos al nivel 5, cada MB paga casi nada... invierte antes en precio.' },
-      { t: 'El MasterServer es IMPOSIBLE', a: 'noob_2004', r: '38', d: 'Necesitas al menos nivel 4 de firewall para abrirlo sin morir en el intento. Y el payload cifrado ayuda mucho.' },
+      { t: 'El MasterServer es IMPOSIBLE', a: 'noob_2004', r: '38', d: 'Lleva Enfoque para lanzar zero-days, guarda energía y arma un payload antes de romper su integridad.' },
       { t: '¿Alguien ha formateado C:?', a: 'Veterano', r: '21', d: 'El legado da +3 % por punto y es permanente. Espera a tener 100+ NovaCoins acumuladas en total.' }
     ];
     threads.forEach(function (t) {
@@ -150,7 +150,7 @@
         '<div class="web-rd">' + Util.esc(def.desc) + ' (tienes: ' + owned + ')</div></div>' +
         '<button class="xp-btn small" data-tool="' + tid + '">Comprar — ' + Util.fmtMoney(def.price) + '</button></div>';
     });
-    h += '<div class="web-rd" style="margin-top:8px">Las herramientas se usan durante los asaltos del <b>Mapa de Red</b>. También pueden caer como botín.</div>';
+    h += '<div class="web-rd" style="margin-top:8px">Las wordlists, tablas arcoíris y capturadores se usan en los <b>contratos CTF</b>; las demás herramientas sirven en la <b>Red táctica</b>. Algunas también aparecen como botín.</div>';
     h += '</div>';
     return page('Descargas NovaNet', h);
   }
@@ -182,21 +182,24 @@
 
   function pgRed() {
     var s = NS.State.get();
-    var h = '<div class="web-news"><div class="web-rcount">Guía oficial del Mapa de Red</div>';
-    h += '<div class="web-news-item"><div class="web-rtitle">¿Qué es un asalto?</div><div class="web-rd">Entras en la red, escaneas nodos, rompes su firewall y drenas sus datos. Cada acción gasta energía y genera rastro. Si el rastro llega a 100, te rastrean y pierdes el botín no guardado.</div></div>';
-    h += '<div class="web-news-item"><div class="web-rtitle">Comandos clave</div><div class="web-rd">scan (revela), crack (rompe 1 capa), exploit (usa vulnerabilidad), bruteforce (lento pero seguro), upload (drena), stealth (baja el rastro), proxy (lo parte por la mitad), disconnect (cobra y sale).</div></div>';
-    h += '<div class="web-news-item"><div class="web-rtitle">Consejo roguelite</div><div class="web-rd">Los implantes (comprados con NovaCoins) persisten entre asaltos. Invierte en energía y sigilo antes de intentar el MasterServer.</div></div>';
+    var h = '<div class="web-news"><div class="web-rcount">Guía oficial de NovaOps · campaña ' + (NS.CTF ? NS.CTF.mainProgress() : 0) + '/7</div>';
+    h += '<div class="web-news-item"><div class="web-rtitle">El bucle principal</div><div class="web-rd">Acepta un contrato, lee el objetivo exacto, examina la evidencia y entrega la bandera o respuesta. Los siete casos principales conectan las cuatro épocas; los secundarios cuentan historias independientes y pagan dinero, XP, fama y reputación.</div></div>';
+    h += '<div class="web-news-item"><div class="web-rtitle">Tipos de CTF</div><div class="web-rd">Inspección de HTML, credenciales FTP débiles, César, hashes de diccionario, capas Base64/ROT13 y reconstrucción de paquetes. Son simulaciones locales y ficticias: NovaOps no realiza ninguna conexión ni ataca servicios reales.</div></div>';
+    h += '<div class="web-news-item"><div class="web-rtitle">Herramientas y pistas</div><div class="web-rd">El Laboratorio mejora el mapeador, la wordlist, el descifrador y el rig de hashes. Las pistas conservan el progreso, pero descuentan reputación. Descargas vende consumibles capaces de acelerar tareas concretas.</div></div>';
+    h += '<div class="web-news-item"><div class="web-rtitle">Red táctica opcional</div><div class="web-rd">El mapa conserva una operación roguelite corta para obtener dinero y datos. Gestiona ICE, energía y rastro, y cobra cuando quieras. No bloquea ningún contrato de historia.</div></div>';
     h += '</div>';
-    return page('Mapa de red — guía', h);
+    return page('NovaOps — guía CTF', h);
   }
 
   function pgAyuda() {
     var h = '<div class="web-news"><div class="web-rcount">Centro de ayuda de NovaVista 2004</div>';
     var faqs = [
-      ['¿Cómo gano dinero?', 'Intereses del banco (mantén saldo alto), publicidad de MyNova (según seguidores), venta de datos robados y las impresiones de NovaClick.'],
+      ['¿Qué hago primero?', 'Abre NovaOps y completa «La página que no existe». El widget del escritorio siempre señala el siguiente contrato principal o la época que debes instalar.'],
+      ['¿Cómo gano dinero?', 'Los contratos CTF pagan al completarlos. También tienes intereses del banco, publicidad de MyNova, venta de datos, Red táctica y NovaClick.'],
       ['¿Qué son las NovaCoins?', 'La moneda meta del roguelite: se minan con bots, se obtienen en asaltos profundos y se gastan en implantes. Acumúlalas para el legado.'],
       ['¿Qué es el legado?', 'Al formatear C: conviertes tu historial de NovaCoins en puntos de legado permanentes (+3 % de ingresos cada uno).'],
       ['¿Por qué me rastrean?', 'Cada acción en un asalto suma rastro. El sigilo, los proxies y la energía bien gestionada son la clave. Si llega a 100, pierdes el botín.'],
+      ['¿Las pistas bloquean algo?', 'No. Conservas el progreso y puedes terminar el CTF; solamente reducen la reputación obtenida en ese contrato.'],
       ['¿Qué hago con los datos?', 'Véndelos en Mis Archivos. Invierte en el acuerdo de datos y en disco duro antes de acumular mucho.'],
       ['¿Es seguro este navegador?', 'NovaNet Explorer solo muestra páginas internas de NovaVista. Las páginas externas están bloqueadas por el filtro de seguridad (según el diseño del sistema).']
     ];

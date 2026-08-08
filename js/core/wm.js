@@ -12,6 +12,7 @@
   var zCounter = 100;
   var cascade = 0;
   var drag = null;
+  var resizing = null;
 
   /* Registro central de aplicaciones (metadatos para escritorio y menú inicio) */
   var appDefs = {};
@@ -58,6 +59,22 @@
     tb.appendChild(title); tb.appendChild(btns);
     var body = Util.el('div', { class: 'win-body' });
     dom.appendChild(tb); dom.appendChild(body);
+
+    // Tirador inferior derecho: todas las ventanas respetan su tamaño mínimo.
+    var resizeHandle = Util.el('div', { class: 'win-resize', title: 'Redimensionar' });
+    resizeHandle.addEventListener('mousedown', function (e) {
+      if (win.maximized) return;
+      focus(id);
+      resizing = {
+        id: id, dom: dom, x: e.clientX, y: e.clientY,
+        w: dom.offsetWidth, h: dom.offsetHeight,
+        minW: def.minW || 280, minH: def.minH || 160
+      };
+      document.addEventListener('mousemove', onResizeMove);
+      document.addEventListener('mouseup', onResizeEnd);
+      e.preventDefault(); e.stopPropagation();
+    });
+    dom.appendChild(resizeHandle);
 
     // Barra de estado opcional
     if (def.status) {
@@ -117,6 +134,18 @@
     drag = null;
     document.removeEventListener('mousemove', onDragMove);
     document.removeEventListener('mouseup', onDragEnd);
+  }
+  function onResizeMove(e) {
+    if (!resizing) return;
+    var maxW = Math.max(resizing.minW, window.innerWidth - resizing.dom.offsetLeft);
+    var maxH = Math.max(resizing.minH, window.innerHeight - resizing.dom.offsetTop - 30);
+    resizing.dom.style.width = Util.clamp(resizing.w + e.clientX - resizing.x, resizing.minW, maxW) + 'px';
+    resizing.dom.style.height = Util.clamp(resizing.h + e.clientY - resizing.y, resizing.minH, maxH) + 'px';
+  }
+  function onResizeEnd() {
+    resizing = null;
+    document.removeEventListener('mousemove', onResizeMove);
+    document.removeEventListener('mouseup', onResizeEnd);
   }
 
   function focus(id) {

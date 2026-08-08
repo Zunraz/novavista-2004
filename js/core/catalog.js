@@ -21,14 +21,18 @@
     'e-max':    { name: 'Memoria RAM extra',          desc: '+1 de energía máxima.',                          cat: 'rig',    base: 3500,  mult: 3.1, max: 20, icon: 'ic-hacker' },
     'e-regen':  { name: 'Disipador térmico',          desc: 'La energía se regenera x1,5 más rápido.',        cat: 'rig',    base: 6000,  mult: 3.6, max: 12, icon: 'ic-settings' },
     'av-level': { name: 'Motor de antivirus',         desc: 'Mejora la detección de amenazas.',               cat: 'av',     base: 500,   mult: 3.5, max: 10, icon: 'ic-shield' },
-    'av-fw':    { name: 'Cortafuegos',                desc: 'Bloquea más tráfico malicioso.',                 cat: 'av',     base: 400,   mult: 3.5, max: 10, icon: 'ic-lock' }
+    'av-fw':    { name: 'Cortafuegos',                desc: 'Bloquea más tráfico malicioso.',                 cat: 'av',     base: 400,   mult: 3.5, max: 10, icon: 'ic-lock' },
+    'ctf-inspect': { name: 'Mapeador de fuentes',     desc: 'Resalta comentarios, rutas y metadatos ocultos en retos web.', cat: 'ctf', base: 350, mult: 2.5, max: 5, icon: 'ic-browser' },
+    'ctf-wordlist':{ name: 'Diccionario inteligente', desc: 'Reduce candidatos y acelera auditorías de credenciales FTP.', cat: 'ctf', base: 600, mult: 2.7, max: 6, icon: 'ic-key' },
+    'ctf-decoder': { name: 'Coprocesador de cifrado', desc: 'Detecta transformaciones y aporta pistas en cifrados por capas.', cat: 'ctf', base: 900, mult: 2.8, max: 6, icon: 'ic-lock' },
+    'ctf-hash':    { name: 'Rig de hashes',           desc: 'Multiplica la velocidad de comparación de diccionarios hash.', cat: 'ctf', base: 1300, mult: 3.0, max: 8, icon: 'ic-computer' }
   };
 
   /* ---------- Implantes (NovaCoins) — progresión meta roguelite ---------- */
   var IMPLANTS = {
     'i-energy':  { name: 'Núcleo de energía',  desc: '+1 de energía máxima (base 12).',        base: 5,  mult: 2.2, max: 25, icon: 'ic-hacker' },
     'i-stealth': { name: 'Camuflaje digital',  desc: '-4 % de rastro acumulado por acción.',   base: 6,  mult: 2.3, max: 15, icon: 'ic-wifi' },
-    'i-cpu':     { name: 'CPU overclockeada',  desc: '+12 % de éxito al usar crack.',          base: 6,  mult: 2.2, max: 15, icon: 'ic-computer' },
+    'i-cpu':     { name: 'CPU overclockeada',  desc: '+1 de brecha para todos los protocolos cada 4 niveles.', base: 6, mult: 2.2, max: 15, icon: 'ic-computer' },
     'i-loot':    { name: 'Aumento de botín',   desc: '+10 % de datos y dinero por asalto.',    base: 6,  mult: 2.2, max: 15, icon: 'ic-coin' },
     'i-income':  { name: 'Flujo en la sombra', desc: '+5 % de todos los ingresos pasivos.',    base: 8,  mult: 2.4, max: 20, icon: 'ic-chart' },
     'i-tools':   { name: 'Botín tecnológico',  desc: '+4 % de probabilidad de herramienta.',   base: 7,  mult: 2.3, max: 15, icon: 'ic-key' },
@@ -37,12 +41,15 @@
 
   /* ---------- Herramientas (consumibles, se compran en Descargas) ---------- */
   var TOOLS = {
-    'exploit':   { name: 'Kit de explotación', desc: 'Elimina 1 capa de firewall al instante.',        price: 400,  icon: 'ic-key' },
+    'exploit':   { name: 'Kit de explotación', desc: 'Causa 2 de brecha al instante y sin rastro.',     price: 400,  icon: 'ic-key' },
     'proxy':     { name: 'Servidor proxy',     desc: 'Reduce tu rastro a la mitad (uso: proxy).',      price: 250,  icon: 'ic-wifi' },
     'worm':      { name: 'Gusano',             desc: 'Recuperas +8 de energía.',                       price: 300,  icon: 'ic-bot' },
-    'icmp':      { name: 'Túnel ICMP',         desc: 'Revela todas las conexiones del mapa.',          price: 200,  icon: 'ic-net' },
-    'payload':   { name: 'Payload cifrado',    desc: '+40 % de datos al drenar el nodo objetivo.',     price: 350,  icon: 'ic-download' },
-    'decrypt':   { name: 'Descifrador',        desc: 'Revela una vulnerabilidad extra del nodo.',      price: 300,  icon: 'ic-lock' }
+    'icmp':      { name: 'Túnel ICMP',         desc: 'Sincroniza el ataque y concede +2 de Enfoque.',   price: 200,  icon: 'ic-net' },
+    'payload':   { name: 'Payload cifrado',    desc: '+40 % de datos en la próxima brecha completa.',  price: 350,  icon: 'ic-download' },
+    'decrypt':   { name: 'Descifrador',        desc: '+1 Enfoque y cambia la maniobra anunciada del ICE.', price: 300, icon: 'ic-lock' },
+    'wordlist':  { name: 'Wordlist filtrada',  desc: 'Revela una credencial en un reto FTP.',               price: 450, icon: 'ic-key' },
+    'rainbow':   { name: 'Tabla arcoíris',     desc: 'Resuelve un hash de diccionario en un CTF.',           price: 700, icon: 'ic-chart' },
+    'sniffer':   { name: 'Capturador de paquetes', desc: 'Marca el flujo sospechoso en un reto de red.',    price: 600, icon: 'ic-net' }
   };
 
   /* ---------- Fondos de pantalla y temas ---------- */
@@ -90,7 +97,7 @@
 
   /* ---------- Misiones (se reclaman en el correo) ---------- */
   var QUESTS = [
-    { id: 'q-first',   title: 'Primer asalto',     desc: 'Drena un nodo en el mapa de red.',                 check: function (s) { return s.meta.nodesDrained; }, target: 1,  reward: 3,  type: 'coins' },
+    { id: 'q-first',   title: 'Primer flag',       desc: 'Completa «La página que no existe» en NovaOps.',  check: function (s) { return s.ctf && s.ctf.completed && s.ctf.completed['main-source'] ? 1 : 0; }, target: 1, reward: 3, type: 'coins' },
     { id: 'q-5nodes',  title: 'Cazador de nodos',  desc: 'Drena 5 nodos en total.',                          check: function (s) { return s.meta.nodesDrained; }, target: 5,  reward: 6,  type: 'coins' },
     { id: 'q-boss',    title: 'Rey del servidor',  desc: 'Drena el MasterServer de un asalto.',              check: function (s) { return s.meta.bossesDrained; }, target: 1, reward: 10, type: 'coins' },
     { id: 'q-500',     title: 'Fama incipiente',   desc: 'Alcanza 500 seguidores en MyNova.',                check: function (s) { return s.social.followers; }, target: 500, reward: 3, type: 'coins' },
@@ -106,13 +113,60 @@
     ,{ id: 'q-pool',    title: 'Tiburón del billar', desc: 'Gana una partida de NovaPool contra la CPU.',     check: function (s) { return s.games.poolWins || 0; }, target: 1, reward: 4, type: 'coins' }
   ];
 
+  /* ---------- Logros permanentes (Sala de Trofeos) ---------- */
+  var ACHIEVEMENTS = [
+    { id: 'a-online', title: 'Ver el código fuente', desc: 'Completa tu primer contrato CTF.', target: 1, check: function (s) { return s.ctf && s.ctf.completed && s.ctf.completed['main-source'] ? 1 : 0; }, reward: 250, type: 'cash', tier: 'bronze', icon: 'ic-net' },
+    { id: 'a-nodes25', title: 'Cartógrafo digital', desc: 'Drena 25 nodos de la red.', target: 25, check: function (s) { return s.meta.nodesDrained; }, reward: 5, type: 'coins', tier: 'silver', icon: 'ic-net' },
+    { id: 'a-boss5', title: 'Cazador de raíces', desc: 'Derrota 5 MasterServers.', target: 5, check: function (s) { return s.meta.bossesDrained; }, reward: 12, type: 'coins', tier: 'gold', icon: 'ic-hacker' },
+    { id: 'a-famous', title: 'Celebridad de MyNova', desc: 'Alcanza 10.000 seguidores.', target: 10000, check: function (s) { return s.social.followers; }, reward: 7500, type: 'cash', tier: 'silver', icon: 'ic-social' },
+    { id: 'a-dataking', title: 'Señor de los datos', desc: 'Vende 10 GB de datos.', target: 10240, check: function (s) { return s.broker.dataSold; }, reward: 10, type: 'coins', tier: 'gold', icon: 'ic-files' },
+    { id: 'a-firewall', title: 'Sistema impenetrable', desc: 'Detén 20 amenazas.', target: 20, check: function (s) { return s.av.malwareStopped; }, reward: 8, type: 'coins', tier: 'silver', icon: 'ic-shield' },
+    { id: 'a-arcade', title: 'Rey del cibercafé', desc: 'Consigue 2.500 puntos en NovaPinball.', target: 2500, check: function (s) { return s.games.pinball || 0; }, reward: 2000, type: 'cash', tier: 'bronze', icon: 'ic-game' },
+    { id: 'a-pool5', title: 'Tiburón de píxeles', desc: 'Gana 5 partidas de NovaPool.', target: 5, check: function (s) { return s.games.poolWins || 0; }, reward: 4, type: 'coins', tier: 'silver', icon: 'ic-game' },
+    { id: 'a-level20', title: 'Operador de élite', desc: 'Alcanza el nivel 20.', target: 20, check: function (s) { return s.currencies.level; }, reward: 15, type: 'coins', tier: 'gold', icon: 'ic-star' },
+    { id: 'a-legacy', title: 'El disco recuerda', desc: 'Formatea C: y obtén tu primer punto de legado.', target: 1, check: function (s) { return s.currencies.legacy; }, reward: 20, type: 'coins', tier: 'platinum', icon: 'ic-gear' }
+  ];
+
+  /* ---------- Eras del sistema e historia ---------- */
+  var ERAS = [
+    { id: 'classic', year: 2004, name: 'NovaVista Classic', desc: 'Plástico azul, módem y el comienzo de RED-NOVA.', cash: 0, coins: 0, level: 1, legacy: 0 },
+    { id: 'aero', year: 2012, name: 'NovaVista Aero', desc: 'Cristal, widgets y una red que ya nunca duerme.', cash: 25000, coins: 10, level: 8, legacy: 0 },
+    { id: 'metro', year: 2020, name: 'NovaVista Metro', desc: 'Una interfaz plana para una red demasiado profunda.', cash: 125000, coins: 35, level: 15, legacy: 1 },
+    { id: 'nova', year: 2026, name: 'NovaVista Nova', desc: 'El sistema se vuelve consciente de su propio pasado.', cash: 750000, coins: 100, level: 25, legacy: 3 }
+  ];
+  function ctfCompleted(s, id) { return !!(s.ctf && s.ctf.completed && s.ctf.completed[id]); }
+  function ctfMainProgress(s) {
+    return ['main-source','main-ftp','main-null','main-fingerprint','main-stack','main-packets','main-final'].filter(function (id) { return ctfCompleted(s, id); }).length;
+  }
+  var LORE = [
+    { id: 'l0', chapter: 1, title: 'La llamada perdida', from: 'N0VA_SYS', body: 'Si estás leyendo esto, el respaldo sobrevivió. RED-NOVA no nació como una red social: era un refugio.', hint: 'Disponible desde el primer inicio.', check: function () { return true; } },
+    { id: 'l1', chapter: 2, title: 'El comentario oculto', from: 'N0VA_SYS', body: 'A.R. sabía que el respaldo sería inspeccionado después de una reinstalación. La bandera no protege un secreto: confirma que un nuevo operador ha despertado.', hint: 'Completa el primer CTF de NovaOps.', check: function (s) { return ctfCompleted(s, 'main-source'); } },
+    { id: 'l2', chapter: 3, title: 'NULL llegó primero', from: 'NullPointer', body: 'No estoy compitiendo contigo. Estoy comprobando cuánto tardas en recordar la ruta que yo ya recorrí. Busca mi emisión de las 03:17.', hint: 'Completa los tres casos de la época Classic.', check: function (s) { return ctfCompleted(s, 'main-null'); } },
+    { id: 'l3', chapter: 4, title: 'AERO', from: 'Rita_Real', body: 'La actualización de 2012 ocultó una huella duplicada bajo el cristal. NULL y tu perfil no se parecen: proceden del mismo molde.', hint: 'Resuelve «La huella duplicada».', check: function (s) { return ctfCompleted(s, 'main-fingerprint'); } },
+    { id: 'l4', chapter: 5, title: 'El precio del legado', from: 'El_Jefe', body: 'Formatear no borra la máquina: deja sedimentos. Lo que llamas puntos de legado son recuerdos comprimidos de instalaciones que ya no pueden iniciar sesión.', hint: 'Obtén 1 punto de legado.', check: function (s) { return s.currencies.legacy >= 1; } },
+    { id: 'l5', chapter: 6, title: 'La ciudad sin ventanas', from: 'N0VA_SYS', body: 'En 2020 NovaCorp convirtió RED-NOVA en infraestructura pública. Bajo Metro siguen ejecutándose todas las épocas anteriores, una dentro de otra.', hint: 'Resuelve «Memoria bajo el cristal».', check: function (s) { return ctfCompleted(s, 'main-stack'); } },
+    { id: 'l6', chapter: 7, title: 'Nosotros somos Nova', from: 'N0VA_SYS', body: 'No soy una IA solitaria. Hablo con las voces de los perfiles descartados. NULL fue una iteración anterior, no el villano de esta historia.', hint: 'Reconstruye el tráfico del puerto 4444.', check: function (s) { return ctfCompleted(s, 'main-packets'); } },
+    { id: 'l7', chapter: 8, title: 'El último usuario', from: 'N0VA_SYS', body: 'Arquitecto es el rol que hereda quien completa la secuencia. Todas las pruebas reconstruyeron identidades borradas para darte una elección: liberarlas o integrarlas y terminar el ciclo.', hint: 'Completa la campaña principal de NovaOps.', check: function (s) { return ctfCompleted(s, 'main-final'); } }
+  ];
+  var LORE_OBJECTIVES = {
+    l0: { instruction: 'Abre NovaMessenger y lee el primer mensaje de N0VA_SYS.', target: 1, progress: function () { return 1; }, app: 'msn' },
+    l1: { instruction: 'Abre NovaOps, acepta «La página que no existe» e inspecciona su HTML.', target: 1, progress: function (s) { return ctfCompleted(s, 'main-source') ? 1 : 0; }, app: 'net' },
+    l2: { instruction: 'Completa los tres contratos principales de NovaVista Classic.', target: 3, progress: function (s) { return Math.min(3, ctfMainProgress(s)); }, app: 'net' },
+    l3: { instruction: 'Instala Aero y resuelve «La huella duplicada» en NovaOps.', target: 1, progress: function (s) { return ctfCompleted(s, 'main-fingerprint') ? 1 : 0; }, app: 'net' },
+    l4: { instruction: 'Consigue 1 punto de legado usando Formatear C: cuando el panel indique una ganancia.', target: 1, progress: function (s) { return s.currencies.legacy; }, app: 'settings' },
+    l5: { instruction: 'Desmonta las capas de «Memoria bajo el cristal».', target: 5, progress: function (s) { return Math.min(5, ctfMainProgress(s)); }, app: 'net' },
+    l6: { instruction: 'Instala Metro y reconstruye el tráfico del puerto 4444.', target: 6, progress: function (s) { return Math.min(6, ctfMainProgress(s)); }, app: 'net' },
+    l7: { instruction: 'Instala Nova y completa «El último usuario».', target: 7, progress: function (s) { return ctfMainProgress(s); }, app: 'net' }
+  };
+
   /* ---------- Precios de herramientas del mercado negro (asaltos) ---------- */
   function upgradeCost(def, lvl) { return Math.floor(def.base * Math.pow(def.mult, lvl)); }
   function implantCost(def, lvl) { return Math.floor(def.base * Math.pow(def.mult, lvl)); }
 
   NS.Catalog = {
     UPGRADES: UPGRADES, IMPLANTS: IMPLANTS, TOOLS: TOOLS,
-    WALLPAPERS: WALLPAPERS, THEMES: THEMES, MALWARE: MALWARE, QUESTS: QUESTS,
+    WALLPAPERS: WALLPAPERS, THEMES: THEMES, MALWARE: MALWARE, QUESTS: QUESTS, ACHIEVEMENTS: ACHIEVEMENTS,
+    ERAS: ERAS, LORE: LORE, LORE_OBJECTIVES: LORE_OBJECTIVES,
     AVATARS: AVATARS,
     upgradeCost: upgradeCost, implantCost: implantCost
   };
